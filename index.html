@@ -94,12 +94,20 @@ html[data-theme="dark"] .oz_logo_dark{display:block}
 .oz_btn_sec{width:100%;min-height:50px;padding:14px;border:1px solid var(--oz-line);border-radius:12px;background:#fff;color:var(--oz-text);font-size:16px;font-weight:600;cursor:pointer}
 .oz_btn_sec:active{background:#f0f2f5}
 .oz_done{text-align:center;padding:24px 0 8px}
+.oz_done .oz_preview{margin-top:16px;text-align:left}
+.oz_done .oz_done_btn{width:auto;min-height:auto;padding:12px 24px;font-size:15px;margin:6px 8px 0 0;border:none;cursor:pointer}
 .oz_done h1{font-size:1.5rem;margin-bottom:10px;color:var(--oz-accent)}
 .oz_done p{color:var(--oz-muted);font-size:16px;margin-bottom:20px;line-height:1.5}
 .oz_done a{display:inline-block;margin:6px 8px 0 0;padding:12px 28px;border-radius:12px;background:var(--oz-accent);color:#fff;font-weight:600;text-decoration:none}
 .oz_done a:hover{text-decoration:none;background:var(--oz-accent-h)}
 .oz_form_err{display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:#fdecea;border:1px solid #f5c6c2;color:#8a1f17;font-size:14px;line-height:1.45}
 .oz_form_err.oz_show{display:block}
+.oz_mod_badge{display:inline-block;margin-bottom:14px;padding:8px 12px;border-radius:8px;background:#fff8e6;border:1px solid #f0d78c;color:#8a6d00;font-size:13px;font-weight:600}
+.oz_mod_badge.oz_pub{background:#e8f5ea;border-color:#b8dfc0;color:#1f5c2b}
+.oz_mod_badge.oz_pub .oz_chk{display:inline-block;margin-right:5px;color:#2e7d32;font-weight:700;font-size:15px;line-height:1}
+html[data-theme="dark"] .oz_mod_badge{background:#2b2618;border-color:#5c4a12;color:#e8c96a}
+html[data-theme="dark"] .oz_mod_badge.oz_pub{background:#1a2e1f;border-color:#3d7c47;color:#a8e6b0}
+html[data-theme="dark"] .oz_mod_badge.oz_pub .oz_chk{color:#6fcf7a}
 .oz_foot{padding:8px var(--oz-pad) calc(16px + var(--oz-safe-b));border-top:8px solid var(--oz-bg);background:#fafbfc}
 .oz_foot_cols{display:flex;flex-direction:column;gap:0}
 .oz_foot_block{border-bottom:1px solid var(--oz-line);padding:0}
@@ -212,6 +220,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <div class="oz_drawer" id="oz_drawer" aria-hidden="true">
 <nav aria-label="Меню">
+<a href="#" class="oz_nav_my">Мой отзыв</a>
 <a href="https://ot-ziv.com/login/">Личный кабинет</a>
 <a href="https://ot-ziv.com/katalog/">Выход</a>
 </nav>
@@ -236,6 +245,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <nav id="oz_nav_top" aria-label="Верхнее меню">
 <a href="https://ot-ziv.com/" class="oz_on">Главная</a>
 <a href="https://ot-ziv.com/katalog/">Каталог</a>
+<a href="#" class="oz_nav_my">Мой отзыв</a>
 <a href="https://ot-ziv.com/napisat-otziv/">Добавить отзыв</a>
 <a href="https://ot-ziv.com/dobavit-kompaniyu/">Новая компания</a>
 <a href="https://ot-ziv.com/o-proekte/">О нас</a>
@@ -270,7 +280,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <main class="oz_main" id="oz_main" itemprop="mainContentOfPage">
 <div class="oz_shell">
 <article class="oz_card" id="oz_review_block">
-<form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
+<form id="oz_review_form" action="#" method="POST" novalidate>
 <input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
@@ -340,12 +350,20 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 </div>
 </form>
+<div class="oz_step" id="oz_step_mine" hidden>
+<h1>Мой отзыв</h1>
+<p class="oz_mod_badge" id="oz_mine_badge">Не опубликован · на модерации</p>
+<p class="oz_note" id="oz_mine_empty" hidden>В кеше этого браузера нет отправленного отзыва.</p>
+<dl class="oz_preview" id="oz_mine_preview"></dl>
+<button type="button" class="oz_btn_sec" id="oz_mine_back">Закрыть</button>
+</div>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <div class="oz_step oz_done" id="oz_step_done" hidden>
 <h1>Спасибо!</h1>
 <p>Форма была успешно отправлена.</p>
 <p class="oz_note">Копия отзыва сохранена в кеше этого браузера на 30 дней.</p>
-<a href="#" id="oz_done_link">Мой отзыв</a>
+<button type="button" class="oz_submit oz_done_btn" id="oz_done_link">Мой отзыв</button>
+<dl class="oz_preview" id="oz_done_preview" hidden></dl>
 <a href="https://ot-ziv.com/">Вернуться на сайт</a>
 </div>
 </article>
@@ -399,10 +417,11 @@ document.documentElement.setAttribute("data-theme",on?"dark":"light");
 localStorage.setItem("oz-theme",on?"dark":"light");
 });
 }
-var FORMSPREE_URL="https://formspree.io/f/xdaqoabn";
+var OZ_SEND_URL="https://hook.eu1.make.com/ptlxtjvly1j8rm4nwn0pnck39r948l8w";
 var stepForm=document.getElementById("oz_step_form");
 var stepPreview=document.getElementById("oz_step_preview");
 var stepDone=document.getElementById("oz_step_done");
+var stepMine=document.getElementById("oz_step_mine");
 var form=document.getElementById("oz_review_form");
 var previewList=document.getElementById("oz_preview_list");
 var formErr=document.getElementById("oz_form_err");
@@ -414,7 +433,8 @@ function showStep(step){
 if(stepForm)stepForm.hidden=step!=="form";
 if(stepPreview)stepPreview.hidden=step!=="preview";
 if(stepDone)stepDone.hidden=step!=="done";
-if(form)form.hidden=step==="done";
+if(stepMine)stepMine.hidden=step!=="mine";
+if(form)form.hidden=step==="done"||step==="mine";
 window.scrollTo({top:0,behavior:"smooth"});
 if(step==="preview"){setTimeout(ozRenderTurnstile,150);}
 }
@@ -433,6 +453,92 @@ run();
 }
 function previewRow(label,text){
 return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
+}
+function ozMakeId(){
+return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+function ozGetLatest(){
+try{
+var all=JSON.parse(localStorage.getItem("oz_v_cache")||"{}");
+var latest=null;
+Object.keys(all).forEach(function(k){
+var it=all[k];
+if(!it||!it.ts)return;
+if(!latest||it.ts>latest.ts)latest=it;
+});
+return latest;
+}catch(e){return null;}
+}
+function fillItemPreview(box,item){
+if(!box||!item)return false;
+var rating=+item.rating||5;
+var stars="★".repeat(rating)+"☆".repeat(5-rating);
+var mail=item.mail||"не указан";
+var tags=item.tags||"—";
+box.innerHTML=
+previewRow("Категория",item.category)+
+previewRow("Название",item.name)+
+previewRow("Ваше имя",item.user)+
+previewRow("E-mail",mail)+
+previewRow("Текст поста",item.text)+
+previewRow("Теги",tags)+
+"<div class=\"oz_preview_row\"><dt>Оценка</dt><dd><span class=\"oz_preview_stars\" aria-label=\""+rating+" из 5\">"+stars+"</span> ("+rating+" из 5)</dd></div>";
+return true;
+}
+var OZ_PUBLISHED_URL="/data/published.json";
+function ozFetchPublished(){
+return fetch(OZ_PUBLISHED_URL+"?t="+Date.now())
+.then(function(r){if(!r.ok)return[];return r.json();})
+.then(function(d){return Array.isArray(d)?d:(d&&d.ids)||[];})
+.catch(function(){return[];});
+}
+function ozMarkPublished(id){
+if(!id)return;
+try{
+var all=JSON.parse(localStorage.getItem("oz_v_cache")||"{}");
+if(all[id]){all[id].published=true;localStorage.setItem("oz_v_cache",JSON.stringify(all));}
+}catch(e){}
+}
+function ozCheckPublished(item){
+if(!item||!item.id)return Promise.resolve(false);
+if(item.published)return Promise.resolve(true);
+return ozFetchPublished().then(function(ids){
+var pub=ids.indexOf(item.id)>=0;
+if(pub)ozMarkPublished(item.id);
+return pub;
+});
+}
+function ozSetModBadge(badge,published){
+if(!badge)return;
+if(published){
+badge.className="oz_mod_badge oz_pub";
+badge.innerHTML='<span class="oz_chk" aria-hidden="true">✓</span> Опубликован';
+}else{
+badge.className="oz_mod_badge";
+badge.textContent="Не опубликован · на модерации";
+}
+}
+function showMyReview(){
+hideErr();
+var box=document.getElementById("oz_mine_preview");
+var empty=document.getElementById("oz_mine_empty");
+var badge=document.getElementById("oz_mine_badge");
+var item=ozGetLatest();
+if(fillItemPreview(box,item)){
+if(empty)empty.hidden=true;
+if(badge)badge.hidden=false;
+if(box)box.hidden=false;
+ozSetModBadge(badge,!!(item&&item.published));
+if(item&&!item.published){
+ozCheckPublished(item).then(function(pub){ozSetModBadge(badge,pub);});
+}
+}else{
+if(box){box.innerHTML="";box.hidden=true;}
+if(empty)empty.hidden=false;
+if(badge)badge.hidden=true;
+}
+showStep("mine");
+if(typeof setDrawer==="function")setDrawer(false);
 }
 function fillPreview(){
 if(!previewList)return;
@@ -453,9 +559,15 @@ function validateForm(){
 if(!form)return false;
 return form.reportValidity();
 }
-function ozSaveCache(){
-var id=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-var item={id:id,ts:Date.now(),category:val("oz_in_category"),name:val("oz_in_company"),user:val("oz_in_name"),mail:val("oz_in_mail"),text:val("oz_in_text"),tags:val("oz_in_tags"),rating:val("oz_in_rating")};
+function fillDonePreview(){
+var box=document.getElementById("oz_done_preview");
+if(!box)return;
+fillItemPreview(box,{category:val("oz_in_category"),name:val("oz_in_company"),user:val("oz_in_name"),mail:val("oz_in_mail"),text:val("oz_in_text"),tags:val("oz_in_tags"),rating:val("oz_in_rating")});
+box.hidden=true;
+}
+function ozSaveCache(id){
+if(!id)id=ozMakeId();
+var item={id:id,ts:Date.now(),published:false,category:val("oz_in_category"),name:val("oz_in_company"),user:val("oz_in_name"),mail:val("oz_in_mail"),text:val("oz_in_text"),tags:val("oz_in_tags"),rating:val("oz_in_rating")};
 try{
 var all=JSON.parse(localStorage.getItem("oz_v_cache")||"{}");
 all[id]=item;
@@ -496,13 +608,34 @@ return;
 }
 var btn=document.getElementById("oz_btn_confirm");
 if(btn){btn.disabled=true;btn.textContent="Отправка…";}
-fetch(FORMSPREE_URL,{method:"POST",body:new FormData(form),headers:{Accept:"application/json"}})
+var rid=ozMakeId();
+var ridEl=form.querySelector("[name=review_id]");
+if(!ridEl){
+ridEl=document.createElement("input");
+ridEl.type="hidden";
+ridEl.name="review_id";
+form.appendChild(ridEl);
+}
+ridEl.value=rid;
+var gotchaEl=form.querySelector("[name=_gotcha]");
+var payload={
+category:val("oz_in_category"),
+company_name:val("oz_in_company"),
+user_name:val("oz_in_name"),
+user_mail:val("oz_in_mail"),
+text_review:val("oz_in_text"),
+TAGS:val("oz_in_tags"),
+rating:val("oz_in_rating"),
+review_id:rid,
+"cf-turnstile-response":ts.value,
+_gotcha:gotchaEl?gotchaEl.value:""
+};
+fetch(OZ_SEND_URL,{method:"POST",body:JSON.stringify(payload),headers:{"Content-Type":"application/json",Accept:"application/json"}})
 .then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};}).catch(function(){return{ok:r.ok,status:r.status,data:null};});})
 .then(function(res){
 if(res.ok){
-var cacheId=ozSaveCache();
-var doneLink=document.getElementById("oz_done_link");
-if(doneLink)doneLink.href="v/?id="+cacheId;
+ozSaveCache(rid);
+fillDonePreview();
 showStep("done");
 return;
 }
@@ -525,6 +658,20 @@ var hid=document.getElementById("oz_in_rating");
 function paint(n){stars.forEach(function(s){s.classList.toggle("oz_lit",+s.dataset.v<=n);});hid.value=n;}
 stars.forEach(function(s){s.addEventListener("click",function(){paint(+s.dataset.v);s.blur();});});
 paint(5);
+var doneLink=document.getElementById("oz_done_link");
+if(doneLink){
+doneLink.addEventListener("click",function(){
+var p=document.getElementById("oz_done_preview");
+if(!p)return;
+p.hidden=!p.hidden;
+doneLink.textContent=p.hidden?"Мой отзыв":"Скрыть отзыв";
+});
+}
+document.querySelectorAll(".oz_nav_my").forEach(function(a){
+a.addEventListener("click",function(e){e.preventDefault();showMyReview();});
+});
+var mineBack=document.getElementById("oz_mine_back");
+if(mineBack){mineBack.addEventListener("click",function(){showStep("form");});}
 var btn=document.getElementById("oz_mob_menu");
 var topBar=document.getElementById("oz_mob_top");
 var drawer=document.getElementById("oz_drawer");
