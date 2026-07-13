@@ -48,8 +48,8 @@ a:hover{text-decoration:underline}
 .oz_cats_mob::-webkit-scrollbar{display:none}
 .oz_cats a{flex:none;display:inline-block;padding:10px 14px;font-size:14px;color:var(--oz-text);background:#f5f6f8;border:1px solid var(--oz-line);border-radius:999px;white-space:nowrap}
 .oz_cats a:active{background:#e8ebef}
-.oz_main{padding:0 0 20px}
-.oz_card{border:none;border-radius:0;padding:18px var(--oz-pad);background:#fff}
+.oz_main{padding:16px 0 20px}
+.oz_card{border:1px solid var(--oz-line);border-radius:10px;padding:18px var(--oz-pad);background:#fff}
 .oz_card h1{font-size:1.2rem;font-weight:700;margin-bottom:6px}
 .oz_card p.oz_lead{color:var(--oz-muted);font-size:15px;margin-bottom:16px;line-height:1.45}
 .oz_grid{display:grid;grid-template-columns:1fr;gap:0}
@@ -66,7 +66,7 @@ a:hover{text-decoration:underline}
 .oz_star:focus,.oz_star:focus-visible,.oz_star:active{outline:none;box-shadow:none}
 .oz_star.oz_lit{color:#ffb300;border-color:#ffc933;background:#fff9e6;text-shadow:0 1px 3px rgba(255,179,0,.35)}
 .oz_star:active{transform:scale(.96)}
-.oz_actions{position:sticky;bottom:calc(var(--oz-tab) + var(--oz-safe-b));z-index:150;background:#fff;padding:12px var(--oz-pad);margin:8px calc(-1 * var(--oz-pad)) 0;border-top:1px solid var(--oz-line);box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.oz_actions{position:sticky;bottom:calc(var(--oz-tab) + var(--oz-safe-b));z-index:150;background:#fff;padding:12px 0 0;margin:8px 0 0;border-top:1px solid var(--oz-line)}
 .oz_submit{width:100%;min-height:50px;padding:14px;border:none;border-radius:12px;background:var(--oz-accent);color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.01em}
 .oz_submit:active{background:var(--oz-accent-h)}
 .oz_legal{margin-top:10px;font-size:12px;color:var(--oz-muted);line-height:1.45;text-align:center}
@@ -122,7 +122,7 @@ html[data-theme="dark"]{--oz-bg:#121417;--oz-text:#e8eaed;--oz-muted:#9aa0a6;--o
 html[data-theme="dark"] body{background:var(--oz-bg);color:var(--oz-text)}
 html[data-theme="dark"] .oz_page,html[data-theme="dark"] .oz_mob_top,html[data-theme="dark"] .oz_cats_wrap,html[data-theme="dark"] .oz_card,html[data-theme="dark"] .oz_foot,html[data-theme="dark"] .oz_tabbar,html[data-theme="dark"] .oz_desk_strip,html[data-theme="dark"] .oz_head{background:#1a1f24}
 html[data-theme="dark"] .oz_field input,html[data-theme="dark"] .oz_field textarea,html[data-theme="dark"] .oz_search input,html[data-theme="dark"] .oz_preview_row{background:#232a31;color:var(--oz-text)}
-html[data-theme="dark"] .oz_actions{background:#1a1f24;box-shadow:0 -4px 16px rgba(0,0,0,.2)}
+html[data-theme="dark"] .oz_actions{background:#1a1f24}
 html[data-theme="dark"] .oz_cats a{background:#232a31;color:var(--oz-text)}
 html[data-theme="dark"] .oz_cats a:active{background:#2b333c}
 html[data-theme="dark"] .oz_btn_sec{background:#232a31;color:var(--oz-text);border-color:var(--oz-line)}
@@ -157,6 +157,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_head .oz_brand{font-size:2.8rem;line-height:1.1}
 .oz_cats_mob{display:none}
 .oz_cats_desk{display:flex;flex-wrap:wrap;padding:16px 0 0;border:none;background:transparent}
+.oz_main{padding:20px 0}
 .oz_card{border:1px solid var(--oz-line);border-radius:10px;padding:20px var(--oz-pad)}
 .oz_card h1{font-size:1.35rem}
 .oz_grid{grid-template-columns:1fr 1fr;gap:0 16px}
