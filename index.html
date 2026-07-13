@@ -244,7 +244,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <article class="oz_card" id="oz_review_block">
 <form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
 <input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
-<input type="hidden" name="_next" value="https://ot-ziv.com/?sent=1">
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
 <div class="oz_step" id="oz_step_form">
@@ -414,17 +413,32 @@ showStep("form");
 if(form){
 form.addEventListener("submit",function(e){
 if(stepPreview.hidden){e.preventDefault();return;}
+e.preventDefault();
+hideErr();
 var ts=form.querySelector("[name='cf-turnstile-response']");
 if(!ts||!ts.value){
-e.preventDefault();
 showErr("Сначала пройдите проверку капчи под формой.");
 showStep("form");
+return;
 }
+var btn=document.getElementById("oz_btn_confirm");
+if(btn){btn.disabled=true;btn.textContent="Отправка…";}
+fetch(FORMSPREE_URL,{method:"POST",body:new FormData(form),headers:{Accept:"application/json"}})
+.then(function(r){return r.json().then(function(d){return{ok:r.ok,data:d};});})
+.then(function(res){
+if(res.ok){showStep("done");return;}
+showErr((res.data&&res.data.error)||"Не удалось отправить. Пройдите капчу заново и попробуйте снова.");
+showStep("form");
+if(window.turnstile){try{turnstile.reset();}catch(ex){}}
+})
+.catch(function(){
+showErr("Ошибка сети. Проверьте интернет и попробуйте снова.");
+})
+.finally(function(){
+var b=document.getElementById("oz_btn_confirm");
+if(b){b.disabled=false;b.textContent="Отправить на модерацию";}
 });
-}
-if(/[?&]sent=1/.test(location.search)){
-showStep("done");
-if(history.replaceState)history.replaceState(null,"","/");
+});
 }
 var stars=document.querySelectorAll("#oz_stars .oz_star");
 var hid=document.getElementById("oz_in_rating");
