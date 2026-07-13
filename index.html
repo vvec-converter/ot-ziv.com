@@ -8,7 +8,7 @@
 <meta name="keywords" content="посты о компании, товары, услуги">
 <meta name="description" content="Благодаря настоящей критике на нашей площадке, вы сможете получить достоверную информацию о нужном товаре, услуге или компании, чтобы дать правильный выбор для общества.">
 <link rel="canonical" href="https://ot-ziv.com/">
-<title>Посты о товаре, услуге, фирме или сайте | ot-ziv.com</title>
+<title>ОТЗЫВ - не терпи несправедливость или вырази благодарность.</title>
 <style>
 :root{--oz-bg:#f0f2f5;--oz-text:#1a1a1a;--oz-muted:#666;--oz-line:#dde1e6;--oz-accent:#3d7c47;--oz-accent-h:#2f6337;--oz-pad:16px;--oz-w:100%;--oz-tab:58px;--oz-safe-b:env(safe-area-inset-bottom,0px);--oz-safe-t:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -160,6 +160,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_foot_block.oz_open .oz_foot_tog::after{display:none}
 }
 </style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
 <div class="oz_page" id="oz_page">
@@ -293,7 +294,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
 <div class="oz_actions oz_preview_actions">
 <p class="oz_captcha_label">Подтвердите, что вы не робот</p>
-<div class="oz_turnstile" id="oz_turnstile_box"></div>
+<div class="oz_turnstile" id="oz_turnstile_box"><div id="oz_turnstile_mount"></div></div>
 <div class="oz_btn_row">
 <button type="button" class="oz_btn_sec" id="oz_btn_edit">Редактировать</button>
 <button type="button" class="oz_submit" id="oz_btn_confirm">Отправить на модерацию</button>
@@ -305,7 +306,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <p>Форма была успешно отправлена.</p>
 <a href="https://ot-ziv.com/">Вернуться на сайт</a>
 </div>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
 </article>
 </div>
 </main>
@@ -361,7 +361,9 @@ var form=document.getElementById("oz_review_form");
 var previewList=document.getElementById("oz_preview_list");
 var formErr=document.getElementById("oz_form_err");
 var turnstileBox=document.getElementById("oz_turnstile_box");
+var turnstileMount=document.getElementById("oz_turnstile_mount");
 var turnstileId=null;
+var turnstileMountGen=0;
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
 function showErr(msg){if(!formErr)return;formErr.textContent=msg;formErr.classList.add("oz_show");}
@@ -378,21 +380,28 @@ return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</d
 function destroyTurnstile(){
 if(turnstileId!==null&&window.turnstile){try{turnstile.remove(turnstileId);}catch(e){}}
 turnstileId=null;
-if(turnstileBox)turnstileBox.innerHTML="";
-}
-function renderTurnstile(){
-if(!turnstileBox||turnstileId!==null)return;
-var size=window.matchMedia("(max-width:767px)").matches?"compact":"normal";
-turnstileId=turnstile.render(turnstileBox,{sitekey:TURNSTILE_KEY,theme:"light",size:size});
+if(turnstileMount)turnstileMount.innerHTML="";
 }
 function mountTurnstile(){
-destroyTurnstile();
-if(!turnstileBox)return;
-function boot(){
-if(!window.turnstile||typeof turnstile.render!=="function"){setTimeout(boot,100);return;}
-turnstile.ready(function(){renderTurnstile();});
+if(!turnstileMount)return;
+var gen=++turnstileMountGen;
+if(turnstileId!==null&&window.turnstile){
+try{turnstile.reset(turnstileId);return;}catch(e){destroyTurnstile();}
 }
-requestAnimationFrame(function(){requestAnimationFrame(boot);});
+function tryRender(attempt){
+if(gen!==turnstileMountGen)return;
+if(!window.turnstile||typeof turnstile.render!=="function"){
+if(attempt<40)setTimeout(function(){tryRender(attempt+1);},150);
+return;
+}
+if(turnstileId!==null)return;
+try{
+turnstileId=turnstile.render(turnstileMount,{sitekey:TURNSTILE_KEY,theme:"light",size:"normal"});
+}catch(e){
+if(attempt<5){destroyTurnstile();setTimeout(function(){tryRender(attempt+1);},200);}
+}
+}
+setTimeout(function(){tryRender(0);},250);
 }
 function fillPreview(){
 if(!previewList)return;
@@ -413,7 +422,7 @@ if(!form)return false;
 return form.reportValidity();
 }
 function getTurnstileToken(){
-var inp=document.querySelector("#oz_turnstile_box input[name='cf-turnstile-response'], textarea[name='cf-turnstile-response']");
+var inp=document.querySelector("[name='cf-turnstile-response']");
 return inp&&inp.value?inp.value:"";
 }
 var btnPreview=document.getElementById("oz_btn_preview");
@@ -430,7 +439,6 @@ var btnEdit=document.getElementById("oz_btn_edit");
 if(btnEdit){
 btnEdit.addEventListener("click",function(){
 hideErr();
-destroyTurnstile();
 showStep("form");
 });
 }
