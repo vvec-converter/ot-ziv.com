@@ -73,10 +73,13 @@ a:hover{text-decoration:underline}
 .oz_note{margin-top:14px;padding-bottom:8px;font-size:14px;color:var(--oz-muted);text-align:center}
 .oz_success{display:none;margin-bottom:16px;padding:14px 16px;border-radius:12px;background:#e8f5ea;border:1px solid #b8dfc0;color:#1f5c2b;font-size:15px;line-height:1.45}
 .oz_success.oz_show{display:block}
-.oz_turnstile{margin:4px 0 16px;min-height:65px}
+.oz_turnstile{margin:8px 0 12px;min-height:78px;display:flex;justify-content:center;align-items:center;width:100%;overflow:visible}
+.oz_captcha_label{font-size:14px;font-weight:600;color:#333;margin-bottom:8px;text-align:center}
+.oz_preview_actions{padding-bottom:calc(12px + var(--oz-safe-b));position:static;margin-top:16px;border-top:1px solid var(--oz-line);box-shadow:none}
+#oz_step_preview{padding-bottom:calc(var(--oz-tab) + var(--oz-safe-b) + 8px)}
 .oz_hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 .oz_step[hidden]{display:none!important}
-.oz_preview{display:grid;gap:14px;margin-bottom:16px}
+.oz_preview{display:grid;gap:14px;margin-bottom:20px;padding-bottom:8px}
 .oz_preview_row{padding:12px 14px;border:1px solid var(--oz-line);border-radius:12px;background:#f8f9fa}
 .oz_preview_row dt{font-size:13px;font-weight:600;color:var(--oz-muted);margin-bottom:4px}
 .oz_preview_row dd{font-size:16px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
@@ -141,6 +144,8 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_actions{position:static;margin:6px 0 0;padding:0;border:none;box-shadow:none;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px}
 .oz_submit{width:auto;min-height:auto;padding:12px 24px;font-size:15px;font-weight:600}
 .oz_legal{margin-top:0;text-align:left;flex:1;min-width:200px}
+.oz_captcha_label{text-align:left}
+.oz_preview_actions{position:static;padding-bottom:0}
 .oz_btn_row{flex-direction:row;flex-wrap:wrap}
 .oz_btn_sec{width:auto;min-height:auto;padding:12px 24px;font-size:15px}
 .oz_done{padding:32px 0}
@@ -286,8 +291,9 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <p class="oz_lead">Убедитесь, что всё верно. После отправки отзыв уйдёт на модерацию.</p>
 <dl class="oz_preview" id="oz_preview_list"></dl>
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
+<div class="oz_actions oz_preview_actions">
+<p class="oz_captcha_label">Подтвердите, что вы не робот</p>
 <div class="oz_turnstile" id="oz_turnstile_box"></div>
-<div class="oz_actions">
 <div class="oz_btn_row">
 <button type="button" class="oz_btn_sec" id="oz_btn_edit">Редактировать</button>
 <button type="button" class="oz_submit" id="oz_btn_confirm">Отправить на модерацию</button>
@@ -369,10 +375,19 @@ window.scrollTo({top:0,behavior:"smooth"});
 function previewRow(label,text){
 return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
 }
-function renderTurnstile(){
-if(!turnstileBox||!window.turnstile)return;
-if(turnstileId!==null){try{turnstile.reset(turnstileId);}catch(e){}}
-else{turnstileId=turnstile.render(turnstileBox,{sitekey:TURNSTILE_KEY});}
+function renderTurnstile(tryNum){
+if(!turnstileBox)return;
+if(!window.turnstile){
+if((tryNum||0)<60)setTimeout(function(){renderTurnstile((tryNum||0)+1);},150);
+return;
+}
+if(turnstileId!==null){try{turnstile.reset(turnstileId);}catch(e){}return;}
+turnstileId=turnstile.render(turnstileBox,{sitekey:TURNSTILE_KEY,theme:"light",size:"flexible"});
+}
+function mountTurnstile(){
+requestAnimationFrame(function(){
+requestAnimationFrame(function(){renderTurnstile(0);});
+});
 }
 function fillPreview(){
 if(!previewList)return;
@@ -403,8 +418,7 @@ hideErr();
 if(!validateForm())return;
 fillPreview();
 showStep("preview");
-if(window.turnstile)renderTurnstile();
-else window.addEventListener("load",renderTurnstile,{once:true});
+mountTurnstile();
 });
 }
 var btnEdit=document.getElementById("oz_btn_edit");
