@@ -61,8 +61,8 @@ a:hover{text-decoration:underline}
 .oz_field textarea{min-height:150px;resize:vertical;line-height:1.45}
 .oz_field.oz_field_rate{display:block;text-align:center;margin-bottom:16px;outline:none}
 .oz_field.oz_field_rate>span{display:block;margin-bottom:8px;font-size:14px;font-weight:600;color:#333}
-.oz_stars{display:block;text-align:center;margin-top:4px;outline:none}
-.oz_star{display:inline-block;vertical-align:top;margin:0 5px;width:54px;height:54px;border:1px solid var(--oz-line);border-radius:12px;background:#fff;cursor:pointer;font-size:30px;line-height:52px;text-align:center;color:#d0d0d0;padding:0;appearance:none;-webkit-appearance:none;outline:none;box-shadow:none}
+.oz_stars{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(4px,1.2vw,8px);width:100%;max-width:100%;margin-top:4px;outline:none}
+.oz_star{flex:1 1 0;min-width:0;max-width:52px;width:auto;aspect-ratio:1;height:auto;margin:0;border:1px solid var(--oz-line);border-radius:12px;background:#fff;cursor:pointer;font-size:clamp(20px,5.5vw,30px);line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#d0d0d0;padding:0;appearance:none;-webkit-appearance:none;outline:none;box-shadow:none;vertical-align:top}
 .oz_star:focus,.oz_star:focus-visible,.oz_star:active{outline:none;box-shadow:none}
 .oz_star.oz_lit{color:#ffb300;border-color:#ffc933;background:#fff9e6;text-shadow:0 1px 3px rgba(255,179,0,.35)}
 .oz_star:active{transform:scale(.96)}
@@ -135,8 +135,8 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_card h1{font-size:1.35rem}
 .oz_grid{grid-template-columns:1fr 1fr;gap:0 16px}
 .oz_field.oz_field_rate{text-align:left}
-.oz_stars{text-align:left}
-.oz_star{width:42px;height:42px;font-size:24px;line-height:40px;margin:0 4px}
+.oz_stars{justify-content:flex-start;gap:8px;max-width:280px}
+.oz_star{flex:0 0 42px;max-width:42px;width:42px;height:42px;font-size:24px}
 .oz_field input,.oz_field textarea{background:#fff}
 .oz_actions{position:static;margin:6px 0 0;padding:0;border:none;box-shadow:none;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px}
 .oz_submit{width:auto;min-height:auto;padding:12px 24px;font-size:15px;font-weight:600}
