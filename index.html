@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
- <!-- это сайт отзыв(ot-ziv.com) и не имеет отношения к сайту отзовик (otzovik (от слова otzovik - отзывать документы  - отзовик отзывающий претензию или иск)) - слово отзыв характеризуется как - публикуемый материал о чем либо характеризующий его хорошую или плохую деятельность. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#3d7c47">
@@ -76,6 +75,22 @@ a:hover{text-decoration:underline}
 .oz_success.oz_show{display:block}
 .oz_turnstile{margin:4px 0 16px;min-height:65px}
 .oz_hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+.oz_step[hidden]{display:none!important}
+.oz_preview{display:grid;gap:14px;margin-bottom:16px}
+.oz_preview_row{padding:12px 14px;border:1px solid var(--oz-line);border-radius:12px;background:#f8f9fa}
+.oz_preview_row dt{font-size:13px;font-weight:600;color:var(--oz-muted);margin-bottom:4px}
+.oz_preview_row dd{font-size:16px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.oz_preview_stars{color:#ffb300;font-size:22px;letter-spacing:2px}
+.oz_btn_row{display:flex;flex-direction:column;gap:10px}
+.oz_btn_sec{width:100%;min-height:50px;padding:14px;border:1px solid var(--oz-line);border-radius:12px;background:#fff;color:var(--oz-text);font-size:16px;font-weight:600;cursor:pointer}
+.oz_btn_sec:active{background:#f0f2f5}
+.oz_done{text-align:center;padding:24px 0 8px}
+.oz_done h1{font-size:1.5rem;margin-bottom:10px;color:var(--oz-accent)}
+.oz_done p{color:var(--oz-muted);font-size:16px;margin-bottom:20px;line-height:1.5}
+.oz_done a{display:inline-block;padding:12px 28px;border-radius:12px;background:var(--oz-accent);color:#fff;font-weight:600;text-decoration:none}
+.oz_done a:hover{text-decoration:none;background:var(--oz-accent-h)}
+.oz_form_err{display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:#fdecea;border:1px solid #f5c6c2;color:#8a1f17;font-size:14px;line-height:1.45}
+.oz_form_err.oz_show{display:block}
 .oz_foot{padding:8px var(--oz-pad) calc(16px + var(--oz-safe-b));border-top:8px solid var(--oz-bg);background:#fafbfc}
 .oz_foot_cols{display:flex;flex-direction:column;gap:0}
 .oz_foot_block{border-bottom:1px solid var(--oz-line);padding:0}
@@ -126,6 +141,9 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_actions{position:static;margin:6px 0 0;padding:0;border:none;box-shadow:none;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px}
 .oz_submit{width:auto;min-height:auto;padding:12px 24px;font-size:15px;font-weight:600}
 .oz_legal{margin-top:0;text-align:left;flex:1;min-width:200px}
+.oz_btn_row{flex-direction:row;flex-wrap:wrap}
+.oz_btn_sec{width:auto;min-height:auto;padding:12px 24px;font-size:15px}
+.oz_done{padding:32px 0}
 .oz_foot_cols{flex-direction:row;flex-wrap:wrap;justify-content:space-between;gap:24px 40px}
 .oz_foot_cols>div{min-width:140px}
 .oz_foot_block{border:none;padding:0}
@@ -218,12 +236,11 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <main class="oz_main" id="oz_main" itemprop="mainContentOfPage">
 <div class="oz_shell">
 <article class="oz_card" id="oz_review_block">
+<div class="oz_step" id="oz_step_form">
 <h1 id="oz_review_title">Добавить пост</h1>
 <p class="oz_lead" id="oz_review_desc">Расскажите о компании, товаре или услуге — помогите другим сделать правильный выбор.</p>
-<div class="oz_success" id="oz_form_success" role="status">Спасибо! Отзыв отправлен на модерацию. После проверки он появится на сайте.</div>
-<form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST">
+<form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
 <input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
-<input type="hidden" name="_next" value="https://ot-ziv.com/?sent=1">
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="oz_grid">
 <div class="oz_field oz_full">
@@ -257,15 +274,31 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <input type="hidden" name="rating" id="oz_in_rating" value="5">
 </div>
-<div class="oz_field oz_full">
-<div class="oz_turnstile cf-turnstile" data-sitekey="0x4AAAAAAD01AYnC8EuRja7z"></div>
-</div>
 </div>
 <div class="oz_actions">
-<button type="submit" class="oz_submit" id="oz_btn_send">Отправить пост</button>
-<p class="oz_legal" id="oz_legal">Нажимая «Отправить пост», вы принимаете <a href="https://ot-ziv.com/politika-konfidentsialnosti/">политику конфиденциальности</a> и <a href="https://ot-ziv.com/polzovatelskoe-soglashenie/">пользовательское соглашение</a>.</p>
+<button type="button" class="oz_submit" id="oz_btn_preview">Проверить отзыв</button>
+<p class="oz_legal" id="oz_legal">Нажимая «Проверить отзыв», вы принимаете <a href="https://ot-ziv.com/politika-konfidentsialnosti/">политику конфиденциальности</a> и <a href="https://ot-ziv.com/polzovatelskoe-soglashenie/">пользовательское соглашение</a>.</p>
 </div>
 </form>
+</div>
+<div class="oz_step" id="oz_step_preview" hidden>
+<h1>Проверьте отзыв</h1>
+<p class="oz_lead">Убедитесь, что всё верно. После отправки отзыв уйдёт на модерацию.</p>
+<dl class="oz_preview" id="oz_preview_list"></dl>
+<div class="oz_form_err" id="oz_form_err" role="alert"></div>
+<div class="oz_turnstile" id="oz_turnstile_box"></div>
+<div class="oz_actions">
+<div class="oz_btn_row">
+<button type="button" class="oz_btn_sec" id="oz_btn_edit">Редактировать</button>
+<button type="button" class="oz_submit" id="oz_btn_confirm">Отправить на модерацию</button>
+</div>
+</div>
+</div>
+<div class="oz_step oz_done" id="oz_step_done" hidden>
+<h1>Спасибо!</h1>
+<p>Форма была успешно отправлена.</p>
+<a href="https://ot-ziv.com/">Вернуться на сайт</a>
+</div>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </article>
 </div>
@@ -312,10 +345,102 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <script>
 (function(){
-if(/[?&]sent=1/.test(location.search)){
-var ok=document.getElementById("oz_form_success");
-if(ok)ok.classList.add("oz_show");
-if(history.replaceState)history.replaceState(null,"","/");
+console.log("Это сайт отзыв (ot-ziv.com) и не имеет отношения к сайту отзовик (otzovik — от слова «отзывать документы»: отзывающий претензию или иск). Слово «отзыв» — публикуемый материал о чём-либо, характеризующий его хорошую или плохую деятельность.");
+var FORMSPREE_URL="https://formspree.io/f/xdaqoabn";
+var TURNSTILE_KEY="0x4AAAAAAD01AYnC8EuRja7z";
+var stepForm=document.getElementById("oz_step_form");
+var stepPreview=document.getElementById("oz_step_preview");
+var stepDone=document.getElementById("oz_step_done");
+var form=document.getElementById("oz_review_form");
+var previewList=document.getElementById("oz_preview_list");
+var formErr=document.getElementById("oz_form_err");
+var turnstileBox=document.getElementById("oz_turnstile_box");
+var turnstileId=null;
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
+function showErr(msg){if(!formErr)return;formErr.textContent=msg;formErr.classList.add("oz_show");}
+function hideErr(){if(formErr)formErr.classList.remove("oz_show");}
+function showStep(step){
+if(stepForm)stepForm.hidden=step!=="form";
+if(stepPreview)stepPreview.hidden=step!=="preview";
+if(stepDone)stepDone.hidden=step!=="done";
+window.scrollTo({top:0,behavior:"smooth"});
+}
+function previewRow(label,text){
+return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
+}
+function renderTurnstile(){
+if(!turnstileBox||!window.turnstile)return;
+if(turnstileId!==null){try{turnstile.reset(turnstileId);}catch(e){}}
+else{turnstileId=turnstile.render(turnstileBox,{sitekey:TURNSTILE_KEY});}
+}
+function fillPreview(){
+if(!previewList)return;
+var rating=+val("oz_in_rating")||5;
+var stars="★".repeat(rating)+"☆".repeat(5-rating);
+var mail=val("oz_in_mail")||"не указан";
+var tags=val("oz_in_tags")||"—";
+previewList.innerHTML=
+previewRow("Компания, товар или услуга",val("oz_in_company"))+
+previewRow("Ваше имя",val("oz_in_name"))+
+previewRow("E-mail",mail)+
+previewRow("Текст поста",val("oz_in_text"))+
+previewRow("Теги",tags)+
+"<div class=\"oz_preview_row\"><dt>Оценка</dt><dd><span class=\"oz_preview_stars\" aria-label=\""+rating+" из 5\">"+stars+"</span> ("+rating+" из 5)</dd></div>";
+}
+function validateForm(){
+if(!form)return false;
+return form.reportValidity();
+}
+function getTurnstileToken(){
+var inp=document.querySelector("#oz_turnstile_box input[name='cf-turnstile-response'], textarea[name='cf-turnstile-response']");
+return inp&&inp.value?inp.value:"";
+}
+var btnPreview=document.getElementById("oz_btn_preview");
+if(btnPreview){
+btnPreview.addEventListener("click",function(){
+hideErr();
+if(!validateForm())return;
+fillPreview();
+showStep("preview");
+if(window.turnstile)renderTurnstile();
+else window.addEventListener("load",renderTurnstile,{once:true});
+});
+}
+var btnEdit=document.getElementById("oz_btn_edit");
+if(btnEdit){
+btnEdit.addEventListener("click",function(){
+hideErr();
+showStep("form");
+});
+}
+var btnConfirm=document.getElementById("oz_btn_confirm");
+if(btnConfirm&&form){
+btnConfirm.addEventListener("click",function(){
+hideErr();
+var token=getTurnstileToken();
+if(!token){showErr("Подтвердите, что вы не робот — пройдите проверку над кнопкой.");return;}
+btnConfirm.disabled=true;
+btnConfirm.textContent="Отправка…";
+var fd=new FormData(form);
+fd.set("cf-turnstile-response",token);
+fetch(FORMSPREE_URL,{method:"POST",body:fd,headers:{Accept:"application/json"}})
+.then(function(r){return r.json().then(function(d){return{ok:r.ok,data:d};});})
+.then(function(res){
+if(res.ok){showStep("done");return;}
+var msg=(res.data&&res.data.error)||"Не удалось отправить. Попробуйте ещё раз.";
+showErr(msg);
+if(window.turnstile&&turnstileId!==null)turnstile.reset(turnstileId);
+})
+.catch(function(){
+showErr("Ошибка сети. Проверьте интернет и попробуйте снова.");
+if(window.turnstile&&turnstileId!==null)turnstile.reset(turnstileId);
+})
+.finally(function(){
+btnConfirm.disabled=false;
+btnConfirm.textContent="Отправить на модерацию";
+});
+});
 }
 var stars=document.querySelectorAll("#oz_stars .oz_star");
 var hid=document.getElementById("oz_in_rating");
