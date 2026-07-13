@@ -39,7 +39,7 @@ a:hover{text-decoration:underline}
 .oz_search button{flex:none;min-width:44px;min-height:44px;padding:0 16px;border:none;border-radius:12px;background:var(--oz-accent);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
 .oz_search button:active{background:var(--oz-accent-h)}
 .oz_cats_desk{display:none}
-.oz_cats_wrap{position:relative;display:flex;align-items:center;border-bottom:1px solid var(--oz-line);background:#fff}
+.oz_cats_wrap{position:relative;display:flex;align-items:center;background:#fff}
 .oz_cats_arr{flex:none;width:34px;height:44px;border:none;background:transparent;color:var(--oz-muted);font-size:26px;font-weight:700;line-height:44px;text-align:center;cursor:pointer}
 .oz_cats_arr:active{color:var(--oz-accent)}
 .oz_cats_arr:disabled{opacity:.22;cursor:default}
@@ -48,7 +48,8 @@ a:hover{text-decoration:underline}
 .oz_cats_mob::-webkit-scrollbar{display:none}
 .oz_cats a{flex:none;display:inline-block;padding:10px 14px;font-size:14px;color:var(--oz-text);background:#f5f6f8;border:1px solid var(--oz-line);border-radius:999px;white-space:nowrap}
 .oz_cats a:active{background:#e8ebef}
-.oz_main{padding:16px 0 20px}
+.oz_main{padding:0}
+.oz_main>.oz_shell{padding:var(--oz-pad)}
 .oz_card{border:1px solid var(--oz-line);border-radius:10px;padding:18px var(--oz-pad);background:#fff}
 .oz_card h1{font-size:1.2rem;font-weight:700;margin-bottom:6px}
 .oz_card p.oz_lead{color:var(--oz-muted);font-size:15px;margin-bottom:16px;line-height:1.45}
@@ -157,7 +158,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_head .oz_brand{font-size:2.8rem;line-height:1.1}
 .oz_cats_mob{display:none}
 .oz_cats_desk{display:flex;flex-wrap:wrap;padding:16px 0 0;border:none;background:transparent}
-.oz_main{padding:20px 0}
 .oz_card{border:1px solid var(--oz-line);border-radius:10px;padding:20px var(--oz-pad)}
 .oz_card h1{font-size:1.35rem}
 .oz_grid{grid-template-columns:1fr 1fr;gap:0 16px}
