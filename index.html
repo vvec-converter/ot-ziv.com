@@ -216,7 +216,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </nav>
 </div>
 <form class="oz_search" id="oz_search_mob" action="https://ot-ziv.com/search/" method="get" role="search">
-<input type="search" name="q" placeholder="Товары, места, услуги, сайты…" list="oz_search_list" aria-label="Поиск" autocomplete="off">
+<input type="search" name="q" placeholder="Поиск по постам…" aria-label="Поиск">
 <button type="submit" name="s" value="">Найти</button>
 </form>
 </div>
@@ -254,7 +254,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <p class="oz_tagline" id="oz_slogan">Честные отзывы о товарах, местах, услугах и сайтах</p>
 </div>
 <form class="oz_search" id="oz_search" action="https://ot-ziv.com/search/" method="get" role="search">
-<input type="search" name="q" placeholder="Ozon, ресторан, такси, YouTube…" list="oz_search_list" aria-label="Поиск" autocomplete="off">
+<input type="search" name="q" placeholder="Поиск…" aria-label="Поиск">
 <button type="submit" name="s" value="">Найти</button>
 </form>
 </div>
@@ -289,7 +289,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <div class="oz_field oz_full">
 <label for="oz_in_company">Название</label>
-<input required type="text" name="company_name" id="oz_in_company" placeholder="Сначала выберите категорию" autocomplete="off" maxlength="59">
+<input required type="text" name="company_name" id="oz_in_company" placeholder="Название товара, места, услуги или сайта" autocomplete="off" maxlength="59">
 </div>
 <div class="oz_field">
 <label for="oz_in_name">Ваше имя</label>
@@ -381,42 +381,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <a href="https://ot-ziv.com/login/">Кабинет</a>
 </nav>
 </div>
-<datalist id="oz_search_list">
-<option value="Товары">
-<option value="Места">
-<option value="Услуги">
-<option value="Сайты">
-<option value="еда">
-<option value="одежда">
-<option value="обувь">
-<option value="техника">
-<option value="мебель">
-<option value="косметика">
-<option value="лекарства">
-<option value="авто">
-<option value="книги">
-<option value="ресторан">
-<option value="кафе">
-<option value="отель">
-<option value="аптека">
-<option value="клиника">
-<option value="салон красоты">
-<option value="кинотеатр">
-<option value="ТЦ">
-<option value="ремонт">
-<option value="стрижка">
-<option value="доставка">
-<option value="такси">
-<option value="страхование">
-<option value="репетитор">
-<option value="Ozon">
-<option value="Wildberries">
-<option value="Avito">
-<option value="Госуслуги">
-<option value="YouTube">
-<option value="Сбербанк">
-</datalist>
-<datalist id="oz_subject_list"></datalist>
 <script>
 (function(){
 console.log("Это сайт отзыв (ot-ziv.com) и не имеет отношения к сайту отзовик (otzovik — от слова «отзывать документы»: отзывающий претензию или иск). Слово «отзыв» — публикуемый материал о чём-либо, характеризующий его хорошую или плохую деятельность.");
@@ -433,26 +397,6 @@ localStorage.setItem("oz-theme",on?"dark":"light");
 });
 }
 var FORMSPREE_URL="https://formspree.io/f/xdaqoabn";
-var OZ_CAT_HINTS={
-"Товары":{ph:"Например: кроссовки, холодильник, косметика",hints:["еда","одежда","обувь","техника","мебель","косметика","лекарства","игрушки","авто","стройматериалы","книги","посуда","спорттовары","бытовая химия","ювелирка"]},
-"Места":{ph:"Например: кафе, аптека, торговый центр",hints:["магазин","ресторан","кафе","бар","отель","гостиница","хостел","клиника","больница","стоматология","аптека","фитнес","салон красоты","парк","ТЦ","АЗС","кинотеатр","музей","вокзал","аэропорт"]},
-"Услуги":{ph:"Например: ремонт, доставка, такси",hints:["ремонт","стрижка","маникюр","массаж","доставка","такси","химчистка","клининг","страхование","банк","юрист","бухгалтерия","репетитор","ремонт техники","установка окон","грузоперевозки"]},
-"Сайты":{ph:"Например: Ozon, Wildberries, Госуслуги",hints:["Ozon","Wildberries","Avito","Госуслуги","YouTube","ВКонтакте","Telegram","Кинопоиск","Яндекс Карты","Google","Сбербанк","маркетплейс","соцсеть","мессенджер","образование","новости"]}
-};
-function updCatHints(){
-var cat=document.getElementById("oz_in_category");
-var name=document.getElementById("oz_in_company");
-var dl=document.getElementById("oz_subject_list");
-if(!cat||!name||!dl)return;
-var data=OZ_CAT_HINTS[cat.value];
-dl.innerHTML="";
-if(!data){name.placeholder="Сначала выберите категорию";name.removeAttribute("list");return;}
-name.placeholder=data.ph;
-name.setAttribute("list","oz_subject_list");
-data.hints.forEach(function(h){var o=document.createElement("option");o.value=h;dl.appendChild(o);});
-}
-var catSel=document.getElementById("oz_in_category");
-if(catSel){catSel.addEventListener("change",updCatHints);updCatHints();}
 var stepForm=document.getElementById("oz_step_form");
 var stepPreview=document.getElementById("oz_step_preview");
 var stepDone=document.getElementById("oz_step_done");
