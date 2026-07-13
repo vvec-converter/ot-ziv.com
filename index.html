@@ -107,6 +107,7 @@ a:hover{text-decoration:underline}
 .oz_foot_panel li:last-child a{border-bottom:none}
 .oz_foot_panel a:active{background:#eef0f3;margin:0 calc(-1 * var(--oz-pad));padding-left:var(--oz-pad);padding-right:var(--oz-pad)}
 .oz_copy{margin-top:16px;padding-top:14px;border-top:1px solid var(--oz-line);font-size:12px;color:var(--oz-muted);text-align:center;line-height:1.55}
+.oz_disclaimer{margin-top:16px;padding-top:0;border-top:none;font-weight:600;color:#444}
 .oz_tabbar{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;background:#fff;border-top:1px solid var(--oz-line);padding-bottom:var(--oz-safe-b);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
 .oz_tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--oz-tab);padding:6px 2px;font-size:10px;font-weight:600;color:var(--oz-muted);text-align:center;line-height:1.15}
 .oz_tabbar a::before{font-size:17px;line-height:1;opacity:.85}
@@ -242,12 +243,12 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <main class="oz_main" id="oz_main" itemprop="mainContentOfPage">
 <div class="oz_shell">
 <article class="oz_card" id="oz_review_block">
-<div class="oz_step" id="oz_step_form">
-<h1 id="oz_review_title">Добавить пост</h1>
-<p class="oz_lead" id="oz_review_desc">Расскажите о компании, товаре или услуге — помогите другим сделать правильный выбор.</p>
 <form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
 <input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
+<div class="oz_step" id="oz_step_form">
+<h1 id="oz_review_title">Добавить пост</h1>
+<p class="oz_lead" id="oz_review_desc">Расскажите о компании, товаре или услуге — помогите другим сделать правильный выбор.</p>
 <div class="oz_grid">
 <div class="oz_field oz_full">
 <label for="oz_in_company">Название компании, товара или услуги</label>
@@ -285,7 +286,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <button type="button" class="oz_submit" id="oz_btn_preview">Проверить отзыв</button>
 <p class="oz_legal" id="oz_legal">Нажимая «Проверить отзыв», вы принимаете <a href="https://ot-ziv.com/politika-konfidentsialnosti/">политику конфиденциальности</a> и <a href="https://ot-ziv.com/polzovatelskoe-soglashenie/">пользовательское соглашение</a>.</p>
 </div>
-</form>
 </div>
 <div class="oz_step" id="oz_step_preview" hidden>
 <h1>Проверьте отзыв</h1>
@@ -297,10 +297,11 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_turnstile" id="oz_turnstile_box"><div id="oz_turnstile_mount"></div></div>
 <div class="oz_btn_row">
 <button type="button" class="oz_btn_sec" id="oz_btn_edit">Редактировать</button>
-<button type="button" class="oz_submit" id="oz_btn_confirm">Отправить на модерацию</button>
+<button type="submit" class="oz_submit" id="oz_btn_confirm">Отправить на модерацию</button>
 </div>
 </div>
 </div>
+</form>
 <div class="oz_step oz_done" id="oz_step_done" hidden>
 <h1>Спасибо!</h1>
 <p>Форма была успешно отправлена.</p>
@@ -338,6 +339,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </ul>
 </div>
 </div>
+<p class="oz_copy oz_disclaimer">Данный ресурс является независимым сайтом отзывов и не имеет никакого отношения к сервису otzovik.com.</p>
 <p class="oz_copy" id="oz_copy">© ot-ziv.com 2015–2026 · Самая честная критика Рунета и стран СНГ.<br>Администрация сайта не несёт ответственности за размещаемые пользователями посты.</p>
 </div>
 </footer>
@@ -363,7 +365,7 @@ var formErr=document.getElementById("oz_form_err");
 var turnstileBox=document.getElementById("oz_turnstile_box");
 var turnstileMount=document.getElementById("oz_turnstile_mount");
 var turnstileId=null;
-var turnstileMountGen=0;
+var turnstileReady=false;
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
 function showErr(msg){if(!formErr)return;formErr.textContent=msg;formErr.classList.add("oz_show");}
@@ -372,36 +374,46 @@ function showStep(step){
 if(stepForm)stepForm.hidden=step!=="form";
 if(stepPreview)stepPreview.hidden=step!=="preview";
 if(stepDone)stepDone.hidden=step!=="done";
+if(form)form.hidden=step==="done";
 window.scrollTo({top:0,behavior:"smooth"});
 }
 function previewRow(label,text){
 return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
 }
 function destroyTurnstile(){
+turnstileReady=false;
 if(turnstileId!==null&&window.turnstile){try{turnstile.remove(turnstileId);}catch(e){}}
 turnstileId=null;
 if(turnstileMount)turnstileMount.innerHTML="";
 }
 function mountTurnstile(){
-if(!turnstileMount)return;
-var gen=++turnstileMountGen;
-if(turnstileId!==null&&window.turnstile){
-try{turnstile.reset(turnstileId);return;}catch(e){destroyTurnstile();}
-}
-function tryRender(attempt){
-if(gen!==turnstileMountGen)return;
+destroyTurnstile();
+if(!turnstileMount||stepPreview.hidden)return;
+function tryRender(n){
+if(stepPreview.hidden||!turnstileMount)return;
 if(!window.turnstile||typeof turnstile.render!=="function"){
-if(attempt<40)setTimeout(function(){tryRender(attempt+1);},150);
+if(n<50)setTimeout(function(){tryRender(n+1);},120);
 return;
 }
 if(turnstileId!==null)return;
 try{
-turnstileId=turnstile.render(turnstileMount,{sitekey:TURNSTILE_KEY,theme:"light",size:"normal"});
+turnstileId=turnstile.render(turnstileMount,{
+sitekey:TURNSTILE_KEY,
+theme:"light",
+size:"normal",
+callback:function(){turnstileReady=true;hideErr();},
+"expired-callback":function(){turnstileReady=false;},
+"error-callback":function(){
+turnstileReady=false;
+showErr("Капча не загрузилась. Отключите блокировщик рекламы и нажмите «Проверить отзыв» снова.");
+destroyTurnstile();
+}
+});
 }catch(e){
-if(attempt<5){destroyTurnstile();setTimeout(function(){tryRender(attempt+1);},200);}
+if(n<8)setTimeout(function(){tryRender(n+1);},200);
 }
 }
-setTimeout(function(){tryRender(0);},250);
+setTimeout(function(){tryRender(0);},350);
 }
 function fillPreview(){
 if(!previewList)return;
@@ -422,7 +434,7 @@ if(!form)return false;
 return form.reportValidity();
 }
 function getTurnstileToken(){
-var inp=document.querySelector("[name='cf-turnstile-response']");
+var inp=form?form.querySelector("[name='cf-turnstile-response']"):null;
 return inp&&inp.value?inp.value:"";
 }
 var btnPreview=document.getElementById("oz_btn_preview");
@@ -439,34 +451,35 @@ var btnEdit=document.getElementById("oz_btn_edit");
 if(btnEdit){
 btnEdit.addEventListener("click",function(){
 hideErr();
+destroyTurnstile();
 showStep("form");
 });
 }
-var btnConfirm=document.getElementById("oz_btn_confirm");
-if(btnConfirm&&form){
-btnConfirm.addEventListener("click",function(){
+if(form){
+form.addEventListener("submit",function(e){
+if(stepPreview.hidden)return;
+e.preventDefault();
 hideErr();
 var token=getTurnstileToken();
-if(!token){showErr("Подтвердите, что вы не робот — пройдите проверку над кнопкой.");return;}
-btnConfirm.disabled=true;
-btnConfirm.textContent="Отправка…";
+if(!token||!turnstileReady){showErr("Подтвердите, что вы не робот — дождитесь появления галочки в капче.");return;}
+var btnConfirm=document.getElementById("oz_btn_confirm");
+if(btnConfirm){btnConfirm.disabled=true;btnConfirm.textContent="Отправка…";}
 var fd=new FormData(form);
-fd.set("cf-turnstile-response",token);
 fetch(FORMSPREE_URL,{method:"POST",body:fd,headers:{Accept:"application/json"}})
 .then(function(r){return r.json().then(function(d){return{ok:r.ok,data:d};});})
 .then(function(res){
 if(res.ok){destroyTurnstile();showStep("done");return;}
 var msg=(res.data&&res.data.error)||"Не удалось отправить. Попробуйте ещё раз.";
 showErr(msg);
-if(window.turnstile&&turnstileId!==null)turnstile.reset(turnstileId);
+mountTurnstile();
 })
 .catch(function(){
 showErr("Ошибка сети. Проверьте интернет и попробуйте снова.");
-if(window.turnstile&&turnstileId!==null)turnstile.reset(turnstileId);
+mountTurnstile();
 })
 .finally(function(){
-btnConfirm.disabled=false;
-btnConfirm.textContent="Отправить на модерацию";
+var btn=document.getElementById("oz_btn_confirm");
+if(btn){btn.disabled=false;btn.textContent="Отправить на модерацию";}
 });
 });
 }
