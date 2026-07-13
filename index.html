@@ -73,7 +73,7 @@ a:hover{text-decoration:underline}
 .oz_note{margin-top:14px;padding-bottom:8px;font-size:14px;color:var(--oz-muted);text-align:center}
 .oz_success{display:none;margin-bottom:16px;padding:14px 16px;border-radius:12px;background:#e8f5ea;border:1px solid #b8dfc0;color:#1f5c2b;font-size:15px;line-height:1.45}
 .oz_success.oz_show{display:block}
-.oz_turnstile{margin:8px 0 12px;min-height:78px;display:flex;justify-content:center;align-items:center;width:100%;overflow:visible}
+.oz_turnstile{margin:8px auto 12px;min-height:70px;min-width:min(100%,300px);max-width:100%;display:flex;justify-content:center;align-items:center;overflow:visible}
 .oz_captcha_label{font-size:14px;font-weight:600;color:#333;margin-bottom:8px;text-align:center}
 .oz_preview_actions{padding-bottom:calc(12px + var(--oz-safe-b));position:static;margin-top:16px;border-top:1px solid var(--oz-line);box-shadow:none}
 #oz_step_preview{padding-bottom:calc(var(--oz-tab) + var(--oz-safe-b) + 8px)}
@@ -305,7 +305,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <p>Форма была успешно отправлена.</p>
 <a href="https://ot-ziv.com/">Вернуться на сайт</a>
 </div>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
 </article>
 </div>
 </main>
@@ -375,19 +375,24 @@ window.scrollTo({top:0,behavior:"smooth"});
 function previewRow(label,text){
 return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
 }
-function renderTurnstile(tryNum){
-if(!turnstileBox)return;
-if(!window.turnstile){
-if((tryNum||0)<60)setTimeout(function(){renderTurnstile((tryNum||0)+1);},150);
-return;
+function destroyTurnstile(){
+if(turnstileId!==null&&window.turnstile){try{turnstile.remove(turnstileId);}catch(e){}}
+turnstileId=null;
+if(turnstileBox)turnstileBox.innerHTML="";
 }
-if(turnstileId!==null){try{turnstile.reset(turnstileId);}catch(e){}return;}
-turnstileId=turnstile.render(turnstileBox,{sitekey:TURNSTILE_KEY,theme:"light",size:"flexible"});
+function renderTurnstile(){
+if(!turnstileBox||turnstileId!==null)return;
+var size=window.matchMedia("(max-width:767px)").matches?"compact":"normal";
+turnstileId=turnstile.render(turnstileBox,{sitekey:TURNSTILE_KEY,theme:"light",size:size});
 }
 function mountTurnstile(){
-requestAnimationFrame(function(){
-requestAnimationFrame(function(){renderTurnstile(0);});
-});
+destroyTurnstile();
+if(!turnstileBox)return;
+function boot(){
+if(!window.turnstile||typeof turnstile.render!=="function"){setTimeout(boot,100);return;}
+turnstile.ready(function(){renderTurnstile();});
+}
+requestAnimationFrame(function(){requestAnimationFrame(boot);});
 }
 function fillPreview(){
 if(!previewList)return;
@@ -425,6 +430,7 @@ var btnEdit=document.getElementById("oz_btn_edit");
 if(btnEdit){
 btnEdit.addEventListener("click",function(){
 hideErr();
+destroyTurnstile();
 showStep("form");
 });
 }
@@ -441,7 +447,7 @@ fd.set("cf-turnstile-response",token);
 fetch(FORMSPREE_URL,{method:"POST",body:fd,headers:{Accept:"application/json"}})
 .then(function(r){return r.json().then(function(d){return{ok:r.ok,data:d};});})
 .then(function(res){
-if(res.ok){showStep("done");return;}
+if(res.ok){destroyTurnstile();showStep("done");return;}
 var msg=(res.data&&res.data.error)||"Не удалось отправить. Попробуйте ещё раз.";
 showErr(msg);
 if(window.turnstile&&turnstileId!==null)turnstile.reset(turnstileId);
