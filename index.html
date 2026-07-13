@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -19,7 +19,7 @@ a:hover{text-decoration:underline}
 .oz_page{width:100%;max-width:var(--oz-w);margin:0 auto;background:#fff;overflow-x:hidden;min-height:100dvh}
 .oz_shell{padding:0 var(--oz-pad)}
 .oz_strip{display:none}
-.oz_mob_top{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--oz-line);padding:calc(10px + var(--oz-safe-t)) var(--oz-pad) 12px}
+.oz_mob_top{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--oz-line);padding:6px var(--oz-pad) 12px}
 .oz_mob_top.oz_menu_open .oz_search{display:none}
 .oz_mob_row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .oz_brand{font-size:2.8rem;font-weight:700;line-height:1.1}
@@ -56,6 +56,11 @@ a:hover{text-decoration:underline}
 .oz_field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;min-width:0}
 .oz_field.oz_full{grid-column:1/-1}
 .oz_field label,.oz_field>span{font-size:14px;font-weight:600;color:#333}
+.oz_field .oz_field_hint{display:block;font-size:12px;font-weight:400;color:var(--oz-muted);margin-top:2px}
+.oz_field input[type="file"]{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--oz-line);border-radius:12px;font-size:14px;font-family:inherit;background:#f8f9fa}
+.oz_preview_img{display:block;max-width:100%;height:auto;border-radius:8px;margin-top:8px;border:1px solid var(--oz-line);background:#fff}
+.oz_preview_img.oz_preview_avatar{width:128px;height:128px;object-fit:cover}
+.oz_preview_img.oz_preview_cover{max-width:360px;aspect-ratio:3/2;object-fit:cover}
 .oz_field input,.oz_field textarea{width:100%;min-width:0;min-height:48px;padding:12px 14px;border:1px solid var(--oz-line);border-radius:12px;font-size:16px;font-family:inherit;background:#f8f9fa}
 .oz_field input:focus,.oz_field textarea:focus{outline:none;border-color:var(--oz-accent);background:#fff;box-shadow:0 0 0 3px rgba(61,124,71,.15)}
 .oz_field textarea{min-height:150px;resize:vertical;line-height:1.45}
@@ -108,6 +113,24 @@ a:hover{text-decoration:underline}
 .oz_foot_panel a:active{background:#eef0f3;margin:0 calc(-1 * var(--oz-pad));padding-left:var(--oz-pad);padding-right:var(--oz-pad)}
 .oz_copy{margin-top:16px;padding-top:14px;border-top:1px solid var(--oz-line);font-size:12px;color:var(--oz-muted);text-align:center;line-height:1.55}
 .oz_disclaimer{margin-top:16px;padding-top:0;border-top:none;font-weight:600;color:#444}
+.oz_theme_slot{display:flex;justify-content:flex-end;padding:calc(6px + var(--oz-safe-t)) var(--oz-pad) 2px}
+.oz_theme_slot .d{display:flex;justify-content:flex-end;margin:0}
+.oz_theme_slot label{cursor:pointer}
+.oz_theme_slot .form-group{margin:0}
+.oz_theme_slot .form-switch{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--oz-muted);cursor:pointer;user-select:none}
+.oz_theme_slot .form-switch input{position:absolute;opacity:0;width:0;height:0}
+.oz_theme_slot .form-icon{display:inline-block;width:40px;height:24px;border-radius:999px;background:var(--oz-line);position:relative;transition:background .2s;flex:none}
+.oz_theme_slot .form-icon::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.oz_theme_slot .form-switch input:checked+.form-icon{background:var(--oz-accent)}
+.oz_theme_slot .form-switch input:checked+.form-icon::after{transform:translateX(16px)}
+html[data-theme="dark"]{--oz-bg:#121417;--oz-text:#e8eaed;--oz-muted:#9aa0a6;--oz-line:#2b3138}
+html[data-theme="dark"] body{background:var(--oz-bg);color:var(--oz-text)}
+html[data-theme="dark"] .oz_page,html[data-theme="dark"] .oz_mob_top,html[data-theme="dark"] .oz_cats_wrap,html[data-theme="dark"] .oz_card,html[data-theme="dark"] .oz_foot,html[data-theme="dark"] .oz_tabbar,html[data-theme="dark"] .oz_desk_strip,html[data-theme="dark"] .oz_head{background:#1a1f24}
+html[data-theme="dark"] .oz_field input,html[data-theme="dark"] .oz_field textarea,html[data-theme="dark"] .oz_field input[type="file"],html[data-theme="dark"] .oz_search input,html[data-theme="dark"] .oz_preview_row{background:#232a31;color:var(--oz-text)}
+html[data-theme="dark"] .oz_actions{background:#1a1f24;box-shadow:0 -4px 16px rgba(0,0,0,.2)}
+html[data-theme="dark"] .oz_cats a{background:#232a31;color:var(--oz-text)}
+html[data-theme="dark"] .oz_cats a:active{background:#2b333c}
+html[data-theme="dark"] .oz_disclaimer{color:#c9cdd2}
 .oz_tabbar{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;background:#fff;border-top:1px solid var(--oz-line);padding-bottom:var(--oz-safe-b);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
 .oz_tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--oz-tab);padding:6px 2px;font-size:10px;font-weight:600;color:var(--oz-muted);text-align:center;line-height:1.15}
 .oz_tabbar a::before{font-size:17px;line-height:1;opacity:.85}
@@ -164,6 +187,16 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
 <div class="oz_page" id="oz_page">
+<div class="oz_theme_slot">
+<div class="d">
+<div class="form-group">
+<label class="form-switch">
+<input type="checkbox" id="darkSwitch" checked>
+<i class="form-icon"></i> Тёмная тема
+</label>
+</div>
+</div>
+</div>
 <div class="oz_mob_top" id="oz_mob_top">
 <div class="oz_mob_row">
 <div class="oz_brand" id="oz_logo">OT<span>ЗЫВ</span></div>
@@ -242,7 +275,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <main class="oz_main" id="oz_main" itemprop="mainContentOfPage">
 <div class="oz_shell">
 <article class="oz_card" id="oz_review_block">
-<form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
+<form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" enctype="multipart/form-data" novalidate>
 <input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
@@ -265,6 +298,14 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_field oz_full">
 <label for="oz_in_text">Текст поста</label>
 <textarea required name="text_review" id="oz_in_text" placeholder="Опишите ваш опыт…" rows="5" maxlength="2500"></textarea>
+</div>
+<div class="oz_field">
+<label for="oz_in_avatar">Аватар ресурса<span class="oz_field_hint">256×256, JPG или PNG, необязательно</span></label>
+<input type="file" name="photo_avatar" id="oz_in_avatar" accept="image/jpeg,image/png,image/webp,image/gif">
+</div>
+<div class="oz_field">
+<label for="oz_in_cover">Фото ресурса<span class="oz_field_hint">720×480, JPG или PNG, необязательно</span></label>
+<input type="file" name="photo_cover" id="oz_in_cover" accept="image/jpeg,image/png,image/webp,image/gif">
 </div>
 <div class="oz_field">
 <label for="oz_in_tags">Теги</label>
@@ -355,6 +396,18 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <script>
 (function(){
 console.log("Это сайт отзыв (ot-ziv.com) и не имеет отношения к сайту отзовик (otzovik — от слова «отзывать документы»: отзывающий претензию или иск). Слово «отзыв» — публикуемый материал о чём-либо, характеризующий его хорошую или плохую деятельность.");
+var darkSwitch=document.getElementById("darkSwitch");
+if(darkSwitch){
+var saved=localStorage.getItem("oz-theme");
+var dark=saved!=="light";
+document.documentElement.setAttribute("data-theme",dark?"dark":"light");
+darkSwitch.checked=dark;
+darkSwitch.addEventListener("change",function(){
+var on=darkSwitch.checked;
+document.documentElement.setAttribute("data-theme",on?"dark":"light");
+localStorage.setItem("oz-theme",on?"dark":"light");
+});
+}
 var FORMSPREE_URL="https://formspree.io/f/xdaqoabn";
 var stepForm=document.getElementById("oz_step_form");
 var stepPreview=document.getElementById("oz_step_preview");
@@ -376,6 +429,24 @@ window.scrollTo({top:0,behavior:"smooth"});
 function previewRow(label,text){
 return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
 }
+function filePreviewRow(label,id,cls){
+var el=document.getElementById(id);
+if(!el||!el.files||!el.files[0])return previewRow(label,"не прикреплено");
+var f=el.files[0];
+var url=URL.createObjectURL(f);
+return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd><img class=\"oz_preview_img "+cls+"\" src=\""+url+"\" alt=\"\"><br>"+esc(f.name)+"</dd></div>";
+}
+function validateImages(){
+var ids=["oz_in_avatar","oz_in_cover"];
+for(var i=0;i<ids.length;i++){
+var el=document.getElementById(ids[i]);
+if(el&&el.files&&el.files[0]&&!/^image\//.test(el.files[0].type)){
+showErr("Можно прикреплять только изображения (JPG, PNG, WebP, GIF).");
+return false;
+}
+}
+return true;
+}
 function fillPreview(){
 if(!previewList)return;
 var rating=+val("oz_in_rating")||5;
@@ -387,6 +458,8 @@ previewRow("Компания, товар или услуга",val("oz_in_company
 previewRow("Ваше имя",val("oz_in_name"))+
 previewRow("E-mail",mail)+
 previewRow("Текст поста",val("oz_in_text"))+
+filePreviewRow("Аватар ресурса","oz_in_avatar","oz_preview_avatar")+
+filePreviewRow("Фото ресурса","oz_in_cover","oz_preview_cover")+
 previewRow("Теги",tags)+
 "<div class=\"oz_preview_row\"><dt>Оценка</dt><dd><span class=\"oz_preview_stars\" aria-label=\""+rating+" из 5\">"+stars+"</span> ("+rating+" из 5)</dd></div>";
 }
@@ -399,6 +472,7 @@ if(btnPreview){
 btnPreview.addEventListener("click",function(){
 hideErr();
 if(!validateForm())return;
+if(!validateImages())return;
 fillPreview();
 showStep("preview");
 });
