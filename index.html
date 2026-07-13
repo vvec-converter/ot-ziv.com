@@ -161,7 +161,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_foot_block.oz_open .oz_foot_tog::after{display:none}
 }
 </style>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
 <div class="oz_page" id="oz_page">
@@ -245,6 +244,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <article class="oz_card" id="oz_review_block">
 <form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
 <input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
+<input type="hidden" name="_next" value="https://ot-ziv.com/?sent=1">
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
 <div class="oz_step" id="oz_step_form">
@@ -282,10 +282,9 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <input type="hidden" name="rating" id="oz_in_rating" value="5">
 </div>
-</div>
 <div class="oz_field oz_full">
-<p class="oz_captcha_label">Подтвердите, что вы не робот</p>
-<div class="oz_turnstile"><div class="cf-turnstile" id="oz_turnstile_widget" data-sitekey="0x4AAAAAAD01AYnC8EuRja7z" data-theme="light"></div></div>
+<div class="oz_turnstile cf-turnstile" data-sitekey="0x4AAAAAAD01AYnC8EuRja7z"></div>
+</div>
 </div>
 <div class="oz_actions">
 <button type="button" class="oz_submit" id="oz_btn_preview">Проверить отзыв</button>
@@ -304,6 +303,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 </div>
 </form>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <div class="oz_step oz_done" id="oz_step_done" hidden>
 <h1>Спасибо!</h1>
 <p>Форма была успешно отправлена.</p>
@@ -377,15 +377,6 @@ window.scrollTo({top:0,behavior:"smooth"});
 function previewRow(label,text){
 return"<div class=\"oz_preview_row\"><dt>"+esc(label)+"</dt><dd>"+esc(text)+"</dd></div>";
 }
-function getTurnstileToken(){
-var inp=form?form.querySelector("[name='cf-turnstile-response']"):null;
-return inp&&inp.value?inp.value:"";
-}
-function resetTurnstile(){
-if(!window.turnstile)return;
-var w=document.getElementById("oz_turnstile_widget");
-try{if(w)turnstile.reset(w);else turnstile.reset();}catch(e){}
-}
 function fillPreview(){
 if(!previewList)return;
 var rating=+val("oz_in_rating")||5;
@@ -409,7 +400,6 @@ if(btnPreview){
 btnPreview.addEventListener("click",function(){
 hideErr();
 if(!validateForm())return;
-if(!getTurnstileToken()){showErr("Подтвердите, что вы не робот — пройдите проверку в капче ниже.");return;}
 fillPreview();
 showStep("preview");
 });
@@ -423,31 +413,18 @@ showStep("form");
 }
 if(form){
 form.addEventListener("submit",function(e){
-if(stepPreview.hidden)return;
+if(stepPreview.hidden){e.preventDefault();return;}
+var ts=form.querySelector("[name='cf-turnstile-response']");
+if(!ts||!ts.value){
 e.preventDefault();
-hideErr();
-var token=getTurnstileToken();
-if(!token){showErr("Капча устарела. Вернитесь назад и пройдите проверку снова.");return;}
-var btnConfirm=document.getElementById("oz_btn_confirm");
-if(btnConfirm){btnConfirm.disabled=true;btnConfirm.textContent="Отправка…";}
-var fd=new FormData(form);
-fetch(FORMSPREE_URL,{method:"POST",body:fd,headers:{Accept:"application/json"}})
-.then(function(r){return r.json().then(function(d){return{ok:r.ok,data:d};});})
-.then(function(res){
-if(res.ok){showStep("done");return;}
-var msg=(res.data&&res.data.error)||"Не удалось отправить. Попробуйте ещё раз.";
-showErr(msg);
-resetTurnstile();
-})
-.catch(function(){
-showErr("Ошибка сети. Проверьте интернет и попробуйте снова.");
-resetTurnstile();
-})
-.finally(function(){
-var btn=document.getElementById("oz_btn_confirm");
-if(btn){btn.disabled=false;btn.textContent="Отправить на модерацию";}
+showErr("Сначала пройдите проверку капчи под формой.");
+showStep("form");
+}
 });
-});
+}
+if(/[?&]sent=1/.test(location.search)){
+showStep("done");
+if(history.replaceState)history.replaceState(null,"","/");
 }
 var stars=document.querySelectorAll("#oz_stars .oz_star");
 var hid=document.getElementById("oz_in_rating");
