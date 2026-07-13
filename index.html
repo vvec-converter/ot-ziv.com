@@ -96,7 +96,7 @@ html[data-theme="dark"] .oz_logo_dark{display:block}
 .oz_done{text-align:center;padding:24px 0 8px}
 .oz_done h1{font-size:1.5rem;margin-bottom:10px;color:var(--oz-accent)}
 .oz_done p{color:var(--oz-muted);font-size:16px;margin-bottom:20px;line-height:1.5}
-.oz_done a{display:inline-block;padding:12px 28px;border-radius:12px;background:var(--oz-accent);color:#fff;font-weight:600;text-decoration:none}
+.oz_done a{display:inline-block;margin:6px 8px 0 0;padding:12px 28px;border-radius:12px;background:var(--oz-accent);color:#fff;font-weight:600;text-decoration:none}
 .oz_done a:hover{text-decoration:none;background:var(--oz-accent-h)}
 .oz_form_err{display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:#fdecea;border:1px solid #f5c6c2;color:#8a1f17;font-size:14px;line-height:1.45}
 .oz_form_err.oz_show{display:block}
@@ -344,6 +344,8 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_step oz_done" id="oz_step_done" hidden>
 <h1>Спасибо!</h1>
 <p>Форма была успешно отправлена.</p>
+<p class="oz_note">Копия отзыва сохранена в кеше этого браузера на 30 дней.</p>
+<a href="#" id="oz_done_link">Мой отзыв</a>
 <a href="https://ot-ziv.com/">Вернуться на сайт</a>
 </div>
 </article>
@@ -451,6 +453,18 @@ function validateForm(){
 if(!form)return false;
 return form.reportValidity();
 }
+function ozSaveCache(){
+var id=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+var item={id:id,ts:Date.now(),category:val("oz_in_category"),name:val("oz_in_company"),user:val("oz_in_name"),mail:val("oz_in_mail"),text:val("oz_in_text"),tags:val("oz_in_tags"),rating:val("oz_in_rating")};
+try{
+var all=JSON.parse(localStorage.getItem("oz_v_cache")||"{}");
+all[id]=item;
+var cut=Date.now()-30*24*60*60*1000;
+Object.keys(all).forEach(function(k){if(!all[k].ts||all[k].ts<cut)delete all[k];});
+localStorage.setItem("oz_v_cache",JSON.stringify(all));
+}catch(e){}
+return id;
+}
 var btnPreview=document.getElementById("oz_btn_preview");
 if(btnPreview){
 btnPreview.addEventListener("click",function(){
@@ -485,7 +499,13 @@ if(btn){btn.disabled=true;btn.textContent="Отправка…";}
 fetch(FORMSPREE_URL,{method:"POST",body:new FormData(form),headers:{Accept:"application/json"}})
 .then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};}).catch(function(){return{ok:r.ok,status:r.status,data:null};});})
 .then(function(res){
-if(res.ok){showStep("done");return;}
+if(res.ok){
+var cacheId=ozSaveCache();
+var doneLink=document.getElementById("oz_done_link");
+if(doneLink)doneLink.href="v/?id="+cacheId;
+showStep("done");
+return;
+}
 var msg=(res.data&&res.data.error)||("Ошибка "+res.status+". Попробуйте снова.");
 showErr(msg);
 showStep("preview");
