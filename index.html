@@ -78,7 +78,8 @@ html[data-theme="dark"] .oz_logo_dark{display:block}
 .oz_note{margin-top:14px;padding-bottom:8px;font-size:14px;color:var(--oz-muted);text-align:center}
 .oz_success{display:none;margin-bottom:16px;padding:14px 16px;border-radius:12px;background:#e8f5ea;border:1px solid #b8dfc0;color:#1f5c2b;font-size:15px;line-height:1.45}
 .oz_success.oz_show{display:block}
-.oz_turnstile{margin:8px auto 12px;min-height:70px;min-width:min(100%,300px);max-width:100%;display:flex;justify-content:center;align-items:center;overflow:visible}
+.oz_turnstile{margin:0 auto 12px;min-height:70px;min-width:min(100%,300px);max-width:100%;display:flex;justify-content:center;align-items:center;overflow:visible;position:relative;z-index:1;touch-action:manipulation}
+.oz_actions .oz_turnstile_field{margin:0 0 12px;padding:0}
 .oz_captcha_label{font-size:14px;font-weight:600;color:#333;margin-bottom:8px;text-align:center}
 .oz_preview_actions{padding-bottom:calc(12px + var(--oz-safe-b));position:static;margin-top:16px;border-top:1px solid var(--oz-line);box-shadow:none}
 #oz_step_preview{padding-bottom:calc(var(--oz-tab) + var(--oz-safe-b) + 8px)}
@@ -318,11 +319,11 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <input type="hidden" name="rating" id="oz_in_rating" value="5">
 </div>
-<div class="oz_field oz_full">
-<div class="oz_turnstile cf-turnstile" data-sitekey="0x4AAAAAAD01AYnC8EuRja7z"></div>
-</div>
 </div>
 <div class="oz_actions">
+<div class="oz_field oz_full oz_turnstile_field">
+<div class="oz_turnstile cf-turnstile" data-sitekey="0x4AAAAAAD01AYnC8EuRja7z"></div>
+</div>
 <button type="button" class="oz_submit" id="oz_btn_preview">Проверить отзыв</button>
 <p class="oz_legal" id="oz_legal">Нажимая «Проверить отзыв», вы принимаете <a href="https://ot-ziv.com/politika-konfidentsialnosti/">политику конфиденциальности</a> и <a href="https://ot-ziv.com/polzovatelskoe-soglashenie/">пользовательское соглашение</a>.</p>
 </div>
