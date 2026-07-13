@@ -22,8 +22,11 @@ a:hover{text-decoration:underline}
 .oz_mob_top{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--oz-line);padding:6px var(--oz-pad) 12px}
 .oz_mob_top.oz_menu_open .oz_search{display:none}
 .oz_mob_row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.oz_brand{font-size:2.8rem;font-weight:700;line-height:1.1}
-.oz_brand span{color:var(--oz-accent)}
+.oz_brand{display:flex;align-items:center;line-height:0}
+.oz_logo_img{display:block;height:2.8rem;width:auto;max-width:min(100%,240px)}
+.oz_logo_dark{display:none}
+html[data-theme="dark"] .oz_logo_light{display:none}
+html[data-theme="dark"] .oz_logo_dark{display:block}
 .oz_mob_menu{width:44px;height:44px;border:1px solid var(--oz-line);border-radius:10px;background:#f8f9fa;font-size:22px;line-height:40px;text-align:center;cursor:pointer;color:var(--oz-text);flex:none}
 .oz_mob_menu.oz_is_open{background:var(--oz-accent);color:#fff;border-color:var(--oz-accent)}
 .oz_search{margin-top:10px}
@@ -155,7 +158,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_head{border-bottom:1px solid var(--oz-line);padding:18px 0 20px}
 .oz_head_top{display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:20px}
 .oz_head_top .oz_search{max-width:340px}
-.oz_head .oz_brand{font-size:2.8rem;line-height:1.1}
+.oz_head .oz_brand{line-height:0}
 .oz_cats_mob{display:none}
 .oz_cats_desk{display:flex;flex-wrap:wrap;padding:16px 0 0;border:none;background:transparent}
 .oz_card{border:1px solid var(--oz-line);border-radius:10px;padding:20px var(--oz-pad)}
@@ -199,7 +202,10 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <div class="oz_mob_top" id="oz_mob_top">
 <div class="oz_mob_row">
-<div class="oz_brand" id="oz_logo">OT<span>ЗЫВ</span></div>
+<div class="oz_brand" id="oz_logo">
+<img class="oz_logo_img oz_logo_light" src="i/d.png" alt="ОТЗЫВ" title="ОТЗЫВ — не терпи несправедливость или вырази благодарность" width="240" height="75" decoding="async">
+<img class="oz_logo_img oz_logo_dark" src="i/w.png" alt="ОТЗЫВ" title="ОТЗЫВ — не терпи несправедливость или вырази благодарность" width="240" height="75" decoding="async">
+</div>
 <button type="button" class="oz_mob_menu" id="oz_mob_menu" aria-label="Меню" aria-expanded="false">☰</button>
 </div>
 <div class="oz_drawer" id="oz_drawer" aria-hidden="true">
@@ -248,7 +254,10 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_shell">
 <div class="oz_head_top">
 <div>
-<div class="oz_brand">OT<span>ЗЫВ</span></div>
+<div class="oz_brand">
+<img class="oz_logo_img oz_logo_light" src="i/d.png" alt="ОТЗЫВ" title="ОТЗЫВ — не терпи несправедливость или вырази благодарность" width="240" height="75" decoding="async">
+<img class="oz_logo_img oz_logo_dark" src="i/w.png" alt="ОТЗЫВ" title="ОТЗЫВ — не терпи несправедливость или вырази благодарность" width="240" height="75" decoding="async">
+</div>
 <p class="oz_tagline" id="oz_slogan">Самая честная критика Рунета и стран СНГ — реальные посты о компаниях, товарах и услугах</p>
 </div>
 <form class="oz_search" id="oz_search" action="https://ot-ziv.com/search/" method="get" role="search">
