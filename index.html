@@ -289,7 +289,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <div class="oz_field oz_full">
 <label for="oz_in_company">Название</label>
-<input required type="text" name="company_name" id="oz_in_company" placeholder="Например: Ozon, кафе, такси, YouTube" list="oz_subject_list" autocomplete="off" maxlength="59">
+<input required type="text" name="company_name" id="oz_in_company" placeholder="Сначала выберите категорию" autocomplete="off" maxlength="59">
 </div>
 <div class="oz_field">
 <label for="oz_in_name">Ваше имя</label>
@@ -305,7 +305,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <div class="oz_field">
 <label for="oz_in_tags">Теги</label>
-<input type="text" name="TAGS" id="oz_in_tags" placeholder="еда, доставка, маркетплейс…" list="oz_search_list" autocomplete="off">
+<input type="text" name="TAGS" id="oz_in_tags" placeholder="через запятую" autocomplete="off">
 </div>
 <div class="oz_field oz_field_rate">
 <span id="oz_rate_label">Оценка</span>
@@ -416,24 +416,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <option value="YouTube">
 <option value="Сбербанк">
 </datalist>
-<datalist id="oz_subject_list">
-<option value="Ozon">
-<option value="Wildberries">
-<option value="Avito">
-<option value="Госуслуги">
-<option value="YouTube">
-<option value="Сбербанк">
-<option value="ресторан">
-<option value="кафе">
-<option value="аптека">
-<option value="клиника">
-<option value="отель">
-<option value="такси">
-<option value="доставка">
-<option value="iPhone">
-<option value="кроссовки">
-<option value="диван">
-</datalist>
+<datalist id="oz_subject_list"></datalist>
 <script>
 (function(){
 console.log("Это сайт отзыв (ot-ziv.com) и не имеет отношения к сайту отзовик (otzovik — от слова «отзывать документы»: отзывающий претензию или иск). Слово «отзыв» — публикуемый материал о чём-либо, характеризующий его хорошую или плохую деятельность.");
@@ -450,6 +433,26 @@ localStorage.setItem("oz-theme",on?"dark":"light");
 });
 }
 var FORMSPREE_URL="https://formspree.io/f/xdaqoabn";
+var OZ_CAT_HINTS={
+"Товары":{ph:"Например: кроссовки, холодильник, косметика",hints:["еда","одежда","обувь","техника","мебель","косметика","лекарства","игрушки","авто","стройматериалы","книги","посуда","спорттовары","бытовая химия","ювелирка"]},
+"Места":{ph:"Например: кафе, аптека, торговый центр",hints:["магазин","ресторан","кафе","бар","отель","гостиница","хостел","клиника","больница","стоматология","аптека","фитнес","салон красоты","парк","ТЦ","АЗС","кинотеатр","музей","вокзал","аэропорт"]},
+"Услуги":{ph:"Например: ремонт, доставка, такси",hints:["ремонт","стрижка","маникюр","массаж","доставка","такси","химчистка","клининг","страхование","банк","юрист","бухгалтерия","репетитор","ремонт техники","установка окон","грузоперевозки"]},
+"Сайты":{ph:"Например: Ozon, Wildberries, Госуслуги",hints:["Ozon","Wildberries","Avito","Госуслуги","YouTube","ВКонтакте","Telegram","Кинопоиск","Яндекс Карты","Google","Сбербанк","маркетплейс","соцсеть","мессенджер","образование","новости"]}
+};
+function updCatHints(){
+var cat=document.getElementById("oz_in_category");
+var name=document.getElementById("oz_in_company");
+var dl=document.getElementById("oz_subject_list");
+if(!cat||!name||!dl)return;
+var data=OZ_CAT_HINTS[cat.value];
+dl.innerHTML="";
+if(!data){name.placeholder="Сначала выберите категорию";name.removeAttribute("list");return;}
+name.placeholder=data.ph;
+name.setAttribute("list","oz_subject_list");
+data.hints.forEach(function(h){var o=document.createElement("option");o.value=h;dl.appendChild(o);});
+}
+var catSel=document.getElementById("oz_in_category");
+if(catSel){catSel.addEventListener("change",updCatHints);updCatHints();}
 var stepForm=document.getElementById("oz_step_form");
 var stepPreview=document.getElementById("oz_step_preview");
 var stepDone=document.getElementById("oz_step_done");
