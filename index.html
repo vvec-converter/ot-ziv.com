@@ -252,19 +252,19 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_grid">
 <div class="oz_field oz_full">
 <label for="oz_in_company">Название компании, товара или услуги</label>
-<input required type="text" name="company_name" id="oz_in_company" placeholder="Например: мой пост" autocomplete="organization">
+<input required type="text" name="company_name" id="oz_in_company" placeholder="Например: мой пост" autocomplete="organization" maxlength="59">
 </div>
 <div class="oz_field">
 <label for="oz_in_name">Ваше имя</label>
-<input required type="text" name="user_name" id="oz_in_name" placeholder="Имя" autocomplete="name">
+<input required type="text" name="user_name" id="oz_in_name" placeholder="Имя" autocomplete="name" maxlength="10">
 </div>
 <div class="oz_field">
 <label for="oz_in_mail">E-mail (необязательно)</label>
-<input type="email" name="user_mail" id="oz_in_mail" placeholder="you@mail.com" autocomplete="email">
+<input type="email" name="user_mail" id="oz_in_mail" placeholder="you@mail.com" autocomplete="email" maxlength="15">
 </div>
 <div class="oz_field oz_full">
 <label for="oz_in_text">Текст поста</label>
-<textarea required name="text_review" id="oz_in_text" placeholder="Опишите ваш опыт…" rows="5"></textarea>
+<textarea required name="text_review" id="oz_in_text" placeholder="Опишите ваш опыт…" rows="5" maxlength="2500"></textarea>
 </div>
 <div class="oz_field">
 <label for="oz_in_tags">Теги</label>
