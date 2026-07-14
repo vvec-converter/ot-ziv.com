@@ -28,23 +28,23 @@
     );
     var darkSwitch = document.getElementById("darkSwitch");
     if (darkSwitch) {
-      var saved = localStorage.getItem("oz-theme");
+      var saved = localStorage.getItem("t");
       var dark = saved !== "light";
       document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
       darkSwitch.checked = dark;
       darkSwitch.addEventListener("change", function () {
         var on = darkSwitch.checked;
         document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
-        localStorage.setItem("oz-theme", on ? "dark" : "light");
+        localStorage.setItem("t", on ? "dark" : "light");
       });
     }
-    var stepForm = document.getElementById("oz_step_form");
-    var stepPreview = document.getElementById("oz_step_preview");
-    var stepDone = document.getElementById("oz_step_done");
-    var stepMine = document.getElementById("oz_step_mine");
-    var form = document.getElementById("oz_review_form");
-    var previewList = document.getElementById("oz_preview_list");
-    var formErr = document.getElementById("oz_form_err");
+    var stepForm = document.getElementById("ba");
+    var stepPreview = document.getElementById("o");
+    var stepDone = document.getElementById("az");
+    var stepMine = document.getElementById("bb");
+    var form = document.getElementById("u");
+    var previewList = document.getElementById("l");
+    var formErr = document.getElementById("bj");
     function esc(s) {
       return String(s || "")
         .replace(/&/g, "&amp;")
@@ -59,10 +59,10 @@
     function showErr(msg) {
       if (!formErr) return;
       formErr.textContent = msg;
-      formErr.classList.add("oz_show");
+      formErr.classList.add("dr");
     }
     function hideErr() {
-      if (formErr) formErr.classList.remove("oz_show");
+      if (formErr) formErr.classList.remove("dr");
     }
     function showStep(step) {
       if (stepForm) stepForm.hidden = step !== "form";
@@ -81,7 +81,7 @@
       return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
     }
     function ozRenderTurnstile() {
-      var box = document.getElementById("oz_turnstile_box");
+      var box = document.getElementById("h");
       if (!box) return;
       function run() {
         if (typeof turnstile === "undefined") {
@@ -100,7 +100,7 @@
     }
     function previewRow(label, text) {
       return (
-        '<div class="oz_preview_row"><dt>' +
+        '<div class="s"><dt>' +
         esc(label) +
         "</dt><dd>" +
         esc(text) +
@@ -112,7 +112,7 @@
     }
     function ozGetLatest() {
       try {
-        var all = JSON.parse(localStorage.getItem("oz_v_cache") || "{}");
+        var all = JSON.parse(localStorage.getItem("c") || "{}");
         var latest = null;
         Object.keys(all).forEach(function (k) {
           var it = all[k];
@@ -127,7 +127,7 @@
     function ozGetById(id) {
       if (!id) return null;
       try {
-        var all = JSON.parse(localStorage.getItem("oz_v_cache") || "{}");
+        var all = JSON.parse(localStorage.getItem("c") || "{}");
         return all[id] || null;
       } catch (e) {
         return null;
@@ -171,7 +171,7 @@
         previewRow("E-mail", mail) +
         previewRow("Текст поста", item.text) +
         previewRow("Теги", tags) +
-        '<div class="oz_preview_row"><dt>Оценка</dt><dd><span class="oz_preview_stars" aria-label="' +
+        '<div class="s"><dt>Оценка</dt><dd><span class="g" aria-label="' +
         rating +
         ' из 5">' +
         stars +
@@ -197,10 +197,10 @@
     function ozMarkPublished(id) {
       if (!id) return;
       try {
-        var all = JSON.parse(localStorage.getItem("oz_v_cache") || "{}");
+        var all = JSON.parse(localStorage.getItem("c") || "{}");
         if (all[id]) {
           all[id].published = true;
-          localStorage.setItem("oz_v_cache", JSON.stringify(all));
+          localStorage.setItem("c", JSON.stringify(all));
         }
       } catch (e) {}
     }
@@ -216,18 +216,18 @@
     function ozSetModBadge(badge, published) {
       if (!badge) return;
       if (published) {
-        badge.className = "oz_mod_badge oz_pub";
-        badge.innerHTML = '<span class="oz_chk" aria-hidden="true">✓</span> Опубликован';
+        badge.className = "aw dw";
+        badge.innerHTML = '<span class="du" aria-hidden="true">✓</span> Опубликован';
       } else {
-        badge.className = "oz_mod_badge";
+        badge.className = "aw";
         badge.textContent = "Не опубликован · на модерации";
       }
     }
     function showMyReview(wantId) {
       hideErr();
-      var box = document.getElementById("oz_mine_preview");
-      var empty = document.getElementById("oz_mine_empty");
-      var badge = document.getElementById("oz_mine_badge");
+      var box = document.getElementById("k");
+      var empty = document.getElementById("ad");
+      var badge = document.getElementById("ac");
       var id = wantId || ozHashId();
       var item = id ? ozGetById(id) : ozGetLatest();
       if (item && item.id) ozSetReviewHash(item.id);
@@ -254,18 +254,18 @@
     }
     function fillPreview() {
       if (!previewList) return;
-      var rating = +val("oz_in_rating") || 5;
+      var rating = +val("as") || 5;
       var stars = "★".repeat(rating) + "☆".repeat(5 - rating);
-      var mail = val("oz_in_mail") || "не указан";
-      var tags = val("oz_in_tags") || "—";
+      var mail = val("ca") || "не указан";
+      var tags = val("cc") || "—";
       previewList.innerHTML =
-        previewRow("Категория", val("oz_in_category")) +
-        previewRow("Название", val("oz_in_company")) +
-        previewRow("Ваше имя", val("oz_in_name")) +
+        previewRow("Категория", val("r")) +
+        previewRow("Название", val("aa")) +
+        previewRow("Ваше имя", val("cb")) +
         previewRow("E-mail", mail) +
-        previewRow("Текст поста", val("oz_in_text")) +
+        previewRow("Текст поста", val("cd")) +
         previewRow("Теги", tags) +
-        '<div class="oz_preview_row"><dt>Оценка</dt><dd><span class="oz_preview_stars" aria-label="' +
+        '<div class="s"><dt>Оценка</dt><dd><span class="g" aria-label="' +
         rating +
         ' из 5">' +
         stars +
@@ -278,16 +278,16 @@
       return form.reportValidity();
     }
     function fillDonePreview() {
-      var box = document.getElementById("oz_done_preview");
+      var box = document.getElementById("i");
       if (!box) return;
       fillItemPreview(box, {
-        category: val("oz_in_category"),
-        name: val("oz_in_company"),
-        user: val("oz_in_name"),
-        mail: val("oz_in_mail"),
-        text: val("oz_in_text"),
-        tags: val("oz_in_tags"),
-        rating: val("oz_in_rating"),
+        category: val("r"),
+        name: val("aa"),
+        user: val("cb"),
+        mail: val("ca"),
+        text: val("cd"),
+        tags: val("cc"),
+        rating: val("as"),
       });
       box.hidden = true;
     }
@@ -297,26 +297,26 @@
         id: id,
         ts: Date.now(),
         published: false,
-        category: val("oz_in_category"),
-        name: val("oz_in_company"),
-        user: val("oz_in_name"),
-        mail: val("oz_in_mail"),
-        text: val("oz_in_text"),
-        tags: val("oz_in_tags"),
-        rating: val("oz_in_rating"),
+        category: val("r"),
+        name: val("aa"),
+        user: val("cb"),
+        mail: val("ca"),
+        text: val("cd"),
+        tags: val("cc"),
+        rating: val("as"),
       };
       try {
-        var all = JSON.parse(localStorage.getItem("oz_v_cache") || "{}");
+        var all = JSON.parse(localStorage.getItem("c") || "{}");
         all[id] = item;
         var cut = Date.now() - 30 * 24 * 60 * 60 * 1000;
         Object.keys(all).forEach(function (k) {
           if (!all[k].ts || all[k].ts < cut) delete all[k];
         });
-        localStorage.setItem("oz_v_cache", JSON.stringify(all));
+        localStorage.setItem("c", JSON.stringify(all));
       } catch (e) {}
       return id;
     }
-    var btnPreview = document.getElementById("oz_btn_preview");
+    var btnPreview = document.getElementById("q");
     if (btnPreview) {
       btnPreview.addEventListener("click", function () {
         hideErr();
@@ -325,7 +325,7 @@
         showStep("preview");
       });
     }
-    var btnEdit = document.getElementById("oz_btn_edit");
+    var btnEdit = document.getElementById("bd");
     if (btnEdit) {
       btnEdit.addEventListener("click", function () {
         hideErr();
@@ -335,7 +335,7 @@
           } catch (ex) {}
           ozTsWidget = null;
         }
-        var box = document.getElementById("oz_turnstile_box");
+        var box = document.getElementById("h");
         if (box) box.innerHTML = "";
         showStep("form");
       });
@@ -357,7 +357,7 @@
           showErr("Ошибка: massag.js не загружен. Обновите страницу.");
           return;
         }
-        var btn = document.getElementById("oz_btn_confirm");
+        var btn = document.getElementById("p");
         if (btn) {
           btn.disabled = true;
           btn.textContent = "Отправка…";
@@ -373,13 +373,13 @@
         ridEl.value = rid;
         var gotchaEl = form.querySelector("[name=_gotcha]");
         var payload = {
-          category: val("oz_in_category"),
-          company_name: val("oz_in_company"),
-          user_name: val("oz_in_name"),
-          user_mail: val("oz_in_mail"),
-          text_review: val("oz_in_text"),
-          TAGS: val("oz_in_tags"),
-          rating: val("oz_in_rating"),
+          category: val("r"),
+          company_name: val("aa"),
+          user_name: val("cb"),
+          user_mail: val("ca"),
+          text_review: val("cd"),
+          TAGS: val("cc"),
+          rating: val("as"),
           review_id: rid,
           "cf-turnstile-response": ts.value,
           _gotcha: gotchaEl ? gotchaEl.value : "",
@@ -412,7 +412,7 @@
             showErr("Ошибка сети. Проверьте интернет и попробуйте снова.");
           })
           .finally(function () {
-            var b = document.getElementById("oz_btn_confirm");
+            var b = document.getElementById("p");
             if (b) {
               b.disabled = false;
               b.textContent = "Отправить на модерацию";
@@ -420,11 +420,11 @@
           });
       });
     }
-    var stars = document.querySelectorAll("#oz_stars .oz_star");
-    var hid = document.getElementById("oz_in_rating");
+    var stars = document.querySelectorAll("#db .ds");
+    var hid = document.getElementById("as");
     function paint(n) {
       stars.forEach(function (s) {
-        s.classList.toggle("oz_lit", +s.dataset.v <= n);
+        s.classList.toggle("dv", +s.dataset.v <= n);
       });
       hid.value = n;
     }
@@ -435,22 +435,22 @@
       });
     });
     paint(5);
-    var doneLink = document.getElementById("oz_done_link");
+    var doneLink = document.getElementById("an");
     if (doneLink) {
       doneLink.addEventListener("click", function () {
-        var p = document.getElementById("oz_done_preview");
+        var p = document.getElementById("i");
         if (!p) return;
         p.hidden = !p.hidden;
         doneLink.textContent = p.hidden ? "Мой отзыв" : "Скрыть отзыв";
       });
     }
-    document.querySelectorAll(".oz_nav_my").forEach(function (a) {
+    document.querySelectorAll(".cq").forEach(function (a) {
       a.addEventListener("click", function (e) {
         e.preventDefault();
         showMyReview();
       });
     });
-    var mineBack = document.getElementById("oz_mine_back");
+    var mineBack = document.getElementById("av");
     if (mineBack) {
       mineBack.addEventListener("click", function () {
         ozClearReviewHash();
@@ -464,14 +464,14 @@
       var hid = ozHashId();
       if (hid) showMyReview(hid);
     });
-    var btn = document.getElementById("oz_mob_menu");
-    var topBar = document.getElementById("oz_mob_top");
-    var drawer = document.getElementById("oz_drawer");
+    var btn = document.getElementById("bm");
+    var topBar = document.getElementById("cg");
+    var drawer = document.getElementById("cn");
     function setDrawer(open) {
       if (!drawer || !btn) return;
-      drawer.classList.toggle("oz_open", open);
-      if (topBar) topBar.classList.toggle("oz_menu_open", open);
-      btn.classList.toggle("oz_is_open", open);
+      drawer.classList.toggle("dp", open);
+      if (topBar) topBar.classList.toggle("au", open);
+      btn.classList.toggle("ce", open);
       btn.textContent = open ? "×" : "☰";
       btn.setAttribute("aria-expanded", open ? "true" : "false");
       btn.setAttribute("aria-label", open ? "Закрыть меню" : "Меню");
@@ -479,7 +479,7 @@
     }
     if (btn && drawer) {
       btn.addEventListener("click", function () {
-        setDrawer(!drawer.classList.contains("oz_open"));
+        setDrawer(!drawer.classList.contains("dp"));
       });
       drawer.querySelectorAll("a").forEach(function (a) {
         a.addEventListener("click", function () {
@@ -487,9 +487,9 @@
         });
       });
     }
-    var cats = document.getElementById("oz_nav_cats");
-    var cPrev = document.getElementById("oz_cats_prev");
-    var cNext = document.getElementById("oz_cats_next");
+    var cats = document.getElementById("bn");
+    var cPrev = document.getElementById("ak");
+    var cNext = document.getElementById("aj");
     function updCats() {
       if (!cats || !cPrev || !cNext) return;
       cPrev.disabled = cats.scrollLeft <= 2;
@@ -506,8 +506,8 @@
       window.addEventListener("resize", updCats);
       updCats();
     }
-    document.querySelectorAll(".oz_foot_tog").forEach(function (btn) {
-      var block = btn.closest(".oz_foot_block");
+    document.querySelectorAll(".bi").forEach(function (btn) {
+      var block = btn.closest(".y");
       var panel = document.getElementById(btn.getAttribute("aria-controls"));
       function mob() {
         return window.matchMedia("(max-width:767px)").matches;
@@ -515,11 +515,11 @@
       function apply() {
         if (!block || !panel) return;
         if (mob()) {
-          var open = block.classList.contains("oz_open");
+          var open = block.classList.contains("dp");
           panel.hidden = !open;
           btn.setAttribute("aria-expanded", open ? "true" : "false");
         } else {
-          block.classList.add("oz_open");
+          block.classList.add("dp");
           panel.hidden = false;
           btn.setAttribute("aria-expanded", "true");
         }
@@ -527,11 +527,11 @@
       btn.addEventListener("click", function (e) {
         e.preventDefault();
         if (!mob() || !block) return;
-        block.classList.toggle("oz_open");
+        block.classList.toggle("dp");
         apply();
       });
       window.addEventListener("resize", apply);
-      if (mob()) block.classList.remove("oz_open");
+      if (mob()) block.classList.remove("dp");
       apply();
     });
     function isHomePage() {
@@ -542,7 +542,7 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (drawer) setDrawer(false);
     }
-    document.querySelectorAll(".oz_home_link").forEach(function (a) {
+    document.querySelectorAll(".ar").forEach(function (a) {
       a.addEventListener("click", function (e) {
         if (!window.matchMedia("(max-width:767px)").matches) return;
         if (isHomePage()) {

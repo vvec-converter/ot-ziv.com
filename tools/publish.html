@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Публикация отзыва — ot-ziv.com</title>
+<style>
+:root{--bg:#121417;--text:#e8eaed;--muted:#9aa0a6;--line:#2b3138;--accent:#3d7c47;--card:#1a1f24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:16px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:1.25rem;margin-bottom:8px}
+.lead{color:var(--muted);font-size:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+textarea,input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px}
+textarea{min-height:72px;resize:vertical}
+.row{margin-bottom:14px}
+.btn{display:inline-block;margin-top:8px;padding:12px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.btn:active{opacity:.9}
+.out{font-family:Consolas,monospace;font-size:13px;min-height:100px;white-space:pre-wrap}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+.ok{color:#a8e6b0;font-size:13px;margin-top:8px;display:none}
+.ok.dr{display:block}
+a{color:#8ab4f8}
+.steps{font-size:14px;margin:16px 0;padding-left:18px}
+.steps li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Публикация отзыва</h1>
+<p class="lead">Только для вас. Скопируйте <strong>одну строку</strong> из Google Таблицы → вставьте → получите JSON для GitHub.</p>
+<ol class="steps">
+<li>В таблице выделите строку отзыва (не заголовок) → Ctrl+C</li>
+<li>Вставьте ниже → «Сделать JSON»</li>
+<li>Скопируйте результат в <code>data/reviews.json</code> и id в <code>data/published.json</code> на GitHub</li>
+</ol>
+<div class="card">
+<div class="row">
+<label for="paste">Строка из таблицы</label>
+<textarea id="paste" placeholder="mrjkao6c355h5t		Услуги	333...	333...		5	теги	текст отзыва"></textarea>
+</div>
+<div class="row">
+<label for="date">Дата (если в таблице пусто)</label>
+<input type="date" id="date">
+</div>
+<button type="button" class="btn" id="go">Сделать JSON</button>
+<p class="ok dr" id="err" style="color:#f5a8a5;display:none"></p>
+</div>
+<div class="card">
+<label for="out_rev">Вставить в data/reviews.json (в массив [...])</label>
+<textarea class="out" id="out_rev" readonly></textarea>
+<button type="button" class="btn" id="cp_rev">Копировать</button>
+</div>
+<div class="card">
+<label for="out_id">Вставить в data/published.json</label>
+<textarea class="out" id="out_id" readonly style="min-height:48px"></textarea>
+<button type="button" class="btn" id="cp_id">Копировать id</button>
+<p class="note">В published.json массив id: добавьте в кавычках через запятую.</p>
+</div>
+<p class="note"><a href="/">← На главную</a> · <a href="/katalog/">Каталог</a></p>
+</div>
+<script>
+(function(){
+var dateIn=document.getElementById("date");
+dateIn.valueAsDate=new Date();
+function todayISO(){
+var d=new Date();
+return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function parseRow(raw){
+var parts=raw.trim().split(/\t/);
+while(parts.length<9)parts.push("");
+return{
+id:(parts[0]||"").trim(),
+date:(parts[1]||"").trim(),
+category:(parts[2]||"").trim(),
+name:(parts[3]||"").trim(),
+user:(parts[4]||"").trim(),
+mail:(parts[5]||"").trim(),
+rating:(parts[6]||"5").trim(),
+tags:(parts[7]||"").trim(),
+text:(parts[8]||"").trim()
+};
+}
+document.getElementById("go").addEventListener("click",function(){
+var err=document.getElementById("err");
+err.style.display="none";
+var raw=document.getElementById("paste").value;
+if(!raw.trim()){err.textContent="Вставьте строку из таблицы.";err.style.display="block";return;}
+var r=parseRow(raw);
+if(!r.id||!r.category||!r.name||!r.text){
+err.textContent="Не хватает данных (нужны минимум: id, категория, название, текст).";
+err.style.display="block";
+return;
+}
+if(!r.date)r.date=dateIn.value||todayISO();
+var obj={
+id:r.id,
+category:r.category,
+name:r.name,
+user:r.user||"Аноним",
+text:r.text,
+rating:+r.rating||5,
+tags:r.tags,
+date:r.date
+};
+if(r.mail)obj.mail=r.mail;
+document.getElementById("out_rev").value=JSON.stringify(obj,null,2);
+document.getElementById("out_id").value='"'+r.id+'"';
+});
+function cp(id,btn){
+btn.addEventListener("click",function(){
+var t=document.getElementById(id);
+t.select();
+navigator.clipboard.writeText(t.value).then(function(){
+var old=btn.textContent;
+btn.textContent="Скопировано ✓";
+setTimeout(function(){btn.textContent=old;},1500);
+});
+});
+}
+cp("out_rev",document.getElementById("cp_rev"));
+cp("out_id",document.getElementById("cp_id"));
+})();
+</script>
+</body>
+</html>
