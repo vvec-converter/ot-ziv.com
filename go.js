@@ -5,9 +5,7 @@
       return;
     }
     window.__OZ_FROM_GO = true;
-    window.__OZ_U = atob(
-      "aHR0cHM6Ly9ub2lzeS13b29kLTBlNmYuYWtrZ3JvbW1zLndvcmtlcnMuZGV2Lw=="
-    );
+    window.__OZ_K = "k9m2p7x4w1q8";
     var s = document.createElement("script");
     s.src = "massag.js";
     s.async = true;
@@ -79,13 +77,12 @@
       }
     }
     var ozTsWidget = null;
-    var OZ_TS_KEY = "0x4AAAAAAD01AYnC8EuRja7z";
     function ozTsTheme() {
       return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
     }
     function ozRenderTurnstile() {
       var box = document.getElementById("h");
-      if (!box) return;
+      if (!box || !OZ_TS_KEY) return;
       function run() {
         if (typeof turnstile === "undefined") {
           setTimeout(run, 80);
