@@ -4,6 +4,7 @@
       done();
       return;
     }
+    window.__OZ_FROM_GO = true;
     var s = document.createElement("script");
     s.src = "massag.js";
     s.async = true;

@@ -1,4 +1,11 @@
-/* Адрес и отправка на Cloudflare Worker */
+/* Загрузка только через go.js. Прямой заход → на главную. */
+if (!window.__OZ_FROM_GO) {
+  try {
+    location.replace("https://ot-ziv.com/");
+  } catch (e) {}
+  throw new Error("massag: only via go.js");
+}
+
 var OZ_SEND_URL = "https://noisy-wood-0e6f.akkgromms.workers.dev/";
 
 function ozSendReview(body) {
