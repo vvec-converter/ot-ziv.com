@@ -1,6 +1,0 @@
-User-agent: *
-Disallow: /massag.js
-Disallow: /messag.js
-Allow: /sitemap.xml
-
-Sitemap: https://ot-ziv.com/sitemap.xml
