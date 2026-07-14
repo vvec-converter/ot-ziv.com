@@ -1,12 +1,11 @@
-/* Загрузка только через go.js. Прямой заход → на главную. */
-if (!window.__OZ_FROM_GO) {
+if (!window.__OZ_FROM_GO || !window.__OZ_U) {
   try {
     location.replace("https://ot-ziv.com/");
   } catch (e) {}
-  throw new Error("massag: only via go.js");
+  throw new Error("blocked");
 }
 
-var OZ_SEND_URL = "https://noisy-wood-0e6f.akkgromms.workers.dev/";
+var OZ_SEND_URL = window.__OZ_U;
 
 function ozSendReview(body) {
   return fetch(OZ_SEND_URL, { method: "POST", body: body }).then(function (r) {

