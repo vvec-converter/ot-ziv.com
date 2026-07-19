@@ -63,7 +63,16 @@ html[data-theme="dark"] .at{display:block}
 .ci{display:grid;gap:14px;margin-bottom:20px;padding-bottom:8px}
 .oz-meta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 16px;font-size:14px;color:var(--e)}
 .oz-meta .g{font-size:18px;letter-spacing:1px;line-height:1}
-.oz-body{font-size:16px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin-bottom:24px}
+.oz-admin{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.oz-admin[hidden]{display:none!important}
+.oz-admin button,.oz-c-admin button{min-height:40px;padding:8px 14px;border:1px solid var(--f);border-radius:10px;background:#fff;color:var(--g);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.oz-admin button.danger,.oz-c-admin button.danger{border-color:#f5c6c2;color:#8a1f17;background:#fdecea}
+html[data-theme="dark"] .oz-admin button,html[data-theme="dark"] .oz-c-admin button{background:#232a31;border-color:var(--f);color:var(--g)}
+html[data-theme="dark"] .oz-admin button.danger,html[data-theme="dark"] .oz-c-admin button.danger{background:#2b1a18;border-color:#5c2b28;color:#f5a8a5}
+.oz-c-admin{display:flex;gap:8px;margin-top:8px}
+.oz-bar{margin-bottom:12px;padding:10px 12px;border-radius:10px;background:#e8f5ea;border:1px solid #b8dfc0;color:#1f5c2b;font-size:14px;font-weight:600}
+html[data-theme="dark"] .oz-bar{background:#1a2e1f;border-color:#3d7c47;color:#a8e6b0}
+.oz-bar[hidden]{display:none!important}
 .oz-miss{color:var(--e);font-size:15px;line-height:1.5;margin:8px 0 16px}
 .oz-comments{margin-top:8px;padding-top:18px;border-top:1px solid var(--f)}
 .oz-comments h2{font-size:1.05rem;font-weight:700;margin-bottom:14px}
@@ -271,6 +280,11 @@ body{padding:18px 16px calc(18px + var(--c))}
 <span id="oz-date"></span>
 </div>
 <div class="oz-body" id="oz-body" itemprop="reviewBody"></div>
+<div class="oz-bar" id="oz-admin-bar" hidden>Режим администратора</div>
+<div class="oz-admin" id="oz-admin-review" hidden>
+<button type="button" id="oz-edit-review">Изменить отзыв</button>
+<button type="button" class="danger" id="oz-del-review">Удалить отзыв</button>
+</div>
 <section class="oz-comments" aria-label="Комментарии">
 <h2>Комментарии</h2>
 <form class="oz-c-form" id="oz-c-form" action="#" method="post">
@@ -335,8 +349,12 @@ body{padding:18px 16px calc(18px + var(--c))}
 </div>
 <script>
 (function () {
+  var API = "https://noisy-wood-0e6f.akkgromms.workers.dev";
   var OZ_TS_KEY = "0x4AAAAAAD01AYnC8EuRja7z";
+  var TOKEN_KEY = "oz_admin_token";
   var ozTsWidget = null;
+  var currentReview = null;
+  var isAdmin = false;
 
   function esc(s) {
     return String(s || "")
@@ -372,6 +390,14 @@ body{padding:18px 16px calc(18px + var(--c))}
       });
     } catch (e) {
       return String(d);
+    }
+  }
+
+  function adminToken() {
+    try {
+      return sessionStorage.getItem(TOKEN_KEY) || "";
+    } catch (e) {
+      return "";
     }
   }
 
@@ -418,7 +444,13 @@ body{padding:18px 16px calc(18px + var(--c))}
     return byId || bySlug;
   }
 
+  function reviewIdForComments() {
+    if (currentReview && currentReview.id) return currentReview.id;
+    return "site";
+  }
+
   function fillAboutSite() {
+    currentReview = { id: "site", name: "ОТЗЫВ — ot-ziv.com", category: "", text: "", user: "", date: "", rating: 0 };
     var meta = document.getElementById("oz-meta");
     var title = document.getElementById("n");
     var body = document.getElementById("oz-body");
@@ -429,9 +461,12 @@ body{padding:18px 16px calc(18px + var(--c))}
         "Независимый сайт отзывов о товарах, местах, услугах и сайтах. Не имеет отношения к сервису otzovik.com.\n\nЗдесь можно оставить комментарий о самом сайте ot-ziv.com.";
     }
     document.title = "ОТЗЫВ — ot-ziv.com";
+    document.getElementById("oz-admin-review").hidden = true;
+    loadComments();
   }
 
   function fillReview(r) {
+    currentReview = r;
     var meta = document.getElementById("oz-meta");
     var title = document.getElementById("n");
     var cat = document.getElementById("oz-cat");
@@ -455,6 +490,63 @@ body{padding:18px 16px calc(18px + var(--c))}
     if (dateEl) dateEl.textContent = fmtDate(r.date);
     if (body) body.textContent = r.text || "";
     document.title = (r.name || "Отзыв") + " — ot-ziv.com";
+    updateAdminUi();
+    loadComments();
+  }
+
+  function updateAdminUi() {
+    var bar = document.getElementById("oz-admin-bar");
+    var box = document.getElementById("oz-admin-review");
+    if (bar) bar.hidden = !isAdmin;
+    if (box) {
+      box.hidden = !(isAdmin && currentReview && currentReview.id && currentReview.id !== "site");
+    }
+    document.querySelectorAll(".oz-c-admin").forEach(function (el) {
+      el.hidden = !isAdmin;
+    });
+  }
+
+  function renderComments(comments) {
+    var list = document.getElementById("oz-clist");
+    if (!list) return;
+    list.innerHTML = "";
+    (comments || []).forEach(function (c) {
+      if (!c) return;
+      var div = document.createElement("div");
+      div.className = "oz-c";
+      div.setAttribute("data-cid", c.id || "");
+      var adminBtns = isAdmin
+        ? '<div class="oz-c-admin"><button type="button" data-act="edit">Изменить</button><button type="button" class="danger" data-act="del">Удалить</button></div>'
+        : "";
+      div.innerHTML =
+        '<div class="oz-c-head"><span class="oz-c-name">' +
+        esc(c.user) +
+        '</span><span class="g" aria-label="' +
+        (+c.rating || 0) +
+        ' из 5">' +
+        stars(c.rating) +
+        "</span><span>" +
+        esc(fmtDate(c.date) || c.date || "") +
+        '</span></div><p class="oz-c-text">' +
+        esc(c.text) +
+        "</p>" +
+        adminBtns;
+      list.appendChild(div);
+    });
+  }
+
+  function loadComments() {
+    var rid = reviewIdForComments();
+    fetch(API + "/comments?review=" + encodeURIComponent(rid) + "&t=" + Date.now())
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (d) {
+        renderComments((d && d.comments) || []);
+      })
+      .catch(function () {
+        renderComments([]);
+      });
   }
 
   function loadReview() {
@@ -475,6 +567,30 @@ body{padding:18px 16px calc(18px + var(--c))}
         fillReview(r);
       })
       .catch(function () {});
+  }
+
+  function checkAdmin() {
+    var tok = adminToken();
+    if (!tok) {
+      isAdmin = false;
+      updateAdminUi();
+      return;
+    }
+    fetch(API + "/admin/me", { headers: { Authorization: "Bearer " + tok } })
+      .then(function (r) {
+        return r.json().then(function (d) {
+          return { ok: r.ok, d: d };
+        });
+      })
+      .then(function (x) {
+        isAdmin = !!(x.ok && x.d && x.d.ok);
+        updateAdminUi();
+        loadComments();
+      })
+      .catch(function () {
+        isAdmin = false;
+        updateAdminUi();
+      });
   }
 
   function ozTsTheme() {
@@ -504,21 +620,16 @@ body{padding:18px 16px calc(18px + var(--c))}
     }
     run();
   }
+
   var darkSwitch = document.getElementById("darkSwitch");
   if (darkSwitch) {
     var saved = localStorage.getItem("t");
     var dark = saved !== "light";
-    document.documentElement.setAttribute(
-      "data-theme",
-      dark ? "dark" : "light"
-    );
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
     darkSwitch.checked = dark;
     darkSwitch.addEventListener("change", function () {
       var on = darkSwitch.checked;
-      document.documentElement.setAttribute(
-        "data-theme",
-        on ? "dark" : "light"
-      );
+      document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
       localStorage.setItem("t", on ? "dark" : "light");
       ozRenderTurnstile();
     });
@@ -547,10 +658,160 @@ body{padding:18px 16px calc(18px + var(--c))}
   }
   wireFoot("j", "ao");
   wireFoot("f", "aq");
+
+  document.getElementById("oz-edit-review").addEventListener("click", function () {
+    if (!isAdmin || !currentReview || currentReview.id === "site") return;
+    var r = currentReview;
+    var name = prompt("Название", r.name || "");
+    if (name === null) return;
+    var category = prompt("Категория", r.category || "");
+    if (category === null) return;
+    var user = prompt("Автор", r.user || "");
+    if (user === null) return;
+    var text = prompt("Текст отзыва", r.text || "");
+    if (text === null) return;
+    var rating = prompt("Оценка 1–5", String(r.rating || 5));
+    if (rating === null) return;
+    var tok = adminToken();
+    fetch(API + "/admin/review", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + tok,
+      },
+      body: JSON.stringify({
+        action: "edit",
+        id: r.id,
+        name: name,
+        category: category,
+        user: user,
+        text: text,
+        rating: rating,
+        tags: r.tags || "",
+        date: r.date || "",
+        mail: r.mail || "",
+      }),
+    })
+      .then(function (res) {
+        return res.json().then(function (d) {
+          return { ok: res.ok, d: d };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          alert((x.d && x.d.error) || "Ошибка");
+          return;
+        }
+        alert("Сохранено. Обновите страницу через минуту.");
+        location.reload();
+      })
+      .catch(function () {
+        alert("Сеть недоступна");
+      });
+  });
+
+  document.getElementById("oz-del-review").addEventListener("click", function () {
+    if (!isAdmin || !currentReview || currentReview.id === "site") return;
+    if (!confirm("Удалить этот отзыв с сайта?")) return;
+    var tok = adminToken();
+    fetch(API + "/admin/review", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + tok,
+      },
+      body: JSON.stringify({ action: "delete", id: currentReview.id }),
+    })
+      .then(function (res) {
+        return res.json().then(function (d) {
+          return { ok: res.ok, d: d };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          alert((x.d && x.d.error) || "Ошибка");
+          return;
+        }
+        alert("Удалено.");
+        location.href = "/katalog/";
+      })
+      .catch(function () {
+        alert("Сеть недоступна");
+      });
+  });
+
+  document.getElementById("oz-clist").addEventListener("click", function (e) {
+    if (!isAdmin) return;
+    var btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+    var wrap = btn.closest(".oz-c");
+    if (!wrap) return;
+    var cid = wrap.getAttribute("data-cid");
+    var act = btn.getAttribute("data-act");
+    var tok = adminToken();
+    var rid = reviewIdForComments();
+    if (act === "del") {
+      if (!confirm("Удалить комментарий?")) return;
+      fetch(API + "/admin/comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + tok,
+        },
+        body: JSON.stringify({ action: "delete", review: rid, id: cid }),
+      })
+        .then(function (r) {
+          return r.json().then(function (d) {
+            return { ok: r.ok, d: d };
+          });
+        })
+        .then(function (x) {
+          if (!x.ok) alert((x.d && x.d.error) || "Ошибка");
+          else loadComments();
+        });
+      return;
+    }
+    if (act === "edit") {
+      var textEl = wrap.querySelector(".oz-c-text");
+      var nameEl = wrap.querySelector(".oz-c-name");
+      var user = prompt("Имя", nameEl ? nameEl.textContent : "");
+      if (user === null) return;
+      var text = prompt("Текст", textEl ? textEl.textContent : "");
+      if (text === null) return;
+      var rating = prompt("Оценка 1–5", "5");
+      if (rating === null) return;
+      fetch(API + "/admin/comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + tok,
+        },
+        body: JSON.stringify({
+          action: "edit",
+          review: rid,
+          id: cid,
+          user: user,
+          text: text,
+          rating: rating,
+        }),
+      })
+        .then(function (r) {
+          return r.json().then(function (d) {
+            return { ok: r.ok, d: d };
+          });
+        })
+        .then(function (x) {
+          if (!x.ok) alert((x.d && x.d.error) || "Ошибка");
+          else loadComments();
+        });
+    }
+  });
+
+  checkAdmin();
   loadReview();
   ozRenderTurnstile();
+
   var form = document.getElementById("oz-c-form");
-  var list = document.getElementById("oz-clist");
   var formErr = document.getElementById("bj");
   var ratingInput = document.getElementById("oz-c-rating");
   var starBtns = document.querySelectorAll("#oz-c-db .ds");
@@ -576,7 +837,7 @@ body{padding:18px 16px calc(18px + var(--c))}
   function hideErr() {
     if (formErr) formErr.classList.remove("dr");
   }
-  if (form && list) {
+  if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       hideErr();
@@ -593,36 +854,49 @@ body{padding:18px 16px calc(18px + var(--c))}
       var text = ((textEl && textEl.value) || "").trim();
       if (!name || !text) return;
       var rating = +((ratingInput && ratingInput.value) || 5) || 5;
-      var d = new Date();
-      var dd = String(d.getDate()).padStart(2, "0");
-      var mm = String(d.getMonth() + 1).padStart(2, "0");
-      var yyyy = d.getFullYear();
-      var div = document.createElement("div");
-      div.className = "oz-c";
-      div.innerHTML =
-        '<div class="oz-c-head"><span class="oz-c-name">' +
-        esc(name) +
-        '</span><span class="g" aria-label="' +
-        rating +
-        ' из 5">' +
-        stars(rating) +
-        "</span><span>" +
-        dd +
-        "." +
-        mm +
-        "." +
-        yyyy +
-        '</span></div><p class="oz-c-text">' +
-        esc(text) +
-        "</p>";
-      list.appendChild(div);
-      form.reset();
-      setStars(5);
-      if (ozTsWidget !== null && window.turnstile) {
-        try {
-          turnstile.reset(ozTsWidget);
-        } catch (ex) {}
-      }
+      var btn = form.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      fetch(API + "/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          review: reviewIdForComments(),
+          user: name,
+          text: text,
+          rating: rating,
+          "cf-turnstile-response": ts.value,
+          _gotcha: "",
+        }),
+      })
+        .then(function (r) {
+          return r.json().then(function (d) {
+            return { ok: r.ok, d: d };
+          });
+        })
+        .then(function (x) {
+          if (btn) btn.disabled = false;
+          if (!x.ok) {
+            showErr((x.d && x.d.error) || "Не удалось отправить");
+            if (ozTsWidget !== null && window.turnstile) {
+              try {
+                turnstile.reset(ozTsWidget);
+              } catch (ex) {}
+            }
+            return;
+          }
+          form.reset();
+          setStars(5);
+          if (ozTsWidget !== null && window.turnstile) {
+            try {
+              turnstile.reset(ozTsWidget);
+            } catch (ex) {}
+          }
+          loadComments();
+        })
+        .catch(function () {
+          if (btn) btn.disabled = false;
+          showErr("Сеть недоступна");
+        });
     });
   }
 })();
