@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Публикация отзыва — ot-ziv.com</title>
+<style>
+:root{--bg:#121417;--text:#e8eaed;--muted:#9aa0a6;--line:#2b3138;--accent:#3d7c47;--card:#1a1f24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:16px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:1.25rem;margin-bottom:8px}
+.lead{color:var(--muted);font-size:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+textarea,input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px}
+textarea{min-height:120px;resize:vertical}
+.row{margin-bottom:14px}
+.btn{display:inline-block;margin-top:8px;padding:12px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn:active{opacity:.9}
+.btn.sec{background:#2b3138}
+.out{font-family:Consolas,monospace;font-size:13px;min-height:100px;white-space:pre-wrap}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+a{color:#8ab4f8}
+.steps{font-size:14px;margin:16px 0;padding-left:18px}
+.steps li{margin-bottom:6px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.btns .btn{margin:0}
+#err{color:#f5a8a5;font-size:14px;margin-top:10px;display:none}
+#ok{color:#a8e6b0;font-size:14px;margin-top:10px;display:none}
+#results{display:none}
+</style>
+</head>
+<body>
+<div id="gate" style="max-width:420px;margin:40px auto;padding:16px;font-family:Segoe UI,system-ui,sans-serif;color:#e8eaed;background:#121417;min-height:40vh">
+<p>Проверка доступа…</p>
+<p style="color:#9aa0a6;font-size:14px;margin-top:8px">Нужен вход в <a href="/admin/" style="color:#8ab4f8">/admin/</a></p>
+</div>
+<div class="wrap" id="app" hidden>
+<h1>Публикация отзыва</h1>
+<p class="lead">Вставьте полученный отзыв <strong>целиком как скопировали</strong> — ничего не вырезайте и не правьте.</p>
+<ol class="steps">
+<li>Скопируйте блок вида <code>review:id {"id":"…",…}</code></li>
+<li>Вставьте ниже → «Сделать JSON»</li>
+<li>Объект → в <code>data/reviews.json</code></li>
+<li>id → в <code>data/published.json</code></li>
+<li>Ссылка → страница <code>otziv.html?id=…</code></li>
+</ol>
+<div class="card">
+<div class="row">
+<label for="paste">Полученный отзыв (вставить как есть)</label>
+<textarea id="paste" placeholder='review:mrrxw8ovoe7z79 {"id":"mrrxw8ovoe7z79","ts":1784474271527,"status":"moderation","category":"Товары","name":"Курсор","user":"Олег","mail":"","text":"Нормальный такой редактор","tags":"cursor, курсор,","rating":5}'></textarea>
+</div>
+<div class="row">
+<label for="date">Дата (если в отзыве нет ts)</label>
+<input type="date" id="date">
+</div>
+<button type="button" class="btn" id="go">Сделать JSON</button>
+<p id="err"></p>
+<p id="ok"></p>
+</div>
+<div id="results">
+<div class="card">
+<label for="out_rev">1. Вставить в data/reviews.json</label>
+<textarea class="out" id="out_rev" readonly></textarea>
+<div class="btns">
+<button type="button" class="btn" id="cp_rev">Копировать JSON</button>
+</div>
+</div>
+<div class="card">
+<label for="out_id">2. Вставить в data/published.json (тот же объект в массив)</label>
+<textarea class="out" id="out_id" readonly></textarea>
+<div class="btns">
+<button type="button" class="btn" id="cp_id">Копировать для published.json</button>
+</div>
+<p class="note">Вставьте объект в массив <code>[...]</code>. Поле <code>name</code> — заголовок на otziv.html; ссылка строится как <code>?id=cursor</code> из name.</p>
+</div>
+<div class="card">
+<label for="out_url">3. Ссылка на otziv.html</label>
+<textarea class="out" id="out_url" readonly style="min-height:48px"></textarea>
+<div class="btns">
+<button type="button" class="btn" id="cp_url">Копировать ссылку</button>
+<a class="btn sec" id="open_url" href="#" target="_blank" rel="noopener" hidden>Открыть</a>
+</div>
+</div>
+</div>
+<p class="note"><a href="/admin/">Админ</a> · <a href="/">← На главную</a> · <a href="/katalog/">Каталог</a> · <a href="/otziv.html">otziv.html</a></p>
+</div>
+<script>
+(function () {
+  var API = "https://noisy-wood-0e6f.akkgromms.workers.dev";
+  var TOKEN_KEY = "oz_admin_token";
+  function token() {
+    try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
+  }
+  function deny() {
+    location.replace("/admin/");
+  }
+  var t = token();
+  if (!t) { deny(); return; }
+  fetch(API + "/admin/me", { headers: { Authorization: "Bearer " + t } })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (x) {
+      if (!x.ok || !x.d || !x.d.ok) { deny(); return; }
+      var gate = document.getElementById("gate");
+      var app = document.getElementById("app");
+      if (gate) gate.hidden = true;
+      if (app) app.hidden = false;
+      bootPublish();
+    })
+    .catch(function () { deny(); });
+
+  function bootPublish() {
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function todayISO() {
+    var d = new Date();
+    return (
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
+  }
+
+  function dateFromTs(ts) {
+    var n = Number(ts);
+    if (!n || isNaN(n)) return "";
+    var d = new Date(n);
+    if (isNaN(d.getTime())) return "";
+    return (
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
+  }
+
+  function pageOrigin() {
+    try {
+      if (location.protocol === "http:" || location.protocol === "https:")
+        return location.origin;
+    } catch (e) {}
+    return "https://ot-ziv.com";
+  }
+
+  function showErr(msg) {
+    var err = $("err");
+    var ok = $("ok");
+    if (ok) ok.style.display = "none";
+    if (!err) {
+      alert(msg);
+      return;
+    }
+    err.textContent = msg;
+    err.style.display = "block";
+  }
+
+  function showOk(msg) {
+    var err = $("err");
+    var ok = $("ok");
+    if (err) {
+      err.style.display = "none";
+      err.textContent = "";
+    }
+    if (!ok) return;
+    ok.textContent = msg;
+    ok.style.display = "block";
+  }
+
+  function normalizePaste(raw) {
+    return String(raw || "")
+      .replace(/^\uFEFF/, "")
+      .replace(/[\u201C\u201D\u201E\u00AB\u00BB]/g, '"')
+      .replace(/[\u2018\u2019]/g, "'")
+      .trim();
+  }
+
+  /** Вставка как есть: review:id {...} */
+  function parseIncoming(raw) {
+    var s = normalizePaste(raw);
+    if (!s) return { error: "Вставьте полученный отзыв целиком." };
+
+    var i = s.indexOf("{");
+    var j = s.lastIndexOf("}");
+    if (i === -1 || j <= i) {
+      return {
+        error:
+          'Не найден JSON {...}. Вставьте целиком, например: review:id {"id":"…",…}',
+      };
+    }
+
+    var jsonStr = s.slice(i, j + 1);
+    var data;
+    try {
+      data = JSON.parse(jsonStr);
+    } catch (e) {
+      return {
+        error:
+          "JSON не разобрался. Вставьте текст без правок, как пришёл. " +
+          (e && e.message ? e.message : ""),
+      };
+    }
+    if (!data || typeof data !== "object") {
+      return { error: "Внутри {...} нет объекта отзыва." };
+    }
+
+    var prefixId = "";
+    var head = s.slice(0, i).trim();
+    var m = head.match(/review\s*:\s*([^\s]+)/i);
+    if (m) prefixId = m[1].trim();
+
+    var id = String(data.id || prefixId || "").trim();
+    var category = String(data.category || "").trim();
+    var name = String(data.name || "").trim();
+    var text = String(data.text || "").trim();
+
+    if (!id || !category || !name || !text) {
+      return {
+        error: "В JSON не хватает полей (нужны id, category, name, text).",
+      };
+    }
+
+    return {
+      ok: true,
+      id: id,
+      category: category,
+      name: name,
+      user: String(data.user || "").trim(),
+      mail: String(data.mail || "").trim(),
+      text: text,
+      tags: String(data.tags || "").trim(),
+      rating: data.rating,
+      ts: data.ts,
+    };
+  }
+
+  function makeJson() {
+    try {
+      var raw = $("paste") ? $("paste").value : "";
+      var parsed = parseIncoming(raw);
+      if (!parsed || parsed.error) {
+        showErr((parsed && parsed.error) || "Не удалось разобрать.");
+        return;
+      }
+
+      var dateEl = $("date");
+      var dateFallback =
+        (dateEl && dateEl.value) || todayISO();
+
+      var obj = {
+        id: parsed.id,
+        category: parsed.category,
+        name: parsed.name,
+        user: parsed.user || "Аноним",
+        text: parsed.text,
+        rating: Math.min(5, Math.max(1, parseInt(parsed.rating, 10) || 5)),
+        tags: parsed.tags,
+        date: dateFromTs(parsed.ts) || dateFallback,
+      };
+      if (parsed.mail) obj.mail = parsed.mail;
+
+      $("out_rev").value = JSON.stringify(obj, null, 2);
+      $("out_id").value = JSON.stringify(obj, null, 2);
+
+      var slug = String(obj.name || "")
+        .trim()
+        .toLowerCase()
+        .replace(/ё/g, "е")
+        .replace(/[^a-z0-9а-я]+/gi, "-")
+        .replace(/^-+|-+$/g, "");
+      var urlKey = slug || parsed.id;
+      var url =
+        pageOrigin() + "/otziv.html?id=" + encodeURIComponent(urlKey);
+      $("out_url").value = url;
+
+      var openBtn = $("open_url");
+      if (openBtn) {
+        openBtn.href = url;
+        openBtn.removeAttribute("hidden");
+      }
+
+      var results = $("results");
+      if (results) {
+        results.style.display = "block";
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      showOk("Готово. Скопируйте блоки ниже в GitHub.");
+    } catch (e) {
+      showErr("Ошибка: " + (e && e.message ? e.message : String(e)));
+    }
+  }
+
+  try {
+    var dateIn = $("date");
+    if (dateIn) {
+      try {
+        dateIn.valueAsDate = new Date();
+      } catch (e1) {
+        dateIn.value = todayISO();
+      }
+    }
+  } catch (e2) {}
+
+  var go = $("go");
+  if (go) go.addEventListener("click", makeJson);
+
+  function cp(id, btnId) {
+    var btn = $(btnId);
+    if (!btn) return;
+    btn.addEventListener("click", function () {
+      var t = $(id);
+      if (!t || !t.value) return;
+      t.select();
+      function done() {
+        var old = btn.textContent;
+        btn.textContent = "Скопировано ✓";
+        setTimeout(function () {
+          btn.textContent = old;
+        }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t.value).then(done).catch(function () {
+          try {
+            document.execCommand("copy");
+            done();
+          } catch (e) {}
+        });
+      } else {
+        try {
+          document.execCommand("copy");
+          done();
+        } catch (e) {}
+      }
+    });
+  }
+  cp("out_rev", "cp_rev");
+  cp("out_id", "cp_id");
+  cp("out_url", "cp_url");
+  }
+})();
+</script>
+</body>
+</html>

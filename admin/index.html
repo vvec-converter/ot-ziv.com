@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Вход — ot-ziv.com</title>
+<style>
+:root{--bg:#121417;--text:#e8eaed;--muted:#9aa0a6;--line:#2b3138;--accent:#3d7c47;--card:#1a1f24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:16px}
+.wrap{max-width:420px;margin:40px auto}
+h1{font-size:1.25rem;margin-bottom:8px}
+.lead{color:var(--muted);font-size:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:15px;margin-bottom:14px}
+.btn{display:inline-block;width:100%;padding:12px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:default}
+.btn.sec{background:#2b3138;margin-top:8px}
+.err{color:#f5a8a5;font-size:14px;margin-top:10px;display:none}
+.ok{color:#a8e6b0;font-size:14px;margin-top:10px;display:none}
+.bc{min-height:70px;margin:8px 0 14px;display:flex;justify-content:center}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+a{color:#8ab4f8}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Вход</h1>
+<p class="lead">Только для администрации сайта.</p>
+
+<div class="card" id="step1">
+<label for="user">Логин</label>
+<input id="user" autocomplete="username" maxlength="64">
+<label for="pass">Пароль</label>
+<input id="pass" type="password" autocomplete="current-password" maxlength="128">
+<div id="h" class="bc"></div>
+<button type="button" class="btn" id="go1">Далее</button>
+<p class="err" id="err1"></p>
+</div>
+
+<div class="card" id="step2" hidden>
+<label for="code">Код подтверждения</label>
+<input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+<button type="button" class="btn" id="go2">Войти</button>
+<button type="button" class="btn sec" id="back">Назад</button>
+<p class="err" id="err2"></p>
+<p class="ok" id="ok2"></p>
+</div>
+
+<div class="card" id="step3" hidden>
+<p class="ok" style="display:block">Готово.</p>
+<a class="btn" href="/tools/publish.html" style="display:block;text-align:center;text-decoration:none;margin-top:14px">Продолжить</a>
+<button type="button" class="btn sec" id="logout">Выйти</button>
+</div>
+
+<p class="note"><a href="/">← На сайт</a></p>
+</div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+(function () {
+  var API = "https://noisy-wood-0e6f.akkgromms.workers.dev";
+  var OZ_TS_KEY = "0x4AAAAAAD01AYnC8EuRja7z";
+  var TOKEN_KEY = "oz_admin_token";
+  var challenge = "";
+  var widget = null;
+
+  function $(id) { return document.getElementById(id); }
+  function showErr(id, msg) {
+    var el = $(id);
+    el.textContent = msg || "";
+    el.style.display = msg ? "block" : "none";
+  }
+  function theme() {
+    return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  }
+  function renderTs() {
+    var box = $("h");
+    if (!box) return;
+    function run() {
+      if (typeof turnstile === "undefined") { setTimeout(run, 80); return; }
+      if (widget !== null) {
+        try { turnstile.remove(widget); } catch (e) {}
+        widget = null;
+        box.innerHTML = "";
+      }
+      widget = turnstile.render(box, { sitekey: OZ_TS_KEY, theme: theme() });
+    }
+    run();
+  }
+  function token() {
+    try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
+  }
+  function setToken(t) {
+    try {
+      if (t) sessionStorage.setItem(TOKEN_KEY, t);
+      else sessionStorage.removeItem(TOKEN_KEY);
+    } catch (e) {}
+  }
+  function showStep(n) {
+    $("step1").hidden = n !== 1;
+    $("step2").hidden = n !== 2;
+    $("step3").hidden = n !== 3;
+  }
+
+  function checkMe() {
+    var t = token();
+    if (!t) { showStep(1); renderTs(); return; }
+    fetch(API + "/admin/me", {
+      headers: { Authorization: "Bearer " + t },
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (x) {
+        if (x.ok && x.d && x.d.ok) showStep(3);
+        else { setToken(""); showStep(1); renderTs(); }
+      })
+      .catch(function () { showStep(1); renderTs(); });
+  }
+
+  $("go1").addEventListener("click", function () {
+    showErr("err1", "");
+    var tsEl = document.querySelector("[name='cf-turnstile-response']");
+    var ts = tsEl && tsEl.value;
+    if (!ts) { showErr("err1", "Пройдите проверку Cloudflare."); return; }
+    var user = $("user").value.trim();
+    var pass = $("pass").value;
+    if (!user || !pass) { showErr("err1", "Введите логин и пароль."); return; }
+    $("go1").disabled = true;
+    fetch(API + "/admin/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: user,
+        password: pass,
+        "cf-turnstile-response": ts,
+      }),
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (x) {
+        $("go1").disabled = false;
+        if (!x.ok) {
+          showErr("err1", (x.d && x.d.error) || "Ошибка входа");
+          if (widget !== null && window.turnstile) try { turnstile.reset(widget); } catch (e) {}
+          return;
+        }
+        challenge = x.d.challenge;
+        showStep(2);
+        $("code").focus();
+      })
+      .catch(function () {
+        $("go1").disabled = false;
+        showErr("err1", "Сеть недоступна");
+      });
+  });
+
+  $("go2").addEventListener("click", function () {
+    showErr("err2", "");
+    $("ok2").style.display = "none";
+    var code = $("code").value.trim();
+    if (!code || !challenge) { showErr("err2", "Введите код из письма."); return; }
+    $("go2").disabled = true;
+    fetch(API + "/admin/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ challenge: challenge, code: code }),
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (x) {
+        $("go2").disabled = false;
+        if (!x.ok) {
+          showErr("err2", (x.d && x.d.error) || "Неверный код");
+          return;
+        }
+        setToken(x.d.token);
+        showStep(3);
+      })
+      .catch(function () {
+        $("go2").disabled = false;
+        showErr("err2", "Сеть недоступна");
+      });
+  });
+
+  $("back").addEventListener("click", function () {
+    challenge = "";
+    showStep(1);
+    renderTs();
+  });
+
+  $("logout").addEventListener("click", function () {
+    var t = token();
+    if (t) {
+      fetch(API + "/admin/logout", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + t },
+      }).catch(function () {});
+    }
+    setToken("");
+    challenge = "";
+    showStep(1);
+    renderTs();
+  });
+
+  checkMe();
+})();
+</script>
+</body>
+</html>
