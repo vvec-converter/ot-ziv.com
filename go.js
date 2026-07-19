@@ -216,6 +216,29 @@
         return pub;
       });
     }
+    function ozReviewPublicUrl(item) {
+      if (!item) return "/otziv.html";
+      var name = String(item.name || "").trim();
+      var slug = name
+        .toLowerCase()
+        .replace(/ё/g, "е")
+        .replace(/[^a-z0-9а-я]+/gi, "-")
+        .replace(/^-+|-+$/g, "");
+      var key = slug || item.id || "";
+      return "/otziv.html?id=" + encodeURIComponent(key);
+    }
+    function ozSetViewLink(item, published) {
+      var a = document.getElementById("oz-view-pub");
+      if (!a) return;
+      if (!published || !item || !item.id) {
+        a.hidden = true;
+        a.style.display = "none";
+        return;
+      }
+      a.href = ozReviewPublicUrl(item);
+      a.hidden = false;
+      a.style.display = "block";
+    }
     function ozSetModBadge(badge, published) {
       if (!badge) return;
       if (published) {
@@ -239,9 +262,11 @@
         if (badge) badge.hidden = false;
         if (box) box.hidden = false;
         ozSetModBadge(badge, !!(item && item.published));
-        if (item && !item.published) {
+        ozSetViewLink(item, !!(item && item.published));
+        if (item) {
           ozCheckPublished(item).then(function (pub) {
             ozSetModBadge(badge, pub);
+            ozSetViewLink(item, pub);
           });
         }
       } else {
@@ -251,6 +276,7 @@
         }
         if (empty) empty.hidden = false;
         if (badge) badge.hidden = true;
+        ozSetViewLink(null, false);
       }
       showStep("mine");
       if (typeof setDrawer === "function") setDrawer(false);
