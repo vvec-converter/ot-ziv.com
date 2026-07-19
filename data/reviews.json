@@ -1,4 +1,5 @@
-[{
+[
+  {
     "id": "mrrxw8ovoe7z79",
     "category": "Товары",
     "name": "Курсор",
@@ -7,4 +8,15 @@
     "rating": 5,
     "tags": "cursor, курсор,",
     "date": "2026-07-19"
-  }]
+  },
+  {
+    "id": "mrs6mz1j5a97vm",
+    "category": "Сайты",
+    "name": "VVC CONVERTER",
+    "user": "Oleg",
+    "text": "Реально конвертирует в кодек vvc я очень рад что смог найти бесплатную\nи нормальную программу на сайте https://vvcconvert.com",
+    "rating": 5,
+    "tags": "vvcconvert,vvcconverter,vvccodec,h266",
+    "date": "2026-07-19"
+  }
+]
