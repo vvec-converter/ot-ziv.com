@@ -72,7 +72,7 @@ html[data-theme="dark"] .at{display:block}
 .oz-c-head{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;margin-bottom:6px;font-size:13px;color:var(--e)}
 .oz-c-name{font-weight:600;color:var(--g);font-size:14px}
 .oz-c-text{font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
-.oz-c-form{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.oz-c-form{margin-top:0;margin-bottom:18px;display:flex;flex-direction:column;gap:10px}
 .oz-c-form label{font-size:14px;font-weight:600;color:#333}
 .oz-c-form input:not([name="_gotcha"]),.oz-c-form textarea{width:100%;min-height:48px;padding:12px 14px;border:1px solid var(--f);border-radius:12px;font-size:16px;font-family:inherit;background:#f8f9fa;color:var(--g)}
 .oz-c-form textarea{min-height:110px;resize:vertical;line-height:1.45}
@@ -273,7 +273,6 @@ body{padding:18px 16px calc(18px + var(--c))}
 <div class="oz-body" id="oz-body" itemprop="reviewBody"></div>
 <section class="oz-comments" aria-label="Комментарии">
 <h2>Комментарии</h2>
-<div id="oz-clist"></div>
 <form class="oz-c-form" id="oz-c-form" action="#" method="post">
 <label class="dx" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="bj" id="bj" role="alert"></div>
@@ -296,6 +295,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 </div>
 <button type="submit">Отправить комментарий</button>
 </form>
+<div id="oz-clist"></div>
 </section>
 </article>
 </div>
