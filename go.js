@@ -208,7 +208,10 @@
       if (!item || !item.id) return Promise.resolve(false);
       if (item.published) return Promise.resolve(true);
       return ozFetchPublished().then(function (ids) {
-        var pub = ids.indexOf(item.id) >= 0;
+        var pub = ids.some(function (x) {
+          if (typeof x === "string") return x === item.id;
+          return x && x.id === item.id;
+        });
         if (pub) ozMarkPublished(item.id);
         return pub;
       });
