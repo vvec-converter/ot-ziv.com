@@ -76,6 +76,24 @@
         setTimeout(ozRenderTurnstile, 150);
       }
     }
+    var catSelect = document.getElementById("r");
+    document.querySelectorAll("a[data-cat]").forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var cat = a.getAttribute("data-cat") || "";
+        if (!catSelect || !cat) return;
+        showStep("form");
+        catSelect.value = cat;
+        try {
+          catSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        } catch (err) {}
+        setTimeout(function () {
+          try {
+            catSelect.focus();
+          } catch (err2) {}
+        }, 80);
+      });
+    });
     var ozTsWidget = null;
     function ozTsTheme() {
       return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
