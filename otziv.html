@@ -209,6 +209,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 <nav aria-label="Меню">
 <a href="index.html">Главная</a>
 <a href="index.html#">Мой отзыв</a>
+<a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
 <form class="cr" id="af" action="https://ot-ziv.com/search/" method="get" role="search">
@@ -231,6 +232,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 <nav id="ch" aria-label="Верхнее меню">
 <a href="index.html">Главная</a>
 <a href="index.html#">Мой отзыв</a>
+<a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
 </div>
@@ -329,10 +331,8 @@ body{padding:18px 16px calc(18px + var(--c))}
 </footer>
 <nav class="cu" id="cu" aria-label="Быстрая навигация">
 <a href="index.html" class="dy ar" id="bv">Главная</a>
-<a href="https://ot-ziv.com/katalog/">Каталог</a>
-<a href="https://ot-ziv.com/napisat-otziv/">Пост</a>
-<a href="https://ot-ziv.com/stati/">Статьи</a>
-<a href="https://ot-ziv.com/login/">Кабинет</a>
+<a href="index.html#">Мой отзыв</a>
+<a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
 <script>
@@ -721,7 +721,7 @@ body{padding:18px 16px calc(18px + var(--c))}
           return;
         }
         alert("Удалено.");
-        location.href = "/katalog/";
+        location.href = "/otzyvy.html";
       })
       .catch(function () {
         alert("Сеть недоступна");
