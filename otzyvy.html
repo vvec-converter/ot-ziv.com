@@ -45,6 +45,11 @@ html[data-theme="dark"] .at{display:block}
 .oz-list-name{font-size:16px;font-weight:700;margin-bottom:4px}
 .oz-list-meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;color:var(--e)}
 .oz-list .g{color:#ffb300;letter-spacing:1px}
+.oz-cats{list-style:none;margin:0;padding:0}
+.oz-cats li{border-bottom:1px solid var(--f)}
+.oz-cats li:last-child{border-bottom:none}
+.oz-cats a{display:block;padding:16px 0;font-size:17px;font-weight:700;color:var(--g);text-decoration:none}
+.oz-back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
 .oz-empty{color:var(--e);font-size:15px;padding:8px 0}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i)}
 .cu a{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--e);text-decoration:none;min-height:var(--i)}
@@ -62,7 +67,7 @@ html[data-theme="dark"]{color-scheme:dark}
 html[data-theme="dark"] body{background:#12151a;color:#e8eaed}
 html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .cu{background:#1a1f26;border-color:#2a313a}
 html[data-theme="dark"] .bm{background:#232a31;border-color:#2a313a;color:#e8eaed}
-html[data-theme="dark"] .cn a,html[data-theme="dark"] .oz-list a{color:#e8eaed;border-color:#2a313a}
+html[data-theme="dark"] .cn a,html[data-theme="dark"] .oz-list a,html[data-theme="dark"] .oz-cats a{color:#e8eaed;border-color:#2a313a}
 html[data-theme="dark"] .oz-list-name{color:#e8eaed}
 @media(min-width:768px){
 :root{--h:24px;--k:820px}
@@ -119,10 +124,17 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <main class="dn">
 <div class="da">
 <article class="dd">
-<h1>Отзывы</h1>
-<p class="dl">Опубликованные отзывы. Нажмите, чтобы открыть.</p>
-<ul class="oz-list" id="oz-list"></ul>
-<p class="oz-empty" id="oz-empty" hidden>Пока нет опубликованных отзывов.</p>
+<a class="oz-back" id="oz-back" href="otzyvy.html" hidden>← Все категории</a>
+<h1 id="oz-title">Отзывы</h1>
+<p class="dl" id="oz-lead">Выберите категорию</p>
+<ul class="oz-cats" id="oz-cats">
+<li><a href="otzyvy.html?c=tovary">Товары</a></li>
+<li><a href="otzyvy.html?c=mesta">Места</a></li>
+<li><a href="otzyvy.html?c=uslugi">Услуги</a></li>
+<li><a href="otzyvy.html?c=sajty">Сайты</a></li>
+</ul>
+<ul class="oz-list" id="oz-list" hidden></ul>
+<p class="oz-empty" id="oz-empty" hidden>В этой категории пока нет отзывов.</p>
 </article>
 </div>
 </main>
@@ -134,6 +146,13 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 </div>
 <script>
 (function () {
+  var CATS = {
+    tovary: "Товары",
+    mesta: "Места",
+    uslugi: "Услуги",
+    sajty: "Сайты",
+  };
+
   function esc(s) {
     return String(s || "")
       .replace(/&/g, "&amp;")
@@ -171,6 +190,14 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     var key = slugify(r.name) || r.id || "";
     return "otziv.html?id=" + encodeURIComponent(key);
   }
+  function getCat() {
+    try {
+      var c = (new URLSearchParams(location.search).get("c") || "").trim().toLowerCase();
+      return CATS[c] ? c : "";
+    } catch (e) {
+      return "";
+    }
+  }
 
   var darkSwitch = document.getElementById("darkSwitch");
   if (darkSwitch) {
@@ -195,8 +222,27 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     });
   }
 
+  var catKey = getCat();
+  var catName = catKey ? CATS[catKey] : "";
+  var catsEl = document.getElementById("oz-cats");
   var listEl = document.getElementById("oz-list");
   var emptyEl = document.getElementById("oz-empty");
+  var backEl = document.getElementById("oz-back");
+  var titleEl = document.getElementById("oz-title");
+  var leadEl = document.getElementById("oz-lead");
+
+  if (!catKey) {
+    document.title = "Отзывы — ot-ziv.com";
+    return;
+  }
+
+  if (catsEl) catsEl.hidden = true;
+  if (listEl) listEl.hidden = false;
+  if (backEl) backEl.hidden = false;
+  if (titleEl) titleEl.textContent = catName;
+  if (leadEl) leadEl.textContent = "Отзывы в категории. Нажмите, чтобы открыть.";
+  document.title = catName + " — ot-ziv.com";
+
   fetch("data/published.json?t=" + Date.now())
     .then(function (r) {
       if (!r.ok) throw new Error("load");
@@ -206,9 +252,9 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
       var items = Array.isArray(data) ? data : [];
       items = items
         .map(function (item) {
-          if (!item) return null;
-          if (typeof item === "string") return null;
+          if (!item || typeof item === "string") return null;
           if (!item.name || !item.text) return null;
+          if (String(item.category || "").trim() !== catName) return null;
           return item;
         })
         .filter(Boolean)
@@ -224,9 +270,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
             esc(reviewHref(r)) +
             '"><div class="oz-list-name">' +
             esc(r.name) +
-            '</div><div class="oz-list-meta"><span>' +
-            esc(r.category || "") +
-            '</span><span class="g" aria-label="' +
+            '</div><div class="oz-list-meta"><span class="g" aria-label="' +
             (+r.rating || 0) +
             ' из 5">' +
             stars(r.rating) +
