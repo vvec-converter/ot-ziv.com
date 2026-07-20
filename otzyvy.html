@@ -9,7 +9,7 @@
 <link rel="canonical" href="https://ot-ziv.com/otzyvy.html">
 <title>Отзывы — ot-ziv.com</title>
 <style>
-:root{--j:#f0f2f5;--g:#1a1a1a;--e:#666;--f:#dde1e6;--b:#3d7c47;--a:#2f6337;--h:16px;--k:100%;--i:58px;--c:env(safe-area-inset-bottom,0px)}
+:root{--j:#f0f2f5;--g:#1a1a1a;--e:#666;--f:#dde1e6;--b:#3d7c47;--a:#2f6337;--h:16px;--k:100%;--i:58px;--c:env(safe-area-inset-bottom,0px);--d:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{overflow-x:hidden}
 body{overflow-x:hidden;font-family:Segoe UI,system-ui,-apple-system,sans-serif;background:var(--j);color:var(--g);line-height:1.5;font-size:16px;padding-bottom:calc(var(--i) + var(--c))}
@@ -61,13 +61,13 @@ html[data-theme="dark"] .at{display:block}
 html[data-theme="dark"] .cu a{color:#f1f3f4}
 html[data-theme="dark"] .cu a.dy{color:#8fd99a}
 html[data-theme="dark"] .cu a:active{background:#232a31}
-.ag{padding:8px var(--h) 0}
-.d{display:flex;justify-content:flex-end}
+.ag{display:flex;justify-content:flex-end;padding:calc(6px + var(--d)) var(--h) 2px}
+.d{display:flex;justify-content:flex-end;margin:0}
 .form-group{margin:0}
 .form-switch{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--e);cursor:pointer;user-select:none}
 .form-switch input{position:absolute;opacity:0;width:0;height:0}
-.form-icon{width:36px;height:20px;border-radius:999px;background:#c5ccd3;position:relative;flex:none}
-.form-icon::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.form-icon{display:inline-block;width:40px;height:24px;border-radius:999px;background:var(--f);position:relative;transition:background .2s;flex:none}
+.form-icon::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
 .form-switch input:checked+.form-icon{background:var(--b)}
 .form-switch input:checked+.form-icon::after{transform:translateX(16px)}
 html[data-theme="dark"]{color-scheme:dark}
