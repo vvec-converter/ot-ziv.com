@@ -145,15 +145,14 @@ html[data-theme="dark"] .bm{background:#232a31;border-color:var(--f);color:var(-
 html[data-theme="dark"] .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 html[data-theme="dark"] .w{color:#c9cdd2}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
-.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:var(--e);text-align:center;line-height:1.15}
-.cu a::before{font-size:17px;line-height:1;opacity:.85}
-.cu a:nth-child(1)::before{content:"⌂"}
-.cu a:nth-child(2)::before{content:"☰"}
-.cu a:nth-child(3)::before{content:"✎"}
-.cu a:nth-child(4)::before{content:"≡"}
-.cu a:nth-child(5)::before{content:"◎"}
+.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#666;text-align:center;line-height:1.15;text-decoration:none}
+.cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
+.cu a span{display:block}
 .cu a.dy{color:var(--b)}
 .cu a:active{background:#f5f6f8}
+html[data-theme="dark"] .cu a{color:#fff}
+html[data-theme="dark"] .cu a.dy{color:var(--b)}
+html[data-theme="dark"] .cu a:active{background:#232a31}
 .am,.v{display:none}
 @media(min-width:768px){
 :root{--h:24px;--k:820px}
@@ -220,7 +219,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 </div>
 <div class="cn" id="cn" aria-hidden="true">
 <nav aria-label="Меню">
-<a href="#" class="cq">Мой отзыв</a>
+<a href="#mine" class="cq">Мой отзыв</a>
 <a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
@@ -243,7 +242,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 <div class="da">
 <nav id="ch" aria-label="Верхнее меню">
 <a href="https://ot-ziv.com/" class="dy">Главная</a>
-<a href="#" class="cq">Мой отзыв</a>
+<a href="#mine" class="cq">Мой отзыв</a>
 <a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
@@ -381,9 +380,18 @@ body{padding:18px 16px calc(18px + var(--c))}
 </div>
 </footer>
 <nav class="cu" id="cu" aria-label="Быстрая навигация">
-<a href="https://ot-ziv.com/" class="dy ar" id="bv">Главная</a>
-<a href="#" class="cq">Мой отзыв</a>
-<a href="otzyvy.html">Отзывы</a>
+<a href="https://ot-ziv.com/" class="dy ar" id="bv">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+<span>Главная</span>
+</a>
+<a href="#mine" class="cq">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+<span>Мой отзыв</span>
+</a>
+<a href="otzyvy.html">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+<span>Отзывы</span>
+</a>
 </nav>
 </div>
 <script src="go.js"></script>

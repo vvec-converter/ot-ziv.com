@@ -51,9 +51,15 @@ html[data-theme="dark"] .at{display:block}
 .oz-cats a{display:block;padding:16px 0;font-size:17px;font-weight:700;color:var(--g);text-decoration:none}
 .oz-back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
 .oz-empty{color:var(--e);font-size:15px;padding:8px 0}
-.cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i)}
-.cu a{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--e);text-decoration:none;min-height:var(--i)}
+.cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#666;text-align:center;line-height:1.15;text-decoration:none}
+.cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
+.cu a span{display:block}
 .cu a.dy{color:var(--b)}
+.cu a:active{background:#f5f6f8}
+html[data-theme="dark"] .cu a{color:#fff}
+html[data-theme="dark"] .cu a.dy{color:var(--b)}
+html[data-theme="dark"] .cu a:active{background:#232a31}
 .ag{padding:8px var(--h) 0}
 .d{display:flex;justify-content:flex-end}
 .form-group{margin:0}
@@ -107,7 +113,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <div class="cn" id="cn" aria-hidden="true">
 <nav aria-label="Меню">
 <a href="index.html">Главная</a>
-<a href="index.html#">Мой отзыв</a>
+<a href="index.html#mine">Мой отзыв</a>
 <a href="otzyvy.html" class="dy">Отзывы</a>
 </nav>
 </div>
@@ -116,7 +122,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <div class="da">
 <nav aria-label="Верхнее меню">
 <a href="index.html">Главная</a>
-<a href="index.html#">Мой отзыв</a>
+<a href="index.html#mine">Мой отзыв</a>
 <a href="otzyvy.html" class="dy">Отзывы</a>
 </nav>
 </div>
@@ -124,7 +130,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <main class="dn">
 <div class="da">
 <article class="dd">
-<a class="oz-back" id="oz-back" href="otzyvy.html" hidden>← Все категории</a>
+<a class="oz-back" id="oz-back" href="index.html" hidden>← назад</a>
 <h1 id="oz-title">Отзывы</h1>
 <p class="dl" id="oz-lead">Выберите категорию</p>
 <ul class="oz-cats" id="oz-cats">
@@ -139,9 +145,18 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 </div>
 </main>
 <nav class="cu" aria-label="Быстрая навигация">
-<a href="index.html">Главная</a>
-<a href="index.html#">Мой отзыв</a>
-<a href="otzyvy.html" class="dy">Отзывы</a>
+<a href="index.html">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+<span>Главная</span>
+</a>
+<a href="index.html#mine">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+<span>Мой отзыв</span>
+</a>
+<a href="otzyvy.html" class="dy">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+<span>Отзывы</span>
+</a>
 </nav>
 </div>
 <script>
