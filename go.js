@@ -4,6 +4,31 @@
     document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");
   } catch (e) {}
 
+  (function ozLiveStamp() {
+    var el = document.getElementById("oz-now");
+    if (!el) return;
+    function pad(n) {
+      return n < 10 ? "0" + n : String(n);
+    }
+    function tick() {
+      var d = new Date();
+      el.textContent =
+        pad(d.getDate()) +
+        " " +
+        pad(d.getMonth() + 1) +
+        " " +
+        d.getFullYear() +
+        " " +
+        pad(d.getHours()) +
+        ":" +
+        pad(d.getMinutes()) +
+        ":" +
+        pad(d.getSeconds());
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+
   function loadMassag(done) {
     if (typeof ozSendReview === "function" && typeof OZ_SEND_URL === "string") {
       done();
