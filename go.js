@@ -65,12 +65,26 @@
     function hideErr() {
       if (formErr) formErr.classList.remove("dr");
     }
+    function ozSetCuTab(tab) {
+      var nav = document.getElementById("cu");
+      if (!nav) return;
+      if (!nav.querySelector("a.ar") && !nav.querySelector("a.cq")) return;
+      var links = nav.querySelectorAll("a");
+      for (var i = 0; i < links.length; i++) links[i].classList.remove("dy");
+      var target = null;
+      if (tab === "mine") target = nav.querySelector("a.cq");
+      else if (tab === "reviews") target = nav.querySelector('a[href*="otzyvy"]');
+      else target = nav.querySelector("a.ar") || document.getElementById("bv");
+      if (target) target.classList.add("dy");
+    }
     function showStep(step) {
       if (stepForm) stepForm.hidden = step !== "form";
       if (stepPreview) stepPreview.hidden = step !== "preview";
       if (stepDone) stepDone.hidden = step !== "done";
       if (stepMine) stepMine.hidden = step !== "mine";
       if (form) form.hidden = step === "done" || step === "mine";
+      if (step === "mine") ozSetCuTab("mine");
+      else if (stepForm || stepMine) ozSetCuTab("home");
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (step === "preview") {
         setTimeout(ozRenderTurnstile, 150);
@@ -153,9 +167,13 @@
     }
     function ozHashId() {
       var h = (location.hash || "").replace(/^#/, "").trim();
-      if (!h) return "";
+      if (!h || /^mine$/i.test(h) || /^my$/i.test(h)) return "";
       if (h.indexOf("review:") === 0) h = h.slice(7);
       return h;
+    }
+    function ozIsMineHash() {
+      var h = (location.hash || "").replace(/^#/, "").trim();
+      return /^mine$/i.test(h) || /^my$/i.test(h);
     }
     function ozSetReviewHash(id) {
       if (!id) return;
@@ -166,6 +184,14 @@
         } catch (e) {
           location.hash = id;
         }
+      }
+    }
+    function ozSetMineHash() {
+      if (ozIsMineHash()) return;
+      try {
+        history.replaceState(null, "", "#mine");
+      } catch (e) {
+        location.hash = "mine";
       }
     }
     function ozClearReviewHash() {
@@ -275,6 +301,7 @@
       var id = wantId || ozHashId();
       var item = id ? ozGetById(id) : ozGetLatest();
       if (item && item.id) ozSetReviewHash(item.id);
+      else ozSetMineHash();
       if (fillItemPreview(box, item)) {
         if (empty) empty.hidden = true;
         if (badge) badge.hidden = false;
@@ -504,12 +531,17 @@
         showStep("form");
       });
     }
-    if (ozHashId()) {
+    if (ozIsMineHash()) {
+      showMyReview();
+    } else if (ozHashId()) {
       showMyReview(ozHashId());
     }
     window.addEventListener("hashchange", function () {
-      var hid = ozHashId();
-      if (hid) showMyReview(hid);
+      if (ozIsMineHash()) showMyReview();
+      else {
+        var hid = ozHashId();
+        if (hid) showMyReview(hid);
+      }
     });
     var btn = document.getElementById("bm");
     var topBar = document.getElementById("cg");
@@ -594,8 +626,19 @@
         if (!window.matchMedia("(max-width:767px)").matches) return;
         if (isHomePage()) {
           e.preventDefault();
-          goPageTop();
+          if (stepMine && !stepMine.hidden) {
+            ozClearReviewHash();
+            showStep("form");
+          } else {
+            ozSetCuTab("home");
+            goPageTop();
+          }
         }
+      });
+    });
+    document.querySelectorAll("#cu a.cq").forEach(function (a) {
+      a.addEventListener("click", function () {
+        ozSetCuTab("mine");
       });
     });
   }
