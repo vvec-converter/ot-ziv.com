@@ -1,4 +1,9 @@
 (function () {
+  try {
+    var t = localStorage.getItem("t");
+    document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");
+  } catch (e) {}
+
   function loadMassag(done) {
     if (typeof ozSendReview === "function" && typeof OZ_SEND_URL === "string") {
       done();

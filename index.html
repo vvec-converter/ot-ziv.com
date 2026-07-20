@@ -2,6 +2,7 @@
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{var t=localStorage.getItem("t");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#3d7c47">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,11 +133,15 @@ html[data-theme="dark"] .aw.dw .du{color:#6fcf7a}
 .ag .form-icon::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
 .ag .form-switch input:checked+.form-icon{background:var(--b)}
 .ag .form-switch input:checked+.form-icon::after{transform:translateX(16px)}
-html[data-theme="dark"]{--j:#121417;--g:#e8eaed;--e:#9aa0a6;--f:#2b3138}
+html[data-theme="dark"]{--j:#121417;--g:#e8eaed;--e:#b0b6bc;--f:#2b3138}
 html[data-theme="dark"] body{background:var(--j);color:var(--g)}
+html[data-theme="dark"] a{color:#8ab4f8}
 html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .al,html[data-theme="dark"] .dd,html[data-theme="dark"] .dh,html[data-theme="dark"] .cu,html[data-theme="dark"] .v,html[data-theme="dark"] .dk{background:#1a1f24}
+html[data-theme="dark"] .cy label,html[data-theme="dark"] .cy>span,html[data-theme="dark"] .cy.x>span,html[data-theme="dark"] .e{color:var(--g)}
 html[data-theme="dark"] .cy input,html[data-theme="dark"] .cy textarea,html[data-theme="dark"] .cy select,html[data-theme="dark"] .cr input,html[data-theme="dark"] .s{background:#232a31;color:var(--g)}
 html[data-theme="dark"] .bw{background:#1a1f24}
+html[data-theme="dark"] .cz{color:var(--e)}
+html[data-theme="dark"] .cz a{color:#8ab4f8}
 html[data-theme="dark"] .de a{background:#232a31;color:var(--g)}
 html[data-theme="dark"] .de a:active{background:#2b333c}
 html[data-theme="dark"] .by{background:#232a31;color:var(--g);border-color:var(--f)}
@@ -145,13 +150,13 @@ html[data-theme="dark"] .bm{background:#232a31;border-color:var(--f);color:var(-
 html[data-theme="dark"] .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 html[data-theme="dark"] .w{color:#c9cdd2}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
-.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#666;text-align:center;line-height:1.15;text-decoration:none}
+.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#595959;text-align:center;line-height:1.15;text-decoration:none}
 .cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
 .cu a span{display:block}
-.cu a.dy{color:var(--b)}
+.cu a.dy{color:#2f6337}
 .cu a:active{background:#f5f6f8}
-html[data-theme="dark"] .cu a{color:#fff}
-html[data-theme="dark"] .cu a.dy{color:var(--b)}
+html[data-theme="dark"] .cu a{color:#f1f3f4}
+html[data-theme="dark"] .cu a.dy{color:#8fd99a}
 html[data-theme="dark"] .cu a:active{background:#232a31}
 .am,.v{display:none}
 @media(min-width:768px){
@@ -394,6 +399,37 @@ body{padding:18px 16px calc(18px + var(--c))}
 </a>
 </nav>
 </div>
+<script>
+(function () {
+  try {
+    var dark = localStorage.getItem("t") !== "light";
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    var sw = document.getElementById("darkSwitch");
+    if (sw) sw.checked = dark;
+  } catch (e) {}
+  var h = (location.hash || "").replace(/^#/, "").trim();
+  var openMine = !!h;
+  if (openMine) {
+    var nav = document.getElementById("cu");
+    if (nav) {
+      var links = nav.querySelectorAll("a");
+      for (var i = 0; i < links.length; i++) links[i].classList.remove("dy");
+      var mine = nav.querySelector("a.cq");
+      if (mine) mine.classList.add("dy");
+    }
+    var ba = document.getElementById("ba");
+    var bb = document.getElementById("bb");
+    var form = document.getElementById("u");
+    var o = document.getElementById("o");
+    var az = document.getElementById("az");
+    if (ba) ba.hidden = true;
+    if (o) o.hidden = true;
+    if (az) az.hidden = true;
+    if (bb) bb.hidden = false;
+    if (form) form.hidden = true;
+  }
+})();
+</script>
 <script src="go.js"></script>
 </body>
 </html>
