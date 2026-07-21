@@ -44,6 +44,7 @@ a{color:#8ab4f8}
 <div class="card" id="step2" hidden>
 <label for="code">Код подтверждения</label>
 <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+<div id="h2" class="bc"></div>
 <button type="button" class="btn" id="go2">Войти</button>
 <button type="button" class="btn sec" id="back">Назад</button>
 <p class="err" id="err2"></p>
@@ -67,6 +68,7 @@ a{color:#8ab4f8}
   var TOKEN_KEY = "oz_admin_token";
   var challenge = "";
   var widget = null;
+  var widget2 = null;
 
   function $(id) { return document.getElementById(id); }
   function showErr(id, msg) {
@@ -77,19 +79,32 @@ a{color:#8ab4f8}
   function theme() {
     return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
   }
-  function renderTs() {
-    var box = $("h");
+  function renderTsIn(boxId, getW, setW) {
+    var box = $(boxId);
     if (!box) return;
     function run() {
       if (typeof turnstile === "undefined") { setTimeout(run, 80); return; }
-      if (widget !== null) {
-        try { turnstile.remove(widget); } catch (e) {}
-        widget = null;
+      var w = getW();
+      if (w !== null) {
+        try { turnstile.remove(w); } catch (e) {}
+        setW(null);
         box.innerHTML = "";
       }
-      widget = turnstile.render(box, { sitekey: OZ_TS_KEY, theme: theme() });
+      setW(turnstile.render(box, { sitekey: OZ_TS_KEY, theme: theme() }));
     }
     run();
+  }
+  function renderTs() {
+    renderTsIn("h", function () { return widget; }, function (w) { widget = w; });
+  }
+  function renderTs2() {
+    renderTsIn("h2", function () { return widget2; }, function (w) { widget2 = w; });
+  }
+  function tsValue(boxId) {
+    var box = $(boxId);
+    if (!box) return "";
+    var el = box.querySelector("[name='cf-turnstile-response']");
+    return el && el.value ? el.value : "";
   }
   function token() {
     try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
@@ -122,8 +137,7 @@ a{color:#8ab4f8}
 
   $("go1").addEventListener("click", function () {
     showErr("err1", "");
-    var tsEl = document.querySelector("[name='cf-turnstile-response']");
-    var ts = tsEl && tsEl.value;
+    var ts = tsValue("h");
     if (!ts) { showErr("err1", "Пройдите проверку Cloudflare."); return; }
     var user = $("user").value.trim();
     var pass = $("pass").value;
@@ -148,6 +162,7 @@ a{color:#8ab4f8}
         }
         challenge = x.d.challenge;
         showStep(2);
+        renderTs2();
         $("code").focus();
       })
       .catch(function () {
@@ -161,17 +176,24 @@ a{color:#8ab4f8}
     $("ok2").style.display = "none";
     var code = $("code").value.trim();
     if (!code || !challenge) { showErr("err2", "Введите код из письма."); return; }
+    var ts = tsValue("h2");
+    if (!ts) { showErr("err2", "Пройдите проверку Cloudflare."); return; }
     $("go2").disabled = true;
     fetch(API + "/admin/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ challenge: challenge, code: code }),
+      body: JSON.stringify({
+        challenge: challenge,
+        code: code,
+        "cf-turnstile-response": ts,
+      }),
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (x) {
         $("go2").disabled = false;
         if (!x.ok) {
           showErr("err2", (x.d && x.d.error) || "Неверный код");
+          if (widget2 !== null && window.turnstile) try { turnstile.reset(widget2); } catch (e) {}
           return;
         }
         setToken(x.d.token);
