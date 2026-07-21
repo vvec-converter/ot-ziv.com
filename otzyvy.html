@@ -65,6 +65,8 @@ html[data-theme="dark"] .at{display:block}
 .oz-pop-list li:last-child{margin-bottom:0}
 .oz-back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
 .oz-empty{color:var(--e);font-size:15px;padding:8px 0}
+.oz-empty-search{color:#c0392b;font-weight:600}
+html[data-theme="dark"] .oz-empty-search{color:#f28b82}
 .oz-bc{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:0 0 12px;font-size:13px;color:var(--e);line-height:1.4}
 .oz-bc a{color:#1a5276;text-decoration:none}
 .oz-bc a:hover{text-decoration:underline}
@@ -602,7 +604,7 @@ html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rg
     }
 
     if (qKey) {
-      if (titleEl) titleEl.textContent = "Поиск: " + qKey;
+      if (titleEl) titleEl.textContent = "Поиск";
       if (leadEl) leadEl.textContent = "Результаты по названию и тегам. Нажмите, чтобы открыть.";
       if (!document.querySelector('meta[name="robots"][content="noindex, follow"]')) {
         var robotsQ = document.createElement("meta");
@@ -610,6 +612,7 @@ html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rg
         robotsQ.content = "noindex, follow";
         document.head.appendChild(robotsQ);
       }
+      document.title = "Поиск — ot-ziv.com";
     } else if (tagKey) {
       if (titleEl) titleEl.textContent = "#" + tagName;
       if (leadEl) leadEl.textContent = "Отзывы с этим тегом. Нажмите, чтобы открыть.";
@@ -647,7 +650,30 @@ html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rg
           .filter(Boolean)
           .reverse();
 
+        if (qKey && !items.length) {
+          try {
+            history.replaceState(null, "", "otzyvy.html");
+          } catch (e) {}
+          applyHubSeo();
+          if (catsEl) catsEl.hidden = false;
+          if (listEl) listEl.hidden = true;
+          if (backEl) {
+            backEl.hidden = false;
+            backEl.href = "/";
+            backEl.textContent = "← на главную";
+          }
+          if (titleEl) titleEl.textContent = "Отзывы";
+          if (leadEl) leadEl.textContent = "Выберите категорию";
+          if (emptyEl) {
+            emptyEl.hidden = false;
+            emptyEl.classList.add("oz-empty-search");
+            emptyEl.textContent = "По запросу ничего не найдено.";
+          }
+          return;
+        }
+
         if (qKey) {
+          if (titleEl) titleEl.textContent = "Поиск: " + qKey;
           applyCollectionSeo({
             title: "Поиск: " + qKey,
             description: "Результаты поиска «" + qKey + "» по названию и тегам на ot-ziv.com.",
@@ -679,8 +705,9 @@ html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rg
         if (!items.length) {
           if (emptyEl) {
             emptyEl.hidden = false;
-            if (qKey) emptyEl.textContent = "По запросу ничего не найдено.";
-            else if (tagKey) emptyEl.textContent = "По этому тегу пока нет отзывов.";
+            emptyEl.classList.remove("oz-empty-search");
+            if (tagKey) emptyEl.textContent = "По этому тегу пока нет отзывов.";
+            else emptyEl.textContent = "В этой категории пока нет отзывов.";
           }
           return;
         }
@@ -707,6 +734,7 @@ html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rg
       .catch(function () {
         if (emptyEl) {
           emptyEl.hidden = false;
+          emptyEl.classList.remove("oz-empty-search");
           emptyEl.textContent = "Не удалось загрузить отзывы.";
         }
       });
