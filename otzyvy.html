@@ -47,9 +47,22 @@ html[data-theme="dark"] .at{display:block}
 .oz-list-meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;color:var(--e)}
 .oz-list .g{color:#ffb300;letter-spacing:1px}
 .oz-cats{list-style:none;margin:0;padding:0}
-.oz-cats li{border-bottom:1px solid var(--f)}
+.oz-cats li{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--f)}
 .oz-cats li:last-child{border-bottom:none}
-.oz-cats a{display:block;padding:16px 0;font-size:17px;font-weight:700;color:var(--g);text-decoration:none}
+.oz-cats a{flex:1;min-width:0;display:block;padding:16px 0;font-size:17px;font-weight:700;color:var(--g);text-decoration:none}
+.oz-i{flex:none;width:32px;height:32px;margin:0;padding:0;border:1px solid var(--f);border-radius:50%;background:#f8f9fa;color:var(--e);font:italic 700 15px/30px Georgia,serif;text-align:center;cursor:pointer}
+.oz-i:hover,.oz-i:focus-visible{background:var(--b);border-color:var(--b);color:#fff;outline:none}
+.oz-pop{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:16px;padding-bottom:calc(16px + var(--i) + var(--c))}
+.oz-pop[hidden]{display:none!important}
+.oz-pop-bg{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.oz-pop-box{position:relative;z-index:1;width:100%;max-width:520px;max-height:min(78dvh,640px);overflow:auto;border:1px solid var(--f);border-radius:12px;background:#fff;padding:18px 16px 16px;box-shadow:0 12px 40px rgba(0,0,0,.2)}
+.oz-pop-x{position:absolute;top:8px;right:8px;width:36px;height:36px;border:none;border-radius:8px;background:transparent;font-size:24px;line-height:1;color:var(--e);cursor:pointer}
+.oz-pop-x:hover{background:#f0f2f5;color:var(--g)}
+.oz-pop-title{font-size:1.15rem;font-weight:700;margin:0 36px 8px 0;line-height:1.3}
+.oz-pop-lead{color:var(--e);font-size:14px;margin:0 0 12px;line-height:1.45}
+.oz-pop-list{margin:0;padding:0 0 0 1.15em;font-size:14px;line-height:1.45;color:var(--g)}
+.oz-pop-list li{margin:0 0 8px}
+.oz-pop-list li:last-child{margin-bottom:0}
 .oz-back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
 .oz-empty{color:var(--e);font-size:15px;padding:8px 0}
 .dh{margin-top:auto;padding:16px var(--h) calc(16px + var(--i) + var(--c));border-top:8px solid var(--j);background:#fafbfc;flex:none}
@@ -80,6 +93,11 @@ html[data-theme="dark"] .oz-clock time{color:#e8eaed}
 html[data-theme="dark"] .bm{background:#232a31;border-color:#2a313a;color:#e8eaed}
 html[data-theme="dark"] .cn a,html[data-theme="dark"] .oz-list a,html[data-theme="dark"] .oz-cats a{color:#e8eaed;border-color:#2a313a}
 html[data-theme="dark"] .oz-list-name{color:#e8eaed}
+html[data-theme="dark"] .oz-i{background:#232a31;border-color:#2a313a;color:#c9cdd2}
+html[data-theme="dark"] .oz-i:hover,html[data-theme="dark"] .oz-i:focus-visible{background:var(--b);border-color:var(--b);color:#fff}
+html[data-theme="dark"] .oz-pop-box{background:#1a1f26;border-color:#2a313a}
+html[data-theme="dark"] .oz-pop-x:hover{background:#232a31;color:#e8eaed}
+html[data-theme="dark"] .oz-pop-list{color:#e8eaed}
 @media(min-width:768px){
 :root{--h:24px;--k:820px}
 body{padding:18px 16px calc(18px + var(--c))}
@@ -92,6 +110,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 .v a.dy{color:var(--b);font-weight:600}
 .dd{padding:20px var(--h)}
 .dd h1{font-size:1.35rem}
+.oz-pop{padding-bottom:16px}
 html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 }
 </style>
@@ -140,19 +159,28 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <h1 id="oz-title">Отзывы</h1>
 <p class="dl" id="oz-lead">Выберите категорию</p>
 <ul class="oz-cats" id="oz-cats">
-<li><a href="otzyvy.html?c=tovary">Товары</a></li>
-<li><a href="otzyvy.html?c=mesta">Места</a></li>
-<li><a href="otzyvy.html?c=uslugi">Услуги</a></li>
-<li><a href="otzyvy.html?c=sajty">Сайты</a></li>
-<li><a href="otzyvy.html?c=rabota">Работа и Карьера</a></li>
-<li><a href="otzyvy.html?c=lyudi">Люди и Персоны</a></li>
-<li><a href="otzyvy.html?c=obshchestvo">Общество и Государство</a></li>
+<li><a href="otzyvy.html?c=tovary">Товары</a><button type="button" class="oz-i" data-cat="tovary" aria-label="О категории Товары">i</button></li>
+<li><a href="otzyvy.html?c=mesta">Места</a><button type="button" class="oz-i" data-cat="mesta" aria-label="О категории Места">i</button></li>
+<li><a href="otzyvy.html?c=uslugi">Услуги</a><button type="button" class="oz-i" data-cat="uslugi" aria-label="О категории Услуги">i</button></li>
+<li><a href="otzyvy.html?c=sajty">Сайты</a><button type="button" class="oz-i" data-cat="sajty" aria-label="О категории Сайты">i</button></li>
+<li><a href="otzyvy.html?c=rabota">Работа и Карьера</a><button type="button" class="oz-i" data-cat="rabota" aria-label="О категории Работа и Карьера">i</button></li>
+<li><a href="otzyvy.html?c=lyudi">Люди и Персоны</a><button type="button" class="oz-i" data-cat="lyudi" aria-label="О категории Люди и Персоны">i</button></li>
+<li><a href="otzyvy.html?c=obshchestvo">Общество и Государство</a><button type="button" class="oz-i" data-cat="obshchestvo" aria-label="О категории Общество и Государство">i</button></li>
 </ul>
 <ul class="oz-list" id="oz-list" hidden></ul>
 <p class="oz-empty" id="oz-empty" hidden>В этой категории пока нет отзывов.</p>
 </article>
 </div>
 </main>
+<div class="oz-pop" id="oz-pop" hidden>
+<div class="oz-pop-bg" id="oz-pop-bg"></div>
+<div class="oz-pop-box" role="dialog" aria-modal="true" aria-labelledby="oz-pop-title">
+<button type="button" class="oz-pop-x" id="oz-pop-x" aria-label="Закрыть">×</button>
+<h2 class="oz-pop-title" id="oz-pop-title"></h2>
+<p class="oz-pop-lead" id="oz-pop-lead"></p>
+<ul class="oz-pop-list" id="oz-pop-list"></ul>
+</div>
+</div>
 <nav class="cu" aria-label="Быстрая навигация">
 <a href="index.html">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -185,6 +213,135 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     lyudi: "Люди и Персоны",
     obshchestvo: "Общество и Государство",
   };
+
+  var CAT_INFO = {
+    tovary: {
+      title: "📦 Товары",
+      lead: "Физические вещи, которые можно купить, потрогать или заказать доставку.",
+      items: [
+        "Электроника и гаджеты: смартфоны, ноутбуки, наушники, умные часы.",
+        "Бытовая техника: холодильники, стиральные машины, кофемашины, пылесосы.",
+        "Транспортные средства: автомобили, мотоциклы, самокаты, велосипеды, запчасти.",
+        "Красота и здоровье: косметика, парфюмерия, лекарства, витамины, БАДы.",
+        "Одежда, обувь и аксессуары: бренды одежды, сумки, ювелирные изделия.",
+        "Дом и ремонт: мебель, строительные материалы, сантехника, инструменты.",
+        "Детские товары: игрушки, коляски, детское питание, подгузники.",
+        "Книги и хобби: печатные книги, настольные игры, товары для творчества.",
+      ],
+    },
+    mesta: {
+      title: "📍 Места",
+      lead: "Локации, заведения и коммерческие точки, которые пользователь посещает лично.",
+      items: [
+        "Общепит: рестораны, кафе, бары, кофейни, фастфуд.",
+        "Отели и туризм: гостиницы, хостелы, базы отдыха, санатории.",
+        "Развлечения и отдых: парки аттракционов, кинотеатры, зоопарки, квесты.",
+        "Красота и спорт: салоны красоты, барбершопы, фитнес-клубы, бассейны.",
+        "Медицинские заведения: частные клиники, стоматологии, лаборатории анализов.",
+        "Торговля: торговые центры, супермаркеты, автосалоны, вещевые рынки.",
+      ],
+    },
+    uslugi: {
+      title: "🛠️ Услуги",
+      lead: "Действия, которые компании или бизнесы выполняют за деньги клиента.",
+      items: [
+        "Финансы и страхование: банки, кредиты, ипотека, ОСАГО, КАСКО.",
+        "Бытовые услуги: клининг, химчистка, ремонт обуви, ателье.",
+        "Транспорт и логистика: такси, каршеринг, грузоперевозки, доставка посылок.",
+        "Ремонт и автосервис: СТО, шиномонтаж, ремонт квартир, сборка мебели.",
+        "Связь и интернет: мобильные операторы, домашний интернет, спутниковое ТВ.",
+        "Обучение: коммерческие курсы, автошколы, языковые школы.",
+        "Организация мероприятий: проведение свадеб, фотосессии, кейтеринг.",
+      ],
+    },
+    sajty: {
+      title: "🌐 Сайты",
+      lead: "Онлайн-платформы, сервисы и мобильные приложения, где весь опыт пользователя проходит в интернете.",
+      items: [
+        "Маркетплейсы и интернет-магазины: платформы заказа товаров и одежды.",
+        "Стриминг и медиа: онлайн-кинотеатры, музыкальные платформы, видеохостинги.",
+        "Игры: онлайн-игры, мобильные приложения игр, игровые магазины.",
+        "Сервисы объявлений: платформы для покупки/продажи вещей, поиска недвижимости.",
+        "Полезный софт: мобильные приложения банков, планировщики, фоторедакторы.",
+      ],
+    },
+    rabota: {
+      title: "💼 Работа и Карьера",
+      lead: "Отзывы сотрудников (бывших и нынешних) о компаниях как о работодателях.",
+      items: [
+        "Крупный сетевой бизнес: отзывы о работе в супермаркетах, банках, общепите.",
+        "IT и digital-компании: отзывы разработчиков, маркетологов, дизайнеров.",
+        "Производство и заводы: условия труда на фабриках, комбинатах, шахтах.",
+        "Кадровые агентства: отзывы о компаниях, которые помогают найти работу.",
+        "Платформы для фриланса и подработки: опыт работы курьером, таксистом, сборщиком заказов.",
+      ],
+    },
+    lyudi: {
+      title: "👥 Люди и Персоны",
+      lead: "Отзывы о конкретных специалистах, экспертах и медийных личностях (оценка человека, а не компании).",
+      items: [
+        "Частные мастера: репетиторы, няни, сиделки, сантехники, электрики.",
+        "Бьюти-мастера: частные парикмахеры, мастера маникюра, лэшмейкеры.",
+        "Здоровье и психология: конкретные врачи, психологи, психотерапевты, тренеры.",
+        "Инфобизнес и блогеры: авторы именных онлайн-курсов, коучи, гиды.",
+      ],
+    },
+    obshchestvo: {
+      title: "🏛️ Общество и Государство",
+      lead: "Некоммерческие, социальные, инфраструктурные и государственные объекты.",
+      items: [
+        "Госуслуги и ведомства: МФЦ, налоговые инспекции, ПФР, ЗАГСы, ГИБДД.",
+        "Образование: государственные школы, детские сады, колледжи, вузы.",
+        "Медицина: городские поликлиники, государственные больницы, роддома.",
+        "Городская среда: бесплатные парки, набережные, общественные пляжи, площади.",
+        "Инфраструктура и ЖКХ: общественный транспорт, вокзалы, управляющие компании (УК).",
+      ],
+    },
+  };
+
+  var pop = document.getElementById("oz-pop");
+  var popTitle = document.getElementById("oz-pop-title");
+  var popLead = document.getElementById("oz-pop-lead");
+  var popList = document.getElementById("oz-pop-list");
+  function openCatInfo(key) {
+    var info = CAT_INFO[key];
+    if (!info || !pop) return;
+    if (popTitle) popTitle.textContent = info.title;
+    if (popLead) popLead.textContent = info.lead;
+    if (popList) {
+      popList.innerHTML = info.items
+        .map(function (item) {
+          return "<li>" + esc(item) + "</li>";
+        })
+        .join("");
+    }
+    pop.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+  function closeCatInfo() {
+    if (!pop || pop.hidden) return;
+    pop.hidden = true;
+    document.body.style.overflow = "";
+  }
+  document.querySelectorAll(".oz-i").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      openCatInfo(btn.getAttribute("data-cat"));
+    });
+    btn.addEventListener("mouseenter", function () {
+      if (window.matchMedia("(hover: hover)").matches) {
+        openCatInfo(btn.getAttribute("data-cat"));
+      }
+    });
+  });
+  var popBg = document.getElementById("oz-pop-bg");
+  var popX = document.getElementById("oz-pop-x");
+  if (popBg) popBg.addEventListener("click", closeCatInfo);
+  if (popX) popX.addEventListener("click", closeCatInfo);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeCatInfo();
+  });
 
   function esc(s) {
     return String(s || "")
