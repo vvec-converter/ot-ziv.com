@@ -5,7 +5,7 @@
   throw new Error("blocked");
 }
 
-var OZ_SEND_URL = "https://noisy-wood-0e6f.akkgromms.workers.dev/";
+var OZ_SEND_URL = "https://noisy-wood-0e6f.otziv.workers.dev/";
 var OZ_TS_KEY = "0x4AAAAAAD01AYnC8EuRja7z";
 
 function ozSendReview(body) {
