@@ -237,8 +237,8 @@ body{padding:18px 16px calc(18px + var(--c))}
 </div>
 <div class="cn" id="cn" aria-hidden="true">
 <nav aria-label="Меню">
-<a href="index.html">Главная</a>
-<a href="index.html#mine">Мой отзыв</a>
+<a href="/">Главная</a>
+<a href="/#mine">Мой отзыв</a>
 <a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
@@ -260,8 +260,8 @@ body{padding:18px 16px calc(18px + var(--c))}
 <div class="v">
 <div class="da">
 <nav id="ch" aria-label="Верхнее меню">
-<a href="index.html">Главная</a>
-<a href="index.html#mine">Мой отзыв</a>
+<a href="/">Главная</a>
+<a href="/#mine">Мой отзыв</a>
 <a href="otzyvy.html">Отзывы</a>
 </nav>
 </div>
@@ -357,11 +357,11 @@ body{padding:18px 16px calc(18px + var(--c))}
 </div>
 </footer>
 <nav class="cu" id="cu" aria-label="Быстрая навигация">
-<a href="index.html" class="dy ar" id="bv">
+<a href="/" class="dy ar" id="bv">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
 <span>Главная</span>
 </a>
-<a href="index.html#mine">
+<a href="/#mine">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
 <span>Мой отзыв</span>
 </a>
@@ -484,7 +484,7 @@ body{padding:18px 16px calc(18px + var(--c))}
     if (bcEl) {
       var catKey = CAT_KEYS[cat];
       var html =
-        '<a href="index.html">Главная</a><span aria-hidden="true">›</span>' +
+        '<a href="/">Главная</a><span aria-hidden="true">›</span>' +
         '<a href="otzyvy.html">Отзывы</a>';
       if (cat && catKey) {
         html +=
