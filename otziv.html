@@ -8,6 +8,14 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="keywords" id="oz-kw" content="отзывы о товарах, местах, услугах, сайтах">
 <meta name="description" id="oz-desc" content="Честные отзывы о товарах, местах, услугах и сайтах — помогите другим сделать правильный выбор.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/i/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/i/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/i/apple-touch-icon.png">
+<link rel="manifest" href="/i/site.webmanifest">
+<meta property="og:image" id="oz-og-image" content="https://ot-ziv.com/i/android-chrome-512x512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" id="oz-tw-image" content="https://ot-ziv.com/i/android-chrome-512x512.png">
 <link rel="canonical" id="oz-canon" href="https://ot-ziv.com/otziv.html">
 <title>Отзыв — ot-ziv.com</title>
 <style>
@@ -483,6 +491,13 @@ body{padding:18px 16px calc(18px + var(--c))}
     var el = document.getElementById("oz-canon");
     if (el) el.setAttribute("href", url);
   }
+  function setShareImage(url) {
+    var img = url || SITE + "/i/android-chrome-512x512.png";
+    var og = document.getElementById("oz-og-image");
+    var tw = document.getElementById("oz-tw-image");
+    if (og) og.setAttribute("content", img);
+    if (tw) tw.setAttribute("content", img);
+  }
   function setJsonLd(id, data) {
     var el = document.getElementById(id);
     if (!el) {
@@ -542,6 +557,7 @@ body{padding:18px 16px calc(18px + var(--c))}
     setMeta("description", desc);
     setMeta("keywords", kw || "отзывы");
     setCanonical(url);
+    setShareImage(SITE + "/i/android-chrome-512x512.png");
 
     var bcEl = document.getElementById("oz-bc");
     if (bcEl) {
@@ -579,6 +595,7 @@ body{padding:18px 16px calc(18px + var(--c))}
       name: "Отзыв: " + name,
       headline: name,
       reviewBody: text,
+      image: SITE + "/i/android-chrome-512x512.png",
       datePublished: date || undefined,
       author: { "@type": "Person", name: author },
       itemReviewed: about,
@@ -643,6 +660,7 @@ body{padding:18px 16px calc(18px + var(--c))}
     );
     setMeta("keywords", "отзывы о товарах, местах, услугах, сайтах");
     setCanonical(SITE + "/otziv.html");
+    setShareImage(SITE + "/i/android-chrome-512x512.png");
     clearJsonLd("oz-ld-review");
     clearJsonLd("oz-ld-bc");
     var bcEl = document.getElementById("oz-bc");
