@@ -42,8 +42,10 @@ a{color:#8ab4f8}
 </div>
 
 <div class="card" id="step2" hidden>
-<label for="code">Код подтверждения</label>
+<label for="code">Код из письма</label>
 <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+<label for="totp">Код из приложения (Authenticator)</label>
+<input id="totp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 цифр">
 <div id="h2" class="bc"></div>
 <button type="button" class="btn" id="go2">Войти</button>
 <button type="button" class="btn sec" id="back">Назад</button>
@@ -175,7 +177,9 @@ a{color:#8ab4f8}
     showErr("err2", "");
     $("ok2").style.display = "none";
     var code = $("code").value.trim();
+    var totp = $("totp").value.trim().replace(/\s+/g, "");
     if (!code || !challenge) { showErr("err2", "Введите код из письма."); return; }
+    if (!/^\d{6}$/.test(totp)) { showErr("err2", "Введите 6-значный код из приложения."); return; }
     var ts = tsValue("h2");
     if (!ts) { showErr("err2", "Пройдите проверку Cloudflare."); return; }
     $("go2").disabled = true;
@@ -185,6 +189,7 @@ a{color:#8ab4f8}
       body: JSON.stringify({
         challenge: challenge,
         code: code,
+        totp: totp,
         "cf-turnstile-response": ts,
       }),
     })
