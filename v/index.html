@@ -6,21 +6,21 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Мой отзыв — ot-ziv.com</title>
 <style>
-:root{--j:#f0f2f5;--g:#1a1a1a;--e:#666;--f:#dde1e6;--b:#3d7c47;--h:16px}
+:root{--oz-bg:#f0f2f5;--oz-text:#1a1a1a;--oz-muted:#666;--oz-line:#dde1e6;--oz-accent:#3d7c47;--oz-pad:16px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Segoe UI,system-ui,sans-serif;background:var(--j);color:var(--g);line-height:1.5;font-size:16px;padding:16px}
+body{font-family:Segoe UI,system-ui,sans-serif;background:var(--oz-bg);color:var(--oz-text);line-height:1.5;font-size:16px;padding:16px}
 a{color:#2f5f8f}
-.wrap{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--f);border-radius:10px;padding:18px var(--h)}
+.wrap{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--oz-line);border-radius:10px;padding:18px var(--oz-pad)}
 h1{font-size:1.2rem;margin-bottom:8px}
-.lead{color:var(--e);font-size:14px;margin-bottom:16px}
-.row{padding:12px 14px;border:1px solid var(--f);border-radius:10px;background:#f8f9fa;margin-bottom:10px}
-.row dt{font-size:13px;font-weight:600;color:var(--e);margin-bottom:4px}
+.lead{color:var(--oz-muted);font-size:14px;margin-bottom:16px}
+.row{padding:12px 14px;border:1px solid var(--oz-line);border-radius:10px;background:#f8f9fa;margin-bottom:10px}
+.row dt{font-size:13px;font-weight:600;color:var(--oz-muted);margin-bottom:4px}
 .row dd{font-size:16px;white-space:pre-wrap;word-break:break-word}
 .stars{color:#ffb300;font-size:20px}
-.btn{display:inline-block;margin-top:14px;padding:12px 20px;border-radius:10px;background:var(--b);color:#fff;font-weight:600;text-decoration:none}
+.btn{display:inline-block;margin-top:14px;padding:12px 20px;border-radius:10px;background:var(--oz-accent);color:#fff;font-weight:600;text-decoration:none}
 .err{color:#8a1f17;background:#fdecea;border:1px solid #f5c6c2;padding:12px;border-radius:10px}
-html[data-theme="dark"]{--j:#121417;--g:#e8eaed;--e:#9aa0a6;--f:#2b3138}
-html[data-theme="dark"] body{background:var(--j);color:var(--g)}
+html[data-theme="dark"]{--oz-bg:#121417;--oz-text:#e8eaed;--oz-muted:#9aa0a6;--oz-line:#2b3138}
+html[data-theme="dark"] body{background:var(--oz-bg);color:var(--oz-text)}
 html[data-theme="dark"] .wrap{background:#1a1f24}
 html[data-theme="dark"] .row{background:#232a31}
 </style>
@@ -29,17 +29,17 @@ html[data-theme="dark"] .row{background:#232a31}
 <div class="wrap">
 <h1>Кеш отзыва</h1>
 <p class="lead">Временная копия хранится только в этом браузере (до 30 дней).</p>
-<div id="cv"></div>
+<div id="oz_v_body"></div>
 <a class="btn" href="https://ot-ziv.com/">На главную</a>
 </div>
 <script>
 (function(){
 var id=new URLSearchParams(location.search).get("id");
-var box=document.getElementById("cv");
+var box=document.getElementById("oz_v_body");
 if(!id){box.innerHTML='<p class="err">Нет номера отзыва. Отправьте отзыв с главной страницы.</p>';return;}
 var item=null;
 try{
-var all=JSON.parse(localStorage.getItem("c")||"{}");
+var all=JSON.parse(localStorage.getItem("oz_v_cache")||"{}");
 item=all[id];
 }catch(e){}
 if(!item){
@@ -59,7 +59,7 @@ row("E-mail",item.mail||"не указан")+
 row("Текст",item.text)+
 row("Теги",item.tags||"—")+
 '<div class="row"><dt>Оценка</dt><dd><span class="stars">'+stars+'</span></dd></div>';
-var th=localStorage.getItem("t");
+var th=localStorage.getItem("oz-theme");
 if(th==="light")document.documentElement.setAttribute("data-theme","light");
 })();
 </script>

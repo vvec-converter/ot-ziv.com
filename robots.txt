@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /data
+Disallow: /go.js
+Disallow: /messag.js
+Disallow: /massag.js
+Disallow: /v
+Disallow: /admin
+Disallow: /tools
+Allow: /sitemap.xml
+
+Sitemap: https://ot-ziv.com/sitemap.xml

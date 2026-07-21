@@ -139,8 +139,65 @@
       });
     });
     var ozTsWidget = null;
+    var ozTsRo = null;
     function ozTsTheme() {
       return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    }
+    function ozFitTsToIframe(box) {
+      if (!box) return;
+      var tries = 0;
+      function unlock(el) {
+        if (!el) return;
+        el.style.setProperty("height", "auto", "important");
+        el.style.setProperty("max-height", "none", "important");
+        el.style.setProperty("overflow", "visible", "important");
+        el.style.setProperty("align-items", "normal", "important");
+      }
+      function apply(iframe) {
+        iframe.removeAttribute("height");
+        iframe.style.setProperty("height", "auto", "important");
+        iframe.style.setProperty("max-height", "none", "important");
+        unlock(box);
+        var nodes = box.querySelectorAll("div");
+        for (var i = 0; i < nodes.length; i++) {
+          unlock(nodes[i]);
+        }
+        return true;
+      }
+      function watch(iframe) {
+        if (ozTsRo) {
+          try {
+            ozTsRo.disconnect();
+          } catch (e) {}
+          ozTsRo = null;
+        }
+        if (typeof MutationObserver !== "undefined") {
+          ozTsRo = new MutationObserver(function () {
+            apply(iframe);
+          });
+          ozTsRo.observe(box, {
+            attributes: true,
+            attributeFilter: ["style", "height"],
+            subtree: true,
+          });
+        }
+        setTimeout(function () {
+          apply(iframe);
+        }, 200);
+        setTimeout(function () {
+          apply(iframe);
+        }, 800);
+      }
+      function fit() {
+        var iframe = box.querySelector("iframe");
+        if (!iframe) {
+          if (++tries < 80) setTimeout(fit, 40);
+          return;
+        }
+        apply(iframe);
+        watch(iframe);
+      }
+      fit();
     }
     function ozRenderTurnstile() {
       var box = document.getElementById("h");
@@ -154,9 +211,15 @@
           try {
             turnstile.reset(ozTsWidget);
           } catch (ex) {}
+          ozFitTsToIframe(box);
           return;
         }
-        ozTsWidget = turnstile.render(box, { sitekey: OZ_TS_KEY, theme: ozTsTheme() });
+        ozTsWidget = turnstile.render(box, {
+          sitekey: OZ_TS_KEY,
+          theme: ozTsTheme(),
+          size: "flexible",
+        });
+        ozFitTsToIframe(box);
       }
       run();
     }

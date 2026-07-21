@@ -5,8 +5,8 @@
 <script>(function(){try{var t=localStorage.getItem("t");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#3d7c47">
-<meta name="description" content="Опубликованные отзывы на ot-ziv.com">
-<link rel="canonical" href="https://ot-ziv.com/otzyvy.html">
+<meta name="description" id="oz-desc" content="Опубликованные отзывы на ot-ziv.com">
+<link rel="canonical" id="oz-canon" href="https://ot-ziv.com/otzyvy.html">
 <title>Отзывы — ot-ziv.com</title>
 <style>
 :root{--j:#f0f2f5;--g:#1a1a1a;--e:#666;--f:#dde1e6;--b:#3d7c47;--a:#2f6337;--h:16px;--k:100%;--i:58px;--c:env(safe-area-inset-bottom,0px);--d:env(safe-area-inset-top,0px)}
@@ -65,6 +65,10 @@ html[data-theme="dark"] .at{display:block}
 .oz-pop-list li:last-child{margin-bottom:0}
 .oz-back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
 .oz-empty{color:var(--e);font-size:15px;padding:8px 0}
+.oz-bc{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:0 0 12px;font-size:13px;color:var(--e);line-height:1.4}
+.oz-bc a{color:#2f5f8f;text-decoration:none}
+.oz-bc a:hover{text-decoration:underline}
+.oz-bc [aria-current="page"]{color:var(--g);font-weight:600}
 .dh{margin-top:auto;padding:16px var(--h) calc(16px + var(--i) + var(--c));border-top:8px solid var(--j);background:#fafbfc;flex:none}
 .oz-clock{margin:0;font-size:14px;color:var(--e);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
 .oz-clock time{display:block;font-size:18px;font-weight:700;color:var(--g);letter-spacing:.02em}
@@ -155,6 +159,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <main class="dn">
 <div class="da">
 <article class="dd">
+<nav class="oz-bc" id="oz-bc" aria-label="Хлебные крошки"></nav>
 <a class="oz-back" id="oz-back" href="https://ot-ziv.com/otzyvy.html" hidden>← назад</a>
 <h1 id="oz-title">Отзывы</h1>
 <p class="dl" id="oz-lead">Выберите категорию</p>
@@ -202,6 +207,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 </p>
 </footer>
 </div>
+<script src="tags.js"></script>
 <script>
 (function () {
   var CATS = {
@@ -213,6 +219,102 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     lyudi: "Люди и Персоны",
     obshchestvo: "Общество и Государство",
   };
+  var SITE = "https://ot-ziv.com";
+
+  function setMetaDesc(content) {
+    var el = document.getElementById("oz-desc");
+    if (el) el.setAttribute("content", content || "");
+  }
+  function setCanonical(url) {
+    var el = document.getElementById("oz-canon");
+    if (el) el.setAttribute("href", url);
+  }
+  function setJsonLd(id, data) {
+    var el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement("script");
+      el.type = "application/ld+json";
+      el.id = id;
+      document.head.appendChild(el);
+    }
+    el.textContent = JSON.stringify(data);
+  }
+  function reviewAbsUrl(r) {
+    var key = slugify(r.name) || r.id || "";
+    return SITE + "/otziv.html?id=" + encodeURIComponent(key);
+  }
+  function applyHubSeo() {
+    document.title = "Отзывы — ot-ziv.com";
+    setMetaDesc("Категории отзывов на ot-ziv.com: товары, места, услуги, сайты и другие.");
+    setCanonical(SITE + "/otzyvy.html");
+    var bc = document.getElementById("oz-bc");
+    if (bc) {
+      bc.innerHTML =
+        '<a href="index.html">Главная</a><span aria-hidden="true">›</span><span aria-current="page">Отзывы</span>';
+    }
+    setJsonLd("oz-ld-page", {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Отзывы",
+      url: SITE + "/otzyvy.html",
+      description: "Категории отзывов на ot-ziv.com",
+    });
+    setJsonLd("oz-ld-bc", {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Главная", item: SITE + "/" },
+        { "@type": "ListItem", position: 2, name: "Отзывы", item: SITE + "/otzyvy.html" },
+      ],
+    });
+  }
+  function applyCollectionSeo(opts) {
+    var title = opts.title;
+    var desc = opts.description;
+    var url = opts.url;
+    var items = opts.items || [];
+    document.title = title + " — ot-ziv.com";
+    setMetaDesc(desc);
+    setCanonical(url);
+    var bc = document.getElementById("oz-bc");
+    if (bc) {
+      bc.innerHTML =
+        '<a href="index.html">Главная</a><span aria-hidden="true">›</span>' +
+        '<a href="otzyvy.html">Отзывы</a><span aria-hidden="true">›</span>' +
+        '<span aria-current="page">' +
+        esc(title) +
+        "</span>";
+    }
+    var list = items.map(function (r, i) {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        url: reviewAbsUrl(r),
+        name: r.name,
+      };
+    });
+    setJsonLd("oz-ld-page", {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      url: url,
+      description: desc,
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: list.length,
+        itemListElement: list,
+      },
+    });
+    setJsonLd("oz-ld-bc", {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Главная", item: SITE + "/" },
+        { "@type": "ListItem", position: 2, name: "Отзывы", item: SITE + "/otzyvy.html" },
+        { "@type": "ListItem", position: 3, name: title, item: url },
+      ],
+    });
+  }
 
   var CAT_INFO = {
     tovary: {
@@ -388,6 +490,16 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
       return "";
     }
   }
+  function getTag() {
+    try {
+      var t = (new URLSearchParams(location.search).get("tag") || "").trim().toLowerCase();
+      if (!t) return "";
+      if (window.OZ_TAGS && OZ_TAGS.bySlug[t]) return t;
+      return window.OZ_TAGS ? OZ_TAGS.slugify(t) : t;
+    } catch (e) {
+      return "";
+    }
+  }
 
   var clockTime = document.getElementById("oz-clock-time");
   var clockDate = document.getElementById("oz-clock-date");
@@ -440,6 +552,8 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 
   var catKey = getCat();
   var catName = catKey ? CATS[catKey] : "";
+  var tagKey = getTag();
+  var tagName = tagKey && window.OZ_TAGS ? OZ_TAGS.name(tagKey) : tagKey;
   var catsEl = document.getElementById("oz-cats");
   var listEl = document.getElementById("oz-list");
   var emptyEl = document.getElementById("oz-empty");
@@ -447,64 +561,117 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
   var titleEl = document.getElementById("oz-title");
   var leadEl = document.getElementById("oz-lead");
 
-  if (!catKey) {
-    document.title = "Отзывы — ot-ziv.com";
+  if (!catKey && !tagKey) {
+    applyHubSeo();
+    if (window.OZ_TAGS && OZ_TAGS.loadUserTags) OZ_TAGS.loadUserTags();
     return;
   }
 
-  if (catsEl) catsEl.hidden = true;
-  if (listEl) listEl.hidden = false;
-  if (backEl) backEl.hidden = false;
-  if (titleEl) titleEl.textContent = catName;
-  if (leadEl) leadEl.textContent = "Отзывы в категории. Нажмите, чтобы открыть.";
-  document.title = catName + " — ot-ziv.com";
+  function runList() {
+    if (tagKey && window.OZ_TAGS) tagName = OZ_TAGS.name(tagKey);
+    if (catsEl) catsEl.hidden = true;
+    if (listEl) listEl.hidden = false;
+    if (backEl) {
+      backEl.hidden = false;
+      backEl.href = "otzyvy.html";
+    }
 
-  fetch("data/published.json?t=" + Date.now())
-    .then(function (r) {
-      if (!r.ok) throw new Error("load");
-      return r.json();
-    })
-    .then(function (data) {
-      var items = Array.isArray(data) ? data : [];
-      items = items
-        .map(function (item) {
-          if (!item || typeof item === "string") return null;
-          if (!item.name || !item.text) return null;
-          if (String(item.category || "").trim() !== catName) return null;
-          return item;
-        })
-        .filter(Boolean)
-        .reverse();
-      if (!items.length) {
-        if (emptyEl) emptyEl.hidden = false;
-        return;
+    if (tagKey) {
+      if (titleEl) titleEl.textContent = "#" + tagName;
+      if (leadEl) leadEl.textContent = "Отзывы с этим тегом. Нажмите, чтобы открыть.";
+      if (!document.querySelector('meta[name="robots"][content="noindex, follow"]')) {
+        var robots = document.createElement("meta");
+        robots.name = "robots";
+        robots.content = "noindex, follow";
+        document.head.appendChild(robots);
       }
-      listEl.innerHTML = items
-        .map(function (r) {
-          return (
-            '<li><a href="' +
-            esc(reviewHref(r)) +
-            '"><div class="oz-list-name">' +
-            esc(r.name) +
-            '</div><div class="oz-list-meta"><span class="g" aria-label="' +
-            (+r.rating || 0) +
-            ' из 5">' +
-            stars(r.rating) +
-            "</span><span>" +
-            esc(fmtDate(r.date) || r.date || "") +
-            "</span><span>" +
-            esc(r.user || "") +
-            "</span></div></a></li>"
-          );
-        })
-        .join("");
-    })
-    .catch(function () {
-      if (emptyEl) {
-        emptyEl.hidden = false;
-        emptyEl.textContent = "Не удалось загрузить отзывы.";
-      }
-    });
+    } else {
+      if (titleEl) titleEl.textContent = catName;
+      if (leadEl) leadEl.textContent = "Отзывы в категории. Нажмите, чтобы открыть.";
+    }
+
+    fetch("data/published.json?t=" + Date.now())
+      .then(function (r) {
+        if (!r.ok) throw new Error("load");
+        return r.json();
+      })
+      .then(function (data) {
+        var items = Array.isArray(data) ? data : [];
+        items = items
+          .map(function (item) {
+            if (!item || typeof item === "string") return null;
+            if (!item.name || !item.text) return null;
+            if (tagKey) {
+              if (!(window.OZ_TAGS && OZ_TAGS.has(item, tagKey))) return null;
+            } else if (String(item.category || "").trim() !== catName) {
+              return null;
+            }
+            return item;
+          })
+          .filter(Boolean)
+          .reverse();
+
+        if (tagKey) {
+          // Страницы тегов не для индекса: только follow + человекочитаемое имя из tags.js/tags.json
+          applyCollectionSeo({
+            title: tagName,
+            description: "Подборка отзывов по тегу «" + tagName + "» на ot-ziv.com.",
+            url: SITE + "/otzyvy.html?tag=" + encodeURIComponent(tagKey),
+            items: items,
+          });
+          document.title = "#" + tagName + " — ot-ziv.com";
+        } else {
+          applyCollectionSeo({
+            title: catName,
+            description:
+              "Отзывы в категории «" +
+              catName +
+              "» на ot-ziv.com. Список опубликованных отзывов.",
+            url: SITE + "/otzyvy.html?c=" + encodeURIComponent(catKey),
+            items: items,
+          });
+        }
+
+        if (!items.length) {
+          if (emptyEl) {
+            emptyEl.hidden = false;
+            if (tagKey) emptyEl.textContent = "По этому тегу пока нет отзывов.";
+          }
+          return;
+        }
+        listEl.innerHTML = items
+          .map(function (r) {
+            return (
+              '<li><a href="' +
+              esc(reviewHref(r)) +
+              '"><div class="oz-list-name">' +
+              esc(r.name) +
+              '</div><div class="oz-list-meta"><span class="g" aria-label="' +
+              (+r.rating || 0) +
+              ' из 5">' +
+              stars(r.rating) +
+              "</span><span>" +
+              esc(fmtDate(r.date) || r.date || "") +
+              "</span><span>" +
+              esc(r.user || "") +
+              "</span></div></a></li>"
+            );
+          })
+          .join("");
+      })
+      .catch(function () {
+        if (emptyEl) {
+          emptyEl.hidden = false;
+          emptyEl.textContent = "Не удалось загрузить отзывы.";
+        }
+      });
+  }
+
+  if (window.OZ_TAGS && OZ_TAGS.loadUserTags) {
+    OZ_TAGS.loadUserTags().then(runList);
+  } else {
+    runList();
+  }
 })();
 </script>
 </body>
