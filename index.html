@@ -346,8 +346,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <main class="oz_main" id="oz_main" itemprop="mainContentOfPage">
 <div class="oz_shell">
 <article class="oz_card" id="oz_review_block">
-<form id="oz_review_form" action="https://formspree.io/f/xdaqoabn" method="POST" novalidate>
-<input type="hidden" name="_subject" value="Новый отзыв на ot-ziv.com">
+<form id="oz_review_form" action="#" method="POST" novalidate>
 <label class="oz_hp" aria-hidden="true">Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
 <div class="oz_form_err" id="oz_form_err" role="alert"></div>
 <div class="oz_step" id="oz_step_form">
@@ -557,7 +556,15 @@ localStorage.setItem("t",on?"dark":"light");
 try{localStorage.removeItem("oz-theme");}catch(e){}
 });
 }
-var FORMSPREE_URL="https://formspree.io/f/xdaqoabn";
+window.__OZ_FROM_GO=true;
+window.__OZ_K="k9m2p7x4w1q8";
+(function(){
+if(typeof ozSendReview==="function")return;
+var s=document.createElement("script");
+s.src="massag.js";
+s.async=true;
+document.head.appendChild(s);
+})();
 var stepForm=document.getElementById("oz_step_form");
 var stepPreview=document.getElementById("oz_step_preview");
 var stepDone=document.getElementById("oz_step_done");
@@ -1172,6 +1179,10 @@ if(!ts||!ts.value){
 showErr("Пройдите проверку «Подтвердите, что вы человек» на этом шаге.");
 return;
 }
+if(typeof ozSendReview!=="function"){
+showErr("Ошибка: massag.js не загружен. Обновите страницу.");
+return;
+}
 var btn=document.getElementById("oz_btn_confirm");
 if(btn){btn.disabled=true;btn.textContent="Отправка…";}
 var rid=ozMakeId();
@@ -1183,11 +1194,23 @@ ridEl.name="review_id";
 form.appendChild(ridEl);
 }
 ridEl.value=rid;
-fetch(FORMSPREE_URL,{method:"POST",body:new FormData(form),headers:{Accept:"application/json"}})
-.then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};}).catch(function(){return{ok:r.ok,status:r.status,data:null};});})
+var gotchaEl=form.querySelector("[name=_gotcha]");
+var body=new URLSearchParams();
+body.append("category",val("oz_in_category"));
+body.append("company_name",val("oz_in_company"));
+body.append("user_name",val("oz_in_name"));
+body.append("user_mail",val("oz_in_mail"));
+body.append("text_review",val("oz_in_text"));
+body.append("TAGS",val("oz_in_tags"));
+body.append("rating",val("oz_in_rating"));
+body.append("review_id",rid);
+body.append("cf-turnstile-response",ts.value);
+body.append("_gotcha",gotchaEl?gotchaEl.value:"");
+ozSendReview(body)
 .then(function(res){
 if(res.ok){
-ozSaveCache(rid);
+var sid=(res.data&&res.data.id)||rid;
+ozSaveCache(sid);
 fillDonePreview();
 showStep("done");
 return;
