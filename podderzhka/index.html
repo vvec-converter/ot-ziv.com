@@ -2,7 +2,7 @@
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<script>(function(){try{var t=localStorage.getItem("t");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem("t");if(t!=="light"&&t!=="dark")t=localStorage.getItem("oz-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#3d7c47">
 <meta name="description" content="Поддержка пользователей ot-ziv.com — вопросы по отзывам, модерации и работе сайта.">
@@ -28,10 +28,10 @@ html[data-theme="dark"] .at{display:block}
 .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 .cn{display:none;padding:6px 0 4px}
 .cn.dp{display:block}
-.cn nav{display:flex;flex-direction:column}
-.cn a{display:block;padding:13px 0;font-size:16px;border-bottom:1px solid var(--f)}
-.cn a:last-child{border-bottom:none}
-.cn a.dy{color:var(--a);font-weight:600}
+.cn nav{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px}
+.cn a{flex:none;display:inline-block;padding:10px 14px;font-size:14px;color:var(--g);background:#f5f6f8;border:1px solid var(--f);border-radius:999px;white-space:nowrap;text-decoration:none}
+.cn a:active{background:#e8ebef}
+.cn a.dy{color:var(--a);font-weight:600;border-color:var(--b);background:rgba(61,124,71,.1)}
 .v{display:none}
 .dn{padding:0;flex:1 0 auto}
 .dn>.da{padding:var(--h)}
@@ -53,7 +53,9 @@ html[data-theme="dark"] .at{display:block}
 .cu a.dy{color:var(--a);font-weight:600}
 .cu a:active{background:#f5f6f8}
 html[data-theme="dark"] a{color:#8ec5f0}
-html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy,html[data-theme="dark"] .cu a.dy{color:#7bc67e}
+html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy,html[data-theme="dark"] .cu a.dy{color:#7bc67e;border-color:#3d7c47;background:rgba(123,198,126,.12)}
+html[data-theme="dark"] .cn a,html[data-theme="dark"] .v a{background:#232a31;color:#e8eaed;border-color:#2a313a}
+html[data-theme="dark"] .cn a:active,html[data-theme="dark"] .v a:active{background:#2b333c}
 html[data-theme="dark"] .cu a:active{background:#232a31}
 .ag{padding:8px var(--h) 0}
 .d{display:flex;justify-content:flex-end}
@@ -78,9 +80,10 @@ body{padding:18px 16px calc(18px + var(--c))}
 .cg,.cn,.cu{display:none}
 .dh{padding-bottom:20px}
 .v{display:block;border-bottom:1px solid var(--f);background:#fafbfc}
-.v nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:11px 0}
-.v a{font-size:14px;white-space:nowrap}
-.v a.dy{color:var(--a);font-weight:600}
+.v nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:11px 0}
+.v a{flex:none;display:inline-block;padding:10px 14px;font-size:14px;color:var(--g);background:#f5f6f8;border:1px solid var(--f);border-radius:999px;white-space:nowrap;text-decoration:none}
+.v a:active{background:#e8ebef}
+.v a.dy{color:var(--a);font-weight:600;border-color:var(--b);background:rgba(61,124,71,.1)}
 .dd{padding:20px var(--h)}
 .dd h1{font-size:1.35rem}
 html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}

@@ -1,6 +1,7 @@
 (function () {
   try {
     var t = localStorage.getItem("t");
+    if (t !== "light" && t !== "dark") t = localStorage.getItem("oz-theme");
     document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");
   } catch (e) {}
 
@@ -35,6 +36,7 @@
     var darkSwitch = document.getElementById("darkSwitch");
     if (darkSwitch) {
       var saved = localStorage.getItem("t");
+      if (saved !== "light" && saved !== "dark") saved = localStorage.getItem("oz-theme");
       var dark = saved !== "light";
       document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
       darkSwitch.checked = dark;
@@ -42,6 +44,9 @@
         var on = darkSwitch.checked;
         document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
         localStorage.setItem("t", on ? "dark" : "light");
+        try {
+          localStorage.removeItem("oz-theme");
+        } catch (e) {}
       });
     }
     var stepForm = document.getElementById("ba");

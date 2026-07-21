@@ -2,7 +2,7 @@
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<script>(function(){try{var t=localStorage.getItem("t");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem("t");if(t!=="light"&&t!=="dark")t=localStorage.getItem("oz-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#3d7c47">
 <meta name="description" id="oz-desc" content="Опубликованные отзывы на ot-ziv.com">
@@ -28,10 +28,10 @@ html[data-theme="dark"] .at{display:block}
 .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 .cn{display:none;padding:6px 0 4px}
 .cn.dp{display:block}
-.cn nav{display:flex;flex-direction:column}
-.cn a{display:block;padding:13px 0;font-size:16px;border-bottom:1px solid var(--f)}
-.cn a:last-child{border-bottom:none}
-.cn a.dy{color:var(--a);font-weight:600}
+.cn nav{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px}
+.cn a{flex:none;display:inline-block;padding:10px 14px;font-size:14px;color:var(--g);background:#f5f6f8;border:1px solid var(--f);border-radius:999px;white-space:nowrap;text-decoration:none}
+.cn a:active{background:#e8ebef}
+.cn a.dy{color:var(--a);font-weight:600;border-color:var(--b);background:rgba(61,124,71,.1)}
 .v{display:none}
 .dn{padding:0;flex:1 0 auto}
 .dn>.da{padding:var(--h)}
@@ -69,6 +69,9 @@ html[data-theme="dark"] .at{display:block}
 .oz-bc a{color:#1a5276;text-decoration:none}
 .oz-bc a:hover{text-decoration:underline}
 .oz-bc [aria-current="page"]{color:var(--g);font-weight:600}
+html[data-theme="dark"] .oz-bc{color:#9aa0a6}
+html[data-theme="dark"] .oz-bc a{color:#8ec5f0}
+html[data-theme="dark"] .oz-bc [aria-current="page"]{color:#e8eaed}
 .dh{margin-top:auto;padding:16px var(--h) calc(16px + var(--i) + var(--c));border-top:8px solid var(--j);background:#fafbfc;flex:none}
 .oz-clock{margin:0;font-size:14px;color:var(--e);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
 .oz-clock time{display:block;font-size:18px;font-weight:700;color:var(--g);letter-spacing:.02em}
@@ -79,7 +82,9 @@ html[data-theme="dark"] .at{display:block}
 .cu a.dy{color:var(--a);font-weight:600}
 .cu a:active{background:#f5f6f8}
 html[data-theme="dark"] a{color:#8ec5f0}
-html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy,html[data-theme="dark"] .cu a.dy{color:#7bc67e}
+html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy,html[data-theme="dark"] .cu a.dy{color:#7bc67e;border-color:#3d7c47;background:rgba(123,198,126,.12)}
+html[data-theme="dark"] .cn a,html[data-theme="dark"] .v a{background:#232a31;color:#e8eaed;border-color:#2a313a}
+html[data-theme="dark"] .cn a:active,html[data-theme="dark"] .v a:active{background:#2b333c}
 html[data-theme="dark"] .cu a:active{background:#232a31}
 .ag{display:flex;justify-content:flex-end;padding:calc(6px + var(--d)) var(--h) 2px}
 .d{display:flex;justify-content:flex-end;margin:0}
@@ -110,13 +115,16 @@ body{padding:18px 16px calc(18px + var(--c))}
 .cg,.cn,.cu{display:none}
 .dh{padding-bottom:20px}
 .v{display:block;border-bottom:1px solid var(--f);background:#fafbfc}
-.v nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:11px 0}
-.v a{font-size:14px;white-space:nowrap}
-.v a.dy{color:var(--a);font-weight:600}
+.v nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:11px 0}
+.v a{flex:none;display:inline-block;padding:10px 14px;font-size:14px;color:var(--g);background:#f5f6f8;border:1px solid var(--f);border-radius:999px;white-space:nowrap;text-decoration:none}
+.v a:active{background:#e8ebef}
+.v a.dy{color:var(--a);font-weight:600;border-color:var(--b);background:rgba(61,124,71,.1)}
 .dd{padding:20px var(--h)}
 .dd h1{font-size:1.35rem}
 .oz-pop{padding-bottom:16px}
 html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
+html[data-theme="dark"] .v a{background:#232a31;color:#e8eaed;border-color:#2a313a}
+html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rgba(123,198,126,.12)}
 }
 </style>
 </head>
@@ -161,7 +169,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <div class="da">
 <article class="dd">
 <nav class="oz-bc" id="oz-bc" aria-label="Хлебные крошки"></nav>
-<a class="oz-back" id="oz-back" href="https://ot-ziv.com/otzyvy.html" hidden>← назад</a>
+<a class="oz-back" id="oz-back" href="otzyvy.html" hidden>← назад</a>
 <h1 id="oz-title">Отзывы</h1>
 <p class="dl" id="oz-lead">Выберите категорию</p>
 <ul class="oz-cats" id="oz-cats">
@@ -502,10 +510,41 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
       return "";
     }
   }
+  function getQ() {
+    try {
+      return (new URLSearchParams(location.search).get("q") || "").trim();
+    } catch (e) {
+      return "";
+    }
+  }
+  function normQ(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/ё/g, "е")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function matchesSearch(item, q) {
+    var nq = normQ(q);
+    if (!nq || !item) return false;
+    if (normQ(item.name).indexOf(nq) !== -1) return true;
+    var qSlug = window.OZ_TAGS ? OZ_TAGS.slugify(q) : slugify(q);
+    var slugs = window.OZ_TAGS ? OZ_TAGS.parse(item.tags) : [];
+    for (var i = 0; i < slugs.length; i++) {
+      var slug = slugs[i];
+      if (!slug) continue;
+      if (slug.indexOf(qSlug) !== -1 || slug.indexOf(nq) !== -1) return true;
+      var tname = window.OZ_TAGS ? OZ_TAGS.name(slug) : slug;
+      if (normQ(tname).indexOf(nq) !== -1) return true;
+    }
+    if (normQ(item.tags).indexOf(nq) !== -1) return true;
+    return false;
+  }
 
   var darkSwitch = document.getElementById("darkSwitch");
   if (darkSwitch) {
     var saved = localStorage.getItem("t");
+    if (saved !== "light" && saved !== "dark") saved = localStorage.getItem("oz-theme");
     var dark = saved !== "light";
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
     darkSwitch.checked = dark;
@@ -513,6 +552,9 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
       var on = darkSwitch.checked;
       document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
       localStorage.setItem("t", on ? "dark" : "light");
+      try {
+        localStorage.removeItem("oz-theme");
+      } catch (e) {}
     });
   }
   var bm = document.getElementById("bm");
@@ -530,6 +572,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
   var catName = catKey ? CATS[catKey] : "";
   var tagKey = getTag();
   var tagName = tagKey && window.OZ_TAGS ? OZ_TAGS.name(tagKey) : tagKey;
+  var qKey = getQ();
   var catsEl = document.getElementById("oz-cats");
   var listEl = document.getElementById("oz-list");
   var emptyEl = document.getElementById("oz-empty");
@@ -537,8 +580,13 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
   var titleEl = document.getElementById("oz-title");
   var leadEl = document.getElementById("oz-lead");
 
-  if (!catKey && !tagKey) {
+  if (!catKey && !tagKey && !qKey) {
     applyHubSeo();
+    if (backEl) {
+      backEl.hidden = false;
+      backEl.href = "/";
+      backEl.textContent = "← на главную";
+    }
     if (window.OZ_TAGS && OZ_TAGS.loadUserTags) OZ_TAGS.loadUserTags();
     return;
   }
@@ -550,9 +598,19 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     if (backEl) {
       backEl.hidden = false;
       backEl.href = "otzyvy.html";
+      backEl.textContent = "← назад";
     }
 
-    if (tagKey) {
+    if (qKey) {
+      if (titleEl) titleEl.textContent = "Поиск: " + qKey;
+      if (leadEl) leadEl.textContent = "Результаты по названию и тегам. Нажмите, чтобы открыть.";
+      if (!document.querySelector('meta[name="robots"][content="noindex, follow"]')) {
+        var robotsQ = document.createElement("meta");
+        robotsQ.name = "robots";
+        robotsQ.content = "noindex, follow";
+        document.head.appendChild(robotsQ);
+      }
+    } else if (tagKey) {
       if (titleEl) titleEl.textContent = "#" + tagName;
       if (leadEl) leadEl.textContent = "Отзывы с этим тегом. Нажмите, чтобы открыть.";
       if (!document.querySelector('meta[name="robots"][content="noindex, follow"]')) {
@@ -577,7 +635,9 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
           .map(function (item) {
             if (!item || typeof item === "string") return null;
             if (!item.name || !item.text) return null;
-            if (tagKey) {
+            if (qKey) {
+              if (!matchesSearch(item, qKey)) return null;
+            } else if (tagKey) {
               if (!(window.OZ_TAGS && OZ_TAGS.has(item, tagKey))) return null;
             } else if (String(item.category || "").trim() !== catName) {
               return null;
@@ -587,7 +647,15 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
           .filter(Boolean)
           .reverse();
 
-        if (tagKey) {
+        if (qKey) {
+          applyCollectionSeo({
+            title: "Поиск: " + qKey,
+            description: "Результаты поиска «" + qKey + "» по названию и тегам на ot-ziv.com.",
+            url: SITE + "/otzyvy.html?q=" + encodeURIComponent(qKey),
+            items: items,
+          });
+          document.title = "Поиск: " + qKey + " — ot-ziv.com";
+        } else if (tagKey) {
           // Страницы тегов не для индекса: только follow + человекочитаемое имя из tags.js/tags.json
           applyCollectionSeo({
             title: tagName,
@@ -611,7 +679,8 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
         if (!items.length) {
           if (emptyEl) {
             emptyEl.hidden = false;
-            if (tagKey) emptyEl.textContent = "По этому тегу пока нет отзывов.";
+            if (qKey) emptyEl.textContent = "По запросу ничего не найдено.";
+            else if (tagKey) emptyEl.textContent = "По этому тегу пока нет отзывов.";
           }
           return;
         }

@@ -59,8 +59,10 @@ row("E-mail",item.mail||"не указан")+
 row("Текст",item.text)+
 row("Теги",item.tags||"—")+
 '<div class="row"><dt>Оценка</dt><dd><span class="stars">'+stars+'</span></dd></div>';
-var th=localStorage.getItem("oz-theme");
+var th=localStorage.getItem("t");
+if(th!=="light"&&th!=="dark")th=localStorage.getItem("oz-theme");
 if(th==="light")document.documentElement.setAttribute("data-theme","light");
+else document.documentElement.setAttribute("data-theme","dark");
 })();
 </script>
 </body>
