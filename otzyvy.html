@@ -15,7 +15,7 @@ html{overflow-x:hidden}
 body{overflow-x:hidden;font-family:Segoe UI,system-ui,-apple-system,sans-serif;background:var(--j);color:var(--g);line-height:1.5;font-size:16px;padding-bottom:calc(var(--i) + var(--c))}
 a{color:#2f5f8f;text-decoration:none}
 a:hover{text-decoration:underline}
-.dq{width:100%;max-width:var(--k);margin:0 auto;background:#fff;overflow-x:hidden;min-height:100dvh}
+.dq{width:100%;max-width:var(--k);margin:0 auto;background:#fff;overflow-x:hidden;min-height:100dvh;display:flex;flex-direction:column}
 .da{padding:0 var(--h)}
 .cg{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--f);padding:6px var(--h) 12px}
 .cf{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -33,7 +33,7 @@ html[data-theme="dark"] .at{display:block}
 .cn a:last-child{border-bottom:none}
 .cn a.dy{color:var(--b);font-weight:600}
 .v{display:none}
-.dn{padding:0}
+.dn{padding:0;flex:1 0 auto}
 .dn>.da{padding:var(--h)}
 .dd{border:1px solid var(--f);border-radius:10px;padding:18px var(--h);background:#fff}
 .dd h1{font-size:1.2rem;font-weight:700;margin-bottom:6px}
@@ -52,6 +52,9 @@ html[data-theme="dark"] .at{display:block}
 .oz-cats a{display:block;padding:16px 0;font-size:17px;font-weight:700;color:var(--g);text-decoration:none}
 .oz-back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
 .oz-empty{color:var(--e);font-size:15px;padding:8px 0}
+.dh{margin-top:auto;padding:16px var(--h) calc(16px + var(--i) + var(--c));border-top:8px solid var(--j);background:#fafbfc;flex:none}
+.oz-clock{margin:0;font-size:14px;color:var(--e);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
+.oz-clock time{display:block;font-size:18px;font-weight:700;color:var(--g);letter-spacing:.02em}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
 .cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#595959;text-align:center;line-height:1.15;text-decoration:none}
 .cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
@@ -72,7 +75,8 @@ html[data-theme="dark"] .cu a:active{background:#232a31}
 .form-switch input:checked+.form-icon::after{transform:translateX(16px)}
 html[data-theme="dark"]{color-scheme:dark}
 html[data-theme="dark"] body{background:#12151a;color:#e8eaed}
-html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .cu{background:#1a1f26;border-color:#2a313a}
+html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .dh,html[data-theme="dark"] .cu{background:#1a1f26;border-color:#2a313a}
+html[data-theme="dark"] .oz-clock time{color:#e8eaed}
 html[data-theme="dark"] .bm{background:#232a31;border-color:#2a313a;color:#e8eaed}
 html[data-theme="dark"] .cn a,html[data-theme="dark"] .oz-list a,html[data-theme="dark"] .oz-cats a{color:#e8eaed;border-color:#2a313a}
 html[data-theme="dark"] .oz-list-name{color:#e8eaed}
@@ -81,6 +85,7 @@ html[data-theme="dark"] .oz-list-name{color:#e8eaed}
 body{padding:18px 16px calc(18px + var(--c))}
 .dq{border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,.06)}
 .cg,.cn,.cu{display:none}
+.dh{padding-bottom:20px}
 .v{display:block;border-bottom:1px solid var(--f);background:#fafbfc}
 .v nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:11px 0}
 .v a{color:var(--e);font-size:14px;white-space:nowrap}
@@ -131,7 +136,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <main class="dn">
 <div class="da">
 <article class="dd">
-<a class="oz-back" id="oz-back" href="index.html" hidden>← назад</a>
+<a class="oz-back" id="oz-back" href="https://ot-ziv.com/otzyvy.html" hidden>← назад</a>
 <h1 id="oz-title">Отзывы</h1>
 <p class="dl" id="oz-lead">Выберите категорию</p>
 <ul class="oz-cats" id="oz-cats">
@@ -139,6 +144,9 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <li><a href="otzyvy.html?c=mesta">Места</a></li>
 <li><a href="otzyvy.html?c=uslugi">Услуги</a></li>
 <li><a href="otzyvy.html?c=sajty">Сайты</a></li>
+<li><a href="otzyvy.html?c=rabota">Работа и Карьера</a></li>
+<li><a href="otzyvy.html?c=lyudi">Люди и Персоны</a></li>
+<li><a href="otzyvy.html?c=obshchestvo">Общество и Государство</a></li>
 </ul>
 <ul class="oz-list" id="oz-list" hidden></ul>
 <p class="oz-empty" id="oz-empty" hidden>В этой категории пока нет отзывов.</p>
@@ -159,6 +167,12 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
 <span>Отзывы</span>
 </a>
 </nav>
+<footer class="dh" id="co">
+<p class="oz-clock" id="oz-clock" aria-live="polite">
+<time id="oz-clock-time" datetime=""></time>
+<span id="oz-clock-date"></span>
+</p>
+</footer>
 </div>
 <script>
 (function () {
@@ -167,6 +181,9 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     mesta: "Места",
     uslugi: "Услуги",
     sajty: "Сайты",
+    rabota: "Работа и Карьера",
+    lyudi: "Люди и Персоны",
+    obshchestvo: "Общество и Государство",
   };
 
   function esc(s) {
@@ -213,6 +230,32 @@ html[data-theme="dark"] .v{background:#151a20;border-color:#2a313a}
     } catch (e) {
       return "";
     }
+  }
+
+  var clockTime = document.getElementById("oz-clock-time");
+  var clockDate = document.getElementById("oz-clock-date");
+  function tickClock() {
+    var now = new Date();
+    var t = now.toLocaleTimeString("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    var d = now.toLocaleDateString("ru-RU", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    if (clockTime) {
+      clockTime.textContent = t;
+      clockTime.setAttribute("datetime", now.toISOString());
+    }
+    if (clockDate) clockDate.textContent = d;
+  }
+  if (clockTime || clockDate) {
+    tickClock();
+    setInterval(tickClock, 1000);
   }
 
   var darkSwitch = document.getElementById("darkSwitch");
