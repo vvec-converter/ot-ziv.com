@@ -73,8 +73,6 @@ html[data-theme="dark"] .oz_logo_dark{display:block}
 .oz_tag_chip.oz_name{border-style:dashed}
 .oz_tag_chip.oz_on{background:var(--oz-accent);border-color:var(--oz-accent);color:#fff;border-style:solid}
 .oz_tag_chip.oz_disabled{opacity:.45;pointer-events:none}
-.oz_tag_hint{margin:0;font-size:13px;color:var(--oz-muted);line-height:1.4}
-.oz_tag_hint[hidden]{display:none!important}
 .oz_stars{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(4px,1.2vw,8px);width:100%;max-width:100%;margin-top:4px;outline:none}
 .oz_star{flex:1 1 0;min-width:0;max-width:52px;width:auto;aspect-ratio:1;height:auto;margin:0;border:1px solid var(--oz-line);border-radius:12px;background:#fff;cursor:pointer;font-size:clamp(20px,5.5vw,30px);line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#d0d0d0;padding:0;appearance:none;-webkit-appearance:none;outline:none;box-shadow:none;vertical-align:top}
 .oz_star:focus,.oz_star:focus-visible,.oz_star:active{outline:none;box-shadow:none}
@@ -131,6 +129,8 @@ html[data-theme="dark"] .oz_mod_badge.oz_pub .oz_chk{color:#6fcf7a}
 .oz_foot_panel a:active{background:#eef0f3;margin:0 calc(-1 * var(--oz-pad));padding-left:var(--oz-pad);padding-right:var(--oz-pad)}
 .oz_copy{margin-top:16px;padding-top:14px;border-top:1px solid var(--oz-line);font-size:12px;color:var(--oz-muted);text-align:center;line-height:1.55}
 .oz_disclaimer{margin-top:16px;padding-top:0;border-top:none;font-weight:600;color:#444}
+.oz_clock{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--oz-line);font-size:14px;color:var(--oz-muted);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
+.oz_clock time{display:block;font-size:18px;font-weight:700;color:var(--oz-text);letter-spacing:.02em}
 .oz_theme_slot{display:flex;justify-content:flex-end;padding:calc(6px + var(--oz-safe-t)) var(--oz-pad) 2px}
 .oz_theme_slot .d{display:flex;justify-content:flex-end;margin:0}
 .oz_theme_slot label{cursor:pointer}
@@ -232,8 +232,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_drawer" id="oz_drawer" aria-hidden="true">
 <nav aria-label="Меню">
 <a href="#" class="oz_nav_my">Мой отзыв</a>
-<a href="https://ot-ziv.com/login/">Личный кабинет</a>
-<a href="https://ot-ziv.com/katalog/">Выход</a>
 </nav>
 </div>
 <form class="oz_search" id="oz_search_mob" action="https://ot-ziv.com/search/" method="get" role="search">
@@ -244,24 +242,20 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_cats_wrap" id="oz_cats_wrap">
 <button type="button" class="oz_cats_arr oz_cats_prev" id="oz_cats_prev" aria-label="Листать назад">‹</button>
 <nav class="oz_cats oz_cats_mob" id="oz_nav_cats" aria-label="Категории">
-<a href="https://ot-ziv.com/katalog/tovary/">Товары</a>
-<a href="https://ot-ziv.com/katalog/mesta/">Места</a>
-<a href="https://ot-ziv.com/katalog/uslugi/">Услуги</a>
-<a href="https://ot-ziv.com/katalog/sajty/">Сайты</a>
+<a href="otzyvy.html?c=tovary">Товары</a>
+<a href="otzyvy.html?c=mesta">Места</a>
+<a href="otzyvy.html?c=uslugi">Услуги</a>
+<a href="otzyvy.html?c=sajty">Сайты</a>
 </nav>
 <button type="button" class="oz_cats_arr oz_cats_next" id="oz_cats_next" aria-label="Листать вперёд">›</button>
 </div>
 <div class="oz_desk_strip">
 <div class="oz_shell">
 <nav id="oz_nav_top" aria-label="Верхнее меню">
-<a href="https://ot-ziv.com/" class="oz_on">Главная</a>
-<a href="https://ot-ziv.com/katalog/">Каталог</a>
+<a href="index.html" class="oz_on">Главная</a>
+<a href="otzyvy.html">Отзывы</a>
 <a href="#" class="oz_nav_my">Мой отзыв</a>
-<a href="https://ot-ziv.com/napisat-otziv/">Добавить отзыв</a>
-<a href="https://ot-ziv.com/dobavit-kompaniyu/">Новая компания</a>
 <a href="https://ot-ziv.com/o-proekte/">О нас</a>
-<a href="https://ot-ziv.com/stati/">Статьи</a>
-<a href="https://ot-ziv.com/login/">Личный кабинет</a>
 </nav>
 </div>
 </div>
@@ -281,10 +275,10 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </form>
 </div>
 <nav class="oz_cats oz_cats_desk" aria-label="Категории">
-<a href="https://ot-ziv.com/katalog/tovary/">Товары</a>
-<a href="https://ot-ziv.com/katalog/mesta/">Места</a>
-<a href="https://ot-ziv.com/katalog/uslugi/">Услуги</a>
-<a href="https://ot-ziv.com/katalog/sajty/">Сайты</a>
+<a href="otzyvy.html?c=tovary">Товары</a>
+<a href="otzyvy.html?c=mesta">Места</a>
+<a href="otzyvy.html?c=uslugi">Услуги</a>
+<a href="otzyvy.html?c=sajty">Сайты</a>
 </nav>
 </div>
 </header>
@@ -331,7 +325,6 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_field oz_full">
 <span id="oz_tags_label">Теги</span>
 <div class="oz_tag_pick" id="oz_tag_pick" role="group" aria-labelledby="oz_tags_label"></div>
-<p class="oz_tag_hint" id="oz_tag_hint">Сначала выберите категорию и название — предложим до 2 тегов (название + категория).</p>
 <input type="hidden" name="TAGS" id="oz_in_tags" value="">
 </div>
 <div class="oz_field oz_field_rate">
@@ -391,10 +384,10 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <div class="oz_foot_block" id="oz_foot_cat_block">
 <button type="button" class="oz_foot_tog" id="oz_foot_cat_btn" aria-expanded="false" aria-controls="oz_foot_cats">Категории</button>
 <ul id="oz_foot_cats" class="oz_foot_panel" hidden>
-<li><a href="https://ot-ziv.com/katalog/tovary/">Товары</a></li>
-<li><a href="https://ot-ziv.com/katalog/mesta/">Места</a></li>
-<li><a href="https://ot-ziv.com/katalog/uslugi/">Услуги</a></li>
-<li><a href="https://ot-ziv.com/katalog/sajty/">Сайты</a></li>
+<li><a href="otzyvy.html?c=tovary">Товары</a></li>
+<li><a href="otzyvy.html?c=mesta">Места</a></li>
+<li><a href="otzyvy.html?c=uslugi">Услуги</a></li>
+<li><a href="otzyvy.html?c=sajty">Сайты</a></li>
 </ul>
 </div>
 <div class="oz_foot_block" id="oz_foot_info_block">
@@ -406,21 +399,33 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </ul>
 </div>
 </div>
-<p class="oz_copy oz_disclaimer">Данный ресурс является независимым сайтом отзывов и не имеет никакого отношения к сервису otzovik.com.</p>
+<p class="oz_copy oz_disclaimer">Данный ресурс является независимым сайтом отзывов и не имеет никакого отношения к другим сервисам.</p>
+<p class="oz_clock" id="oz_clock" aria-live="polite">
+<time id="oz_clock_time" datetime=""></time>
+<span id="oz_clock_date"></span>
+</p>
 <p class="oz_copy" id="oz_copy">© ot-ziv.com 2015–2026 · Самая честная критика Рунета и стран СНГ.<br>Администрация сайта не несёт ответственности за размещаемые пользователями постов.</p>
 </div>
 </footer>
 <nav class="oz_tabbar" id="oz_tabbar" aria-label="Быстрая навигация">
-<a href="https://ot-ziv.com/" class="oz_on oz_home_link" id="oz_tab_home">Главная</a>
-<a href="https://ot-ziv.com/katalog/">Каталог</a>
-<a href="https://ot-ziv.com/napisat-otziv/">Пост</a>
-<a href="https://ot-ziv.com/stati/">Статьи</a>
-<a href="https://ot-ziv.com/login/">Кабинет</a>
+<a href="index.html" class="oz_on oz_home_link" id="oz_tab_home">Главная</a>
+<a href="otzyvy.html">Отзывы</a>
+<a href="index.html#oz_review_block">Пост</a>
 </nav>
 </div>
 <script src="tags.js"></script>
 <script>
 (function(){
+var clockTime=document.getElementById("oz_clock_time");
+var clockDate=document.getElementById("oz_clock_date");
+function tickClock(){
+var now=new Date();
+var t=now.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+var d=now.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+if(clockTime){clockTime.textContent=t;clockTime.setAttribute("datetime",now.toISOString());}
+if(clockDate)clockDate.textContent=d;
+}
+if(clockTime||clockDate){tickClock();setInterval(tickClock,1000);}
 console.log("Это сайт отзыв (ot-ziv.com) и не имеет отношения к сайту отзовик (otzovik — от слова «отзывать документы»: отзывающий претензию или иск). Слово «отзыв» — публикуемый материал о чём-либо, характеризующий его хорошую или плохую деятельность.");
 var darkSwitch=document.getElementById("darkSwitch");
 if(darkSwitch){
@@ -497,7 +502,6 @@ pick.appendChild(lab);
 }
 function ozRenderTagPick(){
 var pick=document.getElementById("oz_tag_pick");
-var hint=document.getElementById("oz_tag_hint");
 var hidden=document.getElementById("oz_in_tags");
 var cat=val("oz_in_category");
 var company=val("oz_in_company");
@@ -511,14 +515,9 @@ if(nameTag&&t.slug===nameTag.slug)return;
 list.push({slug:t.slug,name:t.name,kind:"cat"});
 });
 pick.innerHTML="";
-if(!cat&&!nameTag){
+if(!list.length){
 if(hidden)hidden.value="";
-if(hint){hint.hidden=false;hint.textContent="Сначала выберите категорию и название — предложим до 2 тегов (название + категория).";}
 return;
-}
-if(hint){
-hint.hidden=false;
-hint.textContent="Можно выбрать до 2 тегов: по названию и/или из категории.";
 }
 list.forEach(function(t){ozAddTagChip(pick,t,prev);});
 ozSyncTags();

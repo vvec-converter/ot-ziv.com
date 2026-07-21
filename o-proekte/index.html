@@ -43,6 +43,9 @@ html[data-theme="dark"] .at{display:block}
 .dd ul{padding-left:1.2em;margin-bottom:12px}
 .dd li{margin-bottom:6px}
 .back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
+.dh{padding:16px var(--h) calc(16px + var(--c));border-top:8px solid var(--j);background:#fafbfc}
+.oz-clock{margin:0;font-size:14px;color:var(--e);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
+.oz-clock #oz-now{display:block;font-size:18px;font-weight:700;color:var(--g);letter-spacing:.02em}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
 .cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#595959;text-align:center;line-height:1.15;text-decoration:none}
 .cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
@@ -63,7 +66,8 @@ html[data-theme="dark"] .cu a:active{background:#232a31}
 .form-switch input:checked+.form-icon::after{transform:translateX(16px)}
 html[data-theme="dark"]{color-scheme:dark;--j:#121417;--g:#e8eaed;--e:#9aa0a6;--f:#2b3138}
 html[data-theme="dark"] body{background:var(--j);color:var(--g)}
-html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .cu{background:#1a1f24}
+html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .dh,html[data-theme="dark"] .cu{background:#1a1f24}
+html[data-theme="dark"] .oz-clock #oz-now{color:var(--g)}
 html[data-theme="dark"] .bm{background:#232a31;border-color:var(--f);color:var(--g)}
 html[data-theme="dark"] .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 html[data-theme="dark"] .cn a{color:var(--g)}
@@ -72,6 +76,7 @@ html[data-theme="dark"] .cn a{color:var(--g)}
 body{padding:18px 16px calc(18px + var(--c))}
 .dq{border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,.06)}
 .cg,.cn,.cu{display:none}
+.dh{padding-bottom:20px}
 .v{display:block;border-bottom:1px solid var(--f);background:#fafbfc}
 .v nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:11px 0}
 .v a{color:var(--e);font-size:14px;white-space:nowrap}
@@ -133,7 +138,10 @@ html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
 <li>товары;</li>
 <li>места;</li>
 <li>услуги;</li>
-<li>сайты.</li>
+<li>сайты;</li>
+<li>работа и карьера;</li>
+<li>люди и персоны;</li>
+<li>общество и государство.</li>
 </ul>
 <h2>Принципы</h2>
 <ul>
@@ -141,11 +149,14 @@ html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
 <li>публикация проходит модерацию;</li>
 <li>администрация не несёт ответственности за содержание постов пользователей.</li>
 </ul>
-<p>Данный ресурс является независимым сайтом отзывов и не имеет никакого отношения к похожим сервисам.</p>
+<p>Данный ресурс является независимым сайтом отзывов и не имеет никакого отношения к другим сервисам.</p>
 <p>Связь: <a href="../kontakty/">Контакты</a> · помощь: <a href="../podderzhka/">Поддержка</a>.</p>
 </article>
 </div>
 </main>
+<footer class="dh">
+<p class="oz-clock" aria-live="polite"><span id="oz-now"></span></p>
+</footer>
 <nav class="cu" aria-label="Быстрая навигация">
 <a href="../">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
