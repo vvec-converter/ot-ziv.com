@@ -13,9 +13,9 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{overflow-x:hidden}
 body{overflow-x:hidden;font-family:Segoe UI,system-ui,-apple-system,sans-serif;background:var(--j);color:var(--g);line-height:1.5;font-size:16px;padding-bottom:calc(var(--i) + var(--c))}
-a{color:#2f5f8f;text-decoration:none}
+a{color:#1a5276;text-decoration:none}
 a:hover{text-decoration:underline}
-.dq{width:100%;max-width:var(--k);margin:0 auto;background:#fff;overflow-x:hidden;min-height:100dvh}
+.dq{width:100%;max-width:var(--k);margin:0 auto;background:#fff;overflow-x:hidden;min-height:100dvh;display:flex;flex-direction:column}
 .da{padding:0 var(--h)}
 .cg{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--f);padding:6px var(--h) 12px}
 .cf{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -29,11 +29,11 @@ html[data-theme="dark"] .at{display:block}
 .cn{display:none;padding:6px 0 4px}
 .cn.dp{display:block}
 .cn nav{display:flex;flex-direction:column}
-.cn a{display:block;padding:13px 0;font-size:16px;color:var(--g);border-bottom:1px solid var(--f)}
+.cn a{display:block;padding:13px 0;font-size:16px;border-bottom:1px solid var(--f)}
 .cn a:last-child{border-bottom:none}
-.cn a.dy{color:var(--b);font-weight:600}
+.cn a.dy{color:var(--a);font-weight:600}
 .v{display:none}
-.dn{padding:0}
+.dn{padding:0;flex:1 0 auto}
 .dn>.da{padding:var(--h)}
 .dd{border:1px solid var(--f);border-radius:10px;padding:18px var(--h);background:#fff}
 .dd h1{font-size:1.2rem;font-weight:700;margin-bottom:6px}
@@ -41,14 +41,17 @@ html[data-theme="dark"] .at{display:block}
 .dd h2{font-size:1rem;font-weight:700;margin:20px 0 8px}
 .dd p{font-size:15px;line-height:1.55;margin-bottom:10px}
 .back{display:inline-block;margin-bottom:12px;font-size:14px;font-weight:600}
+.dh{margin-top:auto;padding:16px var(--h) calc(16px + var(--i) + var(--c));border-top:8px solid var(--j);background:#fafbfc;flex:none}
+.oz-clock{margin:0;font-size:14px;color:var(--e);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
+.oz-clock time{display:block;font-size:18px;font-weight:700;color:var(--g);letter-spacing:.02em}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
-.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:#595959;text-align:center;line-height:1.15;text-decoration:none}
+.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;text-align:center;line-height:1.15;text-decoration:none}
 .cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
 .cu a span{display:block}
-.cu a.dy{color:#2f6337}
+.cu a.dy{color:var(--a);font-weight:600}
 .cu a:active{background:#f5f6f8}
-html[data-theme="dark"] .cu a{color:#f1f3f4}
-html[data-theme="dark"] .cu a.dy{color:#8fd99a}
+html[data-theme="dark"] a{color:#8ec5f0}
+html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy,html[data-theme="dark"] .cu a.dy{color:#7bc67e}
 html[data-theme="dark"] .cu a:active{background:#232a31}
 .ag{padding:8px var(--h) 0}
 .d{display:flex;justify-content:flex-end}
@@ -61,7 +64,8 @@ html[data-theme="dark"] .cu a:active{background:#232a31}
 .form-switch input:checked+.form-icon::after{transform:translateX(16px)}
 html[data-theme="dark"]{color-scheme:dark;--j:#121417;--g:#e8eaed;--e:#9aa0a6;--f:#2b3138}
 html[data-theme="dark"] body{background:var(--j);color:var(--g)}
-html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .cu{background:#1a1f24}
+html[data-theme="dark"] .dq,html[data-theme="dark"] .cg,html[data-theme="dark"] .dd,html[data-theme="dark"] .dh,html[data-theme="dark"] .cu{background:#1a1f24}
+html[data-theme="dark"] .oz-clock time{color:#e8eaed}
 html[data-theme="dark"] .bm{background:#232a31;border-color:var(--f);color:var(--g)}
 html[data-theme="dark"] .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 html[data-theme="dark"] .cn a{color:var(--g)}
@@ -70,10 +74,11 @@ html[data-theme="dark"] .cn a{color:var(--g)}
 body{padding:18px 16px calc(18px + var(--c))}
 .dq{border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,.06)}
 .cg,.cn,.cu{display:none}
+.dh{padding-bottom:20px}
 .v{display:block;border-bottom:1px solid var(--f);background:#fafbfc}
 .v nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:11px 0}
-.v a{color:var(--e);font-size:14px;white-space:nowrap}
-.v a.dy{color:var(--b);font-weight:600}
+.v a{font-size:14px;white-space:nowrap}
+.v a.dy{color:var(--a);font-weight:600}
 .dd{padding:20px var(--h)}
 .dd h1{font-size:1.35rem}
 html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
@@ -256,6 +261,12 @@ html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
 </article>
 </div>
 </main>
+<footer class="dh" id="co">
+<p class="oz-clock" id="oz-clock" aria-live="polite">
+<time id="oz-clock-time" datetime=""></time>
+<span id="oz-clock-date"></span>
+</p>
+</footer>
 <nav class="cu" aria-label="Быстрая навигация">
 <a href="../">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -271,6 +282,7 @@ html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
 </a>
 </nav>
 </div>
+<script src="../clock.js"></script>
 <script src="../go.js"></script>
 </body>
 </html>
