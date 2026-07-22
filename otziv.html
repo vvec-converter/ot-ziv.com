@@ -325,16 +325,16 @@ body{padding:18px 16px calc(18px + var(--c))}
 </header>
 <main class="dn" id="dn" itemprop="mainContentOfPage">
 <div class="da">
-<article class="dd" id="m" itemscope itemtype="https://schema.org/Review">
+<article class="dd" id="m">
 <nav class="oz-bc" id="oz-bc" aria-label="Хлебные крошки" hidden></nav>
-<h1 id="n" itemprop="name"></h1>
+<h1 id="n"></h1>
 <div class="oz-meta" id="oz-meta" hidden>
 <span id="oz-cat"></span>
-<span class="g" id="oz-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating"><meta itemprop="ratingValue" content=""><meta itemprop="bestRating" content="5"></span>
-<span id="oz-author">Автор: <span itemprop="author" id="oz-author-name"></span></span>
+<span class="g" id="oz-stars" aria-hidden="true"></span>
+<span id="oz-author">Автор: <span id="oz-author-name"></span></span>
 <span id="oz-date"></span>
 </div>
-<div class="oz-body" id="oz-body" itemprop="reviewBody"></div>
+<div class="oz-body" id="oz-body"></div>
 <div class="oz-tags" id="oz-tags" aria-label="Теги"></div>
 <div class="oz-bar" id="oz-admin-bar" hidden>Режим администратора</div>
 <div class="oz-admin" id="oz-admin-review" hidden>
@@ -581,34 +581,50 @@ body{padding:18px 16px calc(18px + var(--c))}
       bcEl.hidden = false;
     }
 
+    var aboutType = "Thing";
+    if (/сайты/i.test(cat)) aboutType = "WebSite";
+    else if (/товар/i.test(cat)) aboutType = "Product";
+    else if (/услуг/i.test(cat)) aboutType = "Service";
+    else if (/мест/i.test(cat)) aboutType = "Place";
+    else if (/работ|карьер/i.test(cat)) aboutType = "Organization";
+    else if (/люд|персон/i.test(cat)) aboutType = "Person";
+
     var about = {
-      "@type": "Thing",
+      "@type": aboutType,
       name: name,
     };
     if (cat) about.category = cat;
 
+    var ratingValue = rating > 0 ? rating : 5;
     var ld = {
       "@context": "https://schema.org",
       "@type": "Review",
-      "@id": url,
+      "@id": url + "#review",
       url: url,
       name: "Отзыв: " + name,
       headline: name,
-      reviewBody: text,
+      reviewBody: text || undefined,
       image: SITE + "/i/android-chrome-512x512.png",
       datePublished: date || undefined,
-      author: { "@type": "Person", name: author },
+      author: {
+        "@type": "Person",
+        name: author,
+      },
       itemReviewed: about,
-      keywords: kw || undefined,
-    };
-    if (rating > 0) {
-      ld.reviewRating = {
+      reviewRating: {
         "@type": "Rating",
-        ratingValue: rating,
+        ratingValue: ratingValue,
         bestRating: 5,
         worstRating: 1,
-      };
-    }
+      },
+      keywords: kw || undefined,
+      publisher: {
+        "@id": SITE + "/#organization",
+        "@type": "Organization",
+        name: "ОТЗЫВ",
+        url: SITE + "/",
+      },
+    };
     if (tags.length) {
       ld.about = tags.map(function (t) {
         return {
@@ -770,12 +786,18 @@ body{padding:18px 16px calc(18px + var(--c))}
     var title = document.getElementById("n");
     var cat = document.getElementById("oz-cat");
     var starEl = document.getElementById("oz-stars");
+    var authorWrap = document.getElementById("oz-author");
     var author = document.getElementById("oz-author-name");
     var dateEl = document.getElementById("oz-date");
     var body = document.getElementById("oz-body");
     var tagsEl = document.getElementById("oz-tags");
+    var article = document.getElementById("m");
+    var name = String((r && r.name) || "").trim();
+    var user = String((r && r.user) || "Аноним").trim() || "Аноним";
+    var rating = Math.min(5, Math.max(0, +((r && r.rating) || 0) || 0));
+    if (rating < 1) rating = 5;
     if (meta) meta.hidden = false;
-    if (title) title.textContent = r.name || "";
+    if (title) title.textContent = name;
     if (cat) {
       var catKey = CAT_KEYS[r.category];
       if (catKey) {
@@ -789,19 +811,15 @@ body{padding:18px 16px calc(18px + var(--c))}
         cat.textContent = r.category || "";
       }
     }
-    var rating = +r.rating || 0;
     if (starEl) {
       starEl.setAttribute("aria-label", rating + " из 5");
-      starEl.innerHTML =
-        '<meta itemprop="ratingValue" content="' +
-        rating +
-        '"><meta itemprop="bestRating" content="5">' +
-        stars(rating);
+      starEl.innerHTML = stars(rating);
     }
-    if (author) author.textContent = r.user || "Аноним";
+    if (author) author.textContent = user;
     if (dateEl) {
       dateEl.textContent = fmtDate(r.date);
       if (r.date) dateEl.setAttribute("datetime", r.date);
+      else dateEl.removeAttribute("datetime");
     }
     if (body) body.innerHTML = mdHtml(r.text || "");
     if (tagsEl) {
@@ -819,6 +837,15 @@ body{padding:18px 16px calc(18px + var(--c))}
           );
         })
         .join("");
+    }
+    if (article) {
+      article.removeAttribute("itemscope");
+      article.removeAttribute("itemtype");
+    }
+    if (authorWrap) {
+      authorWrap.removeAttribute("itemprop");
+      authorWrap.removeAttribute("itemscope");
+      authorWrap.removeAttribute("itemtype");
     }
     applyReviewSeo(r);
     updateAdminUi();
