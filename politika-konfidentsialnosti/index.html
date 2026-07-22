@@ -24,12 +24,12 @@ a:hover{text-decoration:underline}
 .da{padding:0 var(--h)}
 .cg{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--f);padding:6px var(--h) 12px}
 .cf{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.cw{display:flex;align-items:center;line-height:0}
-.bl{display:block;height:2.8rem;width:auto;max-width:min(100%,240px)}
+.cw{display:flex;align-items:center;line-height:0;min-width:0;flex:1;max-width:calc(100% - 54px);position:relative;z-index:0}
+.bl{display:block;height:2.8rem;width:auto;max-width:100%}
 .at{display:none}
 html[data-theme="dark"] .ab{display:none}
 html[data-theme="dark"] .at{display:block}
-.bm{width:44px;height:44px;border:1px solid var(--f);border-radius:10px;background:#f8f9fa;font-size:22px;line-height:40px;text-align:center;cursor:pointer;color:var(--g);flex:none}
+.bm{width:44px;height:44px;border:1px solid var(--f);border-radius:10px;background:#f8f9fa;font-size:22px;line-height:40px;text-align:center;cursor:pointer;color:var(--g);flex:none;position:relative;z-index:2;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none}
 .bm.ce{background:var(--b);color:#fff;border-color:var(--b)}
 .cn{display:none;padding:6px 0 4px}
 .cn.dp{display:block}
@@ -50,20 +50,23 @@ html[data-theme="dark"] .at{display:block}
 .oz-clock{margin:0;font-size:14px;color:var(--e);text-align:center;line-height:1.5;font-variant-numeric:tabular-nums}
 .oz-clock time{display:block;font-size:18px;font-weight:700;color:var(--g);letter-spacing:.02em}
 .cu{position:fixed;left:0;right:0;bottom:0;z-index:180;display:flex;background:#fff;border-top:1px solid var(--f);padding-bottom:var(--c);min-height:var(--i);box-shadow:0 -2px 12px rgba(0,0,0,.08)}
-.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;text-align:center;line-height:1.15;text-decoration:none}
+.cu a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--i);padding:6px 2px;font-size:10px;font-weight:600;color:var(--e);text-align:center;line-height:1.15;text-decoration:none;background:transparent}
 .cu a svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor}
 .cu a span{display:block}
-.cu a.dy{color:var(--a);font-weight:600}
-.cu a:active{background:#f5f6f8}
+.cu a.dy{color:var(--a);font-weight:600;background:transparent}
+html:not([data-theme="dark"]) .cu a:active{background:#f5f6f8}
 html[data-theme="dark"] a{color:#8ec5f0}
-html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy,html[data-theme="dark"] .cu a.dy{color:#7bc67e;border-color:#3d7c47;background:rgba(123,198,126,.12)}
+html[data-theme="dark"] .cn a.dy,html[data-theme="dark"] .v a.dy{color:#7bc67e;border-color:#3d7c47;background:rgba(123,198,126,.12)}
+html[data-theme="dark"] .cu a{color:#9aa0a6;background:transparent}
+html[data-theme="dark"] .cu a.dy{color:#7bc67e;background:transparent}
 html[data-theme="dark"] .cn a,html[data-theme="dark"] .v a{background:#232a31;color:#e8eaed;border-color:#2a313a}
 html[data-theme="dark"] .cn a:active,html[data-theme="dark"] .v a:active{background:#2b333c}
-html[data-theme="dark"] .cu a:active{background:#232a31}
+html[data-theme="dark"] .cu a:active{background:#232a31;color:#9aa0a6}
+html[data-theme="dark"] .cu a.dy:active{color:#7bc67e}
 .ag{padding:8px var(--h) 0}
 .d{display:flex;justify-content:flex-end}
 .form-group{margin:0}
-.form-switch{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--e);cursor:pointer;user-select:none}
+.form-switch{position:relative;display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--e);cursor:pointer;user-select:none}
 .form-switch input{position:absolute;opacity:0;width:0;height:0}
 .form-icon{width:36px;height:20px;border-radius:999px;background:#c5ccd3;position:relative;flex:none}
 .form-icon::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
@@ -117,9 +120,41 @@ html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
 <nav aria-label="Меню">
 <a href="../">Главная</a>
 <a href="../otzyvy.html">Отзывы</a>
-<a href="./" class="dy">Политика конфиденциальности</a>
+<a href="./" class="dy">Политика</a>
 </nav>
 </div>
+<script>
+(function () {
+  var darkSwitch = document.getElementById("darkSwitch");
+  if (darkSwitch) {
+    var saved = localStorage.getItem("t");
+    if (saved !== "light" && saved !== "dark") saved = localStorage.getItem("oz-theme");
+    var dark = saved !== "light";
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    darkSwitch.checked = dark;
+    darkSwitch.addEventListener("change", function () {
+      var on = darkSwitch.checked;
+      document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
+      localStorage.setItem("t", on ? "dark" : "light");
+      try { localStorage.removeItem("oz-theme"); } catch (e) {}
+    });
+  }
+  var bm = document.getElementById("bm");
+  var cn = document.getElementById("cn");
+  if (!bm || !cn) return;
+  function setOpen(open) {
+    cn.classList.toggle("dp", !!open);
+    bm.classList.toggle("ce", !!open);
+    bm.setAttribute("aria-expanded", open ? "true" : "false");
+    cn.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+  bm.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen(!cn.classList.contains("dp"));
+  });
+})();
+</script>
 </div>
 <div class="v">
 <div class="da">
@@ -210,7 +245,6 @@ html[data-theme="dark"] .v{background:#151a20;border-color:var(--f)}
 </a>
 </nav>
 </div>
-<script src="../clock.js"></script>
-<script src="../go.js"></script>
+<script src="../clock.js" async></script>
 </body>
 </html>

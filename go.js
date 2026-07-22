@@ -573,7 +573,7 @@
       stars.forEach(function (s) {
         s.classList.toggle("dv", +s.dataset.v <= n);
       });
-      hid.value = n;
+      if (hid) hid.value = n;
     }
     stars.forEach(function (s) {
       s.addEventListener("click", function () {
@@ -581,7 +581,7 @@
         s.blur();
       });
     });
-    paint(5);
+    if (hid || stars.length) paint(5);
     var doneLink = document.getElementById("an");
     if (doneLink) {
       doneLink.addEventListener("click", function () {

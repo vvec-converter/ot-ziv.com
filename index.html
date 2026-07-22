@@ -110,7 +110,13 @@ html[data-theme="dark"] .oz-pop-cat-lead{color:#9aa0a6}
 .oz_field input,.oz_field textarea,.oz_field select{width:100%;min-width:0;min-height:48px;padding:12px 14px;border:1px solid var(--oz-line);border-radius:12px;font-size:16px;font-family:inherit;background:#f8f9fa}
 .oz_field select{cursor:pointer;appearance:auto}
 .oz_field input:focus,.oz_field textarea:focus{outline:none;border-color:var(--oz-accent);background:#fff;box-shadow:0 0 0 3px rgba(61,124,71,.15)}
-.oz_field textarea{min-height:150px;resize:vertical;line-height:1.45}
+.oz_field textarea{min-height:150px;resize:none;line-height:1.45}
+.oz_text_wrap{position:relative}
+.oz_text_resize{display:flex;align-items:center;justify-content:center;width:100%;height:28px;margin-top:-2px;padding:0;border:1px solid var(--oz-line);border-top:none;border-radius:0 0 12px 12px;background:#eef0f3;color:var(--oz-muted);font-size:18px;font-weight:700;line-height:1;cursor:ns-resize;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-appearance:none;appearance:none}
+.oz_text_resize::before{content:"🡇";display:block;opacity:.85;font-weight:700}
+.oz_text_wrap textarea{border-radius:12px 12px 0 0;margin-bottom:0}
+.oz_text_wrap:focus-within .oz_text_resize{border-color:var(--oz-accent)}
+.oz_text_count{margin:0;font-size:12px;color:var(--oz-muted);text-align:right;line-height:1.35;font-variant-numeric:tabular-nums}
 .oz_field.oz_field_rate{display:block;text-align:center;margin-bottom:16px;outline:none}
 .oz_field.oz_field_rate>.oz_field_lab{justify-content:flex-start;margin-bottom:8px}
 .oz_field.oz_field_rate>span{display:block;margin-bottom:8px;font-size:14px;font-weight:600;color:var(--oz-text)}
@@ -157,6 +163,9 @@ html[data-theme="dark"] .oz-pop-cat-lead{color:#9aa0a6}
 .oz_done a:hover{text-decoration:none;background:var(--oz-accent-h)}
 .oz_form_err{display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:#fdecea;border:1px solid #f5c6c2;color:#8a1f17;font-size:14px;line-height:1.45}
 .oz_form_err.oz_show{display:block}
+.oz_field_err{display:none;margin:0;padding:10px 12px;border-radius:10px;background:#fdecea;border:1px solid #f5c6c2;color:#8a1f17;font-size:13px;line-height:1.45}
+.oz_field_err.oz_show{display:block}
+html[data-theme="dark"] .oz_form_err,html[data-theme="dark"] .oz_field_err{background:#2b1a18;border-color:#5c2b26;color:#f5c0b8}
 .oz_mod_badge{display:inline-block;margin-bottom:14px;padding:8px 12px;border-radius:8px;background:#fff8e6;border:1px solid #f0d78c;color:#8a6d00;font-size:13px;font-weight:600}
 .oz_mod_badge.oz_pub{background:#e8f5ea;border-color:#b8dfc0;color:#1f5c2b}
 .oz_mod_badge.oz_pub .oz_chk{display:inline-block;margin-right:5px;color:#2e7d32;font-weight:700;font-size:15px;line-height:1}
@@ -194,6 +203,7 @@ html[data-theme="dark"]{--oz-bg:#121417;--oz-text:#e8eaed;--oz-muted:#9aa0a6;--o
 html[data-theme="dark"] body{background:var(--oz-bg);color:var(--oz-text)}
 html[data-theme="dark"] .oz_page,html[data-theme="dark"] .oz_mob_top,html[data-theme="dark"] .oz_cats_wrap,html[data-theme="dark"] .oz_card,html[data-theme="dark"] .oz_foot,html[data-theme="dark"] .dh,html[data-theme="dark"] .oz_tabbar,html[data-theme="dark"] .oz_desk_strip,html[data-theme="dark"] .oz_head{background:#1a1f24}
 html[data-theme="dark"] .oz_field input,html[data-theme="dark"] .oz_field textarea,html[data-theme="dark"] .oz_field select,html[data-theme="dark"] .oz_search input,html[data-theme="dark"] .oz_preview_row,html[data-theme="dark"] .oz_cat_btn,html[data-theme="dark"] .oz_cat_drop,html[data-theme="dark"] .oz_cat_info_cell{background:#232a31;color:var(--oz-text)}
+html[data-theme="dark"] .oz_text_resize{background:#1c2229;border-color:#2a313a;color:#9aa0a6}
 html[data-theme="dark"] .oz_cat_btn:focus{background:#232a31}
 html[data-theme="dark"] .oz_cat_opt{color:var(--oz-text)}
 html[data-theme="dark"] .oz_cat_opt:hover,html[data-theme="dark"] .oz_cat_opt:focus{background:rgba(123,198,126,.1)}
@@ -249,6 +259,8 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_stars{justify-content:flex-start;gap:8px;max-width:280px}
 .oz_star{flex:0 0 42px;max-width:42px;width:42px;height:42px;font-size:24px}
 .oz_field input,.oz_field textarea,.oz_field select,.oz_tag_pick,.oz_cat_btn{background:#fff}
+.oz_text_resize{display:none}
+.oz_text_wrap textarea{border-radius:12px;resize:vertical}
 .oz_cat_drop{background:#fff}
 .oz_cat_info_cell{background:#f8f9fa}
 .oz_actions{position:static;margin:6px 0 0;padding:0;border:none;box-shadow:none;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px}
@@ -409,6 +421,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 </div>
 </div>
+<p class="oz_field_err" id="oz_cat_err" role="alert"></p>
 </div>
 <div class="oz_field oz_full">
 <div class="oz_field_lab">
@@ -416,6 +429,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <button type="button" class="oz-i" data-tip="company" aria-label="Подсказка: название">i</button>
 </div>
 <input required type="text" name="company_name" id="oz_in_company" placeholder="Название товара, места, услуги или сайта" autocomplete="off" maxlength="60">
+<p class="oz_field_err" id="oz_company_err" role="alert"></p>
 </div>
 <div class="oz_field">
 <div class="oz_field_lab">
@@ -423,6 +437,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <button type="button" class="oz-i" data-tip="name" aria-label="Подсказка: имя">i</button>
 </div>
 <input required type="text" name="user_name" id="oz_in_name" placeholder="Имя" autocomplete="name" maxlength="10">
+<p class="oz_field_err" id="oz_name_err" role="alert"></p>
 </div>
 <div class="oz_field">
 <div class="oz_field_lab">
@@ -430,13 +445,19 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <button type="button" class="oz-i" data-tip="mail" aria-label="Подсказка: e-mail">i</button>
 </div>
 <input type="email" name="user_mail" id="oz_in_mail" placeholder="you@mail.com" autocomplete="email" maxlength="15">
+<p class="oz_field_err" id="oz_mail_err" role="alert"></p>
 </div>
 <div class="oz_field oz_full">
 <div class="oz_field_lab">
 <label for="oz_in_text">Текст поста</label>
 <button type="button" class="oz-i" data-tip="text" aria-label="Подсказка: текст поста">i</button>
 </div>
+<div class="oz_text_wrap">
 <textarea required name="text_review" id="oz_in_text" placeholder="Опишите ваш опыт…" rows="5" minlength="300" maxlength="2500"></textarea>
+<button type="button" class="oz_text_resize" id="oz_text_resize" aria-label="Потяните, чтобы изменить высоту поля"></button>
+</div>
+<p class="oz_text_count" id="oz_text_count" aria-live="polite">мин 300 (<span id="oz_text_count_n">0</span>)</p>
+<p class="oz_field_err" id="oz_text_err" role="alert"></p>
 </div>
 <div class="oz_field oz_full">
 <div class="oz_field_lab">
@@ -445,6 +466,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 </div>
 <div class="oz_tag_pick" id="oz_tag_pick" role="group" aria-labelledby="oz_tags_label"></div>
 <input type="hidden" name="TAGS" id="oz_in_tags" value="">
+<p class="oz_field_err" id="oz_tags_err" role="alert"></p>
 </div>
 <div class="oz_field oz_field_rate">
 <div class="oz_field_lab">
@@ -472,6 +494,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <dl class="oz_preview" id="oz_preview_list"></dl>
 <div class="oz_field oz_full oz_turnstile_field">
 <div id="oz_turnstile_box" class="oz_turnstile"></div>
+<p class="oz_field_err" id="oz_ts_err" role="alert"></p>
 </div>
 <div class="oz_actions oz_preview_actions">
 <div class="oz_btn_row">
@@ -580,6 +603,34 @@ var stepMine=document.getElementById("oz_step_mine");
 var form=document.getElementById("oz_review_form");
 var previewList=document.getElementById("oz_preview_list");
 var formErr=document.getElementById("oz_form_err");
+var fieldErrIds=["oz_form_err","oz_cat_err","oz_company_err","oz_name_err","oz_mail_err","oz_text_err","oz_tags_err","oz_ts_err"];
+function hideErr(){
+fieldErrIds.forEach(function(id){
+var el=document.getElementById(id);
+if(!el)return;
+el.textContent="";
+el.classList.remove("oz_show");
+});
+}
+function showFieldErr(id,msg,focusEl){
+hideErr();
+var el=document.getElementById(id);
+if(el){
+el.textContent=msg;
+el.classList.add("oz_show");
+}
+if(focusEl){
+try{focusEl.focus();}catch(e){}
+try{focusEl.scrollIntoView({behavior:"smooth",block:"center"});}catch(e2){}
+}else if(el){
+try{el.scrollIntoView({behavior:"smooth",block:"center"});}catch(e3){}
+}
+}
+function showErr(msg){showFieldErr("oz_form_err",msg);}
+function showTextErr(msg){
+var textEl=document.getElementById("oz_in_text");
+showFieldErr("oz_text_err",msg,textEl);
+}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
 function ozFormatTags(raw){
@@ -943,32 +994,43 @@ syncCatBtn();
 }
 function validateForm(){
 if(!form)return false;
+hideErr();
 if(catSelect&&!catSelect.value.trim()){
-showErr("Выберите категорию");
-if(catBtn)catBtn.focus();
+showFieldErr("oz_cat_err","Выберите категорию",catBtn||catSelect);
+return false;
+}
+var companyEl=document.getElementById("oz_in_company");
+if(!val("oz_in_company")){
+showFieldErr("oz_company_err","Укажите название",companyEl);
+return false;
+}
+var nameEl=document.getElementById("oz_in_name");
+if(!val("oz_in_name")){
+showFieldErr("oz_name_err","Укажите ваше имя",nameEl);
+return false;
+}
+var mailEl=document.getElementById("oz_in_mail");
+if(mailEl&&mailEl.value.trim()&&!mailEl.checkValidity()){
+showFieldErr("oz_mail_err","Укажите корректный e-mail",mailEl);
 return false;
 }
 var textEl=document.getElementById("oz_in_text");
 var text=textEl?String(textEl.value||"").trim():"";
 var len=text.length;
 if(len<300){
-showErr("Текст поста слишком короткий: минимум 300 символов (сейчас "+len+").");
-if(textEl)textEl.focus();
+showFieldErr("oz_text_err","Текст поста слишком короткий: минимум 300 символов (сейчас "+len+").",textEl);
 return false;
 }
 if(len>2500){
-showErr("Текст поста слишком длинный: максимум 2500 символов (сейчас "+len+").");
-if(textEl)textEl.focus();
+showFieldErr("oz_text_err","Текст поста слишком длинный: максимум 2500 символов (сейчас "+len+").",textEl);
 return false;
 }
 var tags=val("oz_in_tags");
 if(!tags){
-showErr("Выберите хотя бы один тег.");
 var tagPick=document.getElementById("oz_tag_pick");
-if(tagPick)tagPick.scrollIntoView({behavior:"smooth",block:"center"});
+showFieldErr("oz_tags_err","Выберите хотя бы один тег.",tagPick);
 return false;
 }
-hideErr();
 if(!form.checkValidity()){
 form.reportValidity();
 return false;
@@ -985,8 +1047,6 @@ OZ_TAGS.loadUserTags().then(function(){ozRenderTagPick();});
 }else{
 ozRenderTagPick();
 }
-function showErr(msg){if(!formErr)return;formErr.textContent=msg;formErr.classList.add("oz_show");}
-function hideErr(){if(formErr)formErr.classList.remove("oz_show");}
 function showStep(step){
 if(stepForm)stepForm.hidden=step!=="form";
 if(stepPreview)stepPreview.hidden=step!=="preview";
@@ -1184,11 +1244,11 @@ e.preventDefault();
 hideErr();
 var ts=form.querySelector("[name='cf-turnstile-response']");
 if(!ts||!ts.value){
-showErr("Пройдите проверку «Подтвердите, что вы человек» на этом шаге.");
+showFieldErr("oz_ts_err",'Пройдите проверку «Подтвердите, что вы человек» на этом шаге.',document.getElementById("oz_turnstile_box"));
 return;
 }
 if(typeof ozSendReview!=="function"){
-showErr("Ошибка: massag.js не загружен. Обновите страницу.");
+showFieldErr("oz_ts_err","Ошибка: massag.js не загружен. Обновите страницу.",document.getElementById("oz_turnstile_box"));
 return;
 }
 var btn=document.getElementById("oz_btn_confirm");
@@ -1224,12 +1284,12 @@ showStep("done");
 return;
 }
 var msg=(res.data&&res.data.error)||("Ошибка "+res.status+". Попробуйте снова.");
-showErr(msg);
+showFieldErr("oz_ts_err",msg,document.getElementById("oz_turnstile_box"));
 showStep("preview");
 if(ozTsWidget!==null&&window.turnstile){try{turnstile.reset(ozTsWidget);}catch(ex){}}
 })
 .catch(function(){
-showErr("Ошибка сети. Проверьте интернет и попробуйте снова.");
+showFieldErr("oz_ts_err","Ошибка сети. Проверьте интернет и попробуйте снова.",document.getElementById("oz_turnstile_box"));
 })
 .finally(function(){
 var b=document.getElementById("oz_btn_confirm");
@@ -1242,6 +1302,49 @@ var hid=document.getElementById("oz_in_rating");
 function paint(n){stars.forEach(function(s){s.classList.toggle("oz_lit",+s.dataset.v<=n);});hid.value=n;}
 stars.forEach(function(s){s.addEventListener("click",function(){paint(+s.dataset.v);s.blur();});});
 paint(5);
+(function(){
+var ta=document.getElementById("oz_in_text");
+var grip=document.getElementById("oz_text_resize");
+var countN=document.getElementById("oz_text_count_n");
+function updCount(){
+if(!countN||!ta)return;
+countN.textContent=String(ta.value||"").trim().length;
+}
+if(ta){
+ta.addEventListener("input",updCount);
+updCount();
+}
+if(!ta||!grip)return;
+var minH=150,maxH=Math.max(320,Math.floor(window.innerHeight*0.7));
+var startY=0,startH=0,dragging=false;
+function onMove(e){
+if(!dragging)return;
+var y=e.clientY;
+var next=Math.min(maxH,Math.max(minH,startH+(y-startY)));
+ta.style.height=next+"px";
+}
+function onUp(){
+if(!dragging)return;
+dragging=false;
+grip.releasePointerCapture&&grip.releasePointerCapture(grip._pid);
+window.removeEventListener("pointermove",onMove);
+window.removeEventListener("pointerup",onUp);
+window.removeEventListener("pointercancel",onUp);
+}
+grip.addEventListener("pointerdown",function(e){
+if(e.button!=null&&e.button!==0)return;
+e.preventDefault();
+dragging=true;
+startY=e.clientY;
+startH=ta.offsetHeight;
+grip._pid=e.pointerId;
+try{grip.setPointerCapture(e.pointerId);}catch(err){}
+maxH=Math.max(320,Math.floor(window.innerHeight*0.7));
+window.addEventListener("pointermove",onMove);
+window.addEventListener("pointerup",onUp);
+window.addEventListener("pointercancel",onUp);
+});
+})();
 var doneLink=document.getElementById("oz_done_link");
 if(doneLink){
 doneLink.addEventListener("click",function(){
