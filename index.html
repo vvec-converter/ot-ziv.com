@@ -123,7 +123,7 @@ html[data-theme="dark"] .oz-pop-cat-lead{color:#9aa0a6}
 .oz_page_scroller_thumb{position:absolute;left:2px;right:2px;top:0;height:48px;border-radius:999px;background:var(--oz-accent);opacity:.85;pointer-events:none}
 html[data-theme="dark"] .oz_page_scroller_rail{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.1)}
 html[data-theme="dark"] .oz_page_scroller_thumb{background:#7bc67e}
-.oz_field.oz_field_rate{display:block;text-align:center;margin-bottom:16px;outline:none}
+.oz_field.oz_field_rate{display:block;text-align:left;margin-bottom:16px;outline:none}
 .oz_field.oz_field_rate>.oz_field_lab{justify-content:flex-start;margin-bottom:8px}
 .oz_field.oz_field_rate>span{display:block;margin-bottom:8px;font-size:14px;font-weight:600;color:var(--oz-text)}
 .oz_tag_pick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;align-content:center;width:100%;min-height:48px;padding:12px 14px;border:1px solid var(--oz-line);border-radius:12px;background:#f8f9fa}
@@ -133,11 +133,13 @@ html[data-theme="dark"] .oz_page_scroller_thumb{background:#7bc67e}
 .oz_tag_chip.oz_name{border-style:dashed}
 .oz_tag_chip.oz_on{background:var(--oz-accent);border-color:var(--oz-accent);color:#fff;border-style:solid}
 .oz_tag_chip.oz_disabled{opacity:.45;pointer-events:none}
-.oz_stars{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(4px,1.2vw,8px);width:100%;max-width:100%;margin-top:4px;outline:none}
-.oz_star{flex:1 1 0;min-width:0;max-width:52px;width:auto;aspect-ratio:1;height:auto;margin:0;border:1px solid var(--oz-line);border-radius:12px;background:#fff;cursor:pointer;font-size:clamp(20px,5.5vw,30px);line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#d0d0d0;padding:0;appearance:none;-webkit-appearance:none;outline:none;box-shadow:none;vertical-align:top}
+.oz_stars{display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:clamp(4px,1.2vw,8px);width:100%;max-width:280px;margin-top:4px;outline:none}
+.oz_star{flex:0 0 42px;width:42px;height:42px;margin:0;border:1px solid var(--oz-line);border-radius:12px;background:#fff;cursor:pointer;font-size:24px;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#d0d0d0;padding:0;appearance:none;-webkit-appearance:none;outline:none;box-shadow:none}
 .oz_star:focus,.oz_star:focus-visible,.oz_star:active{outline:none;box-shadow:none}
 .oz_star.oz_lit{color:#ffb300;border-color:#ffc933;background:#fff9e6;text-shadow:0 1px 3px rgba(255,179,0,.35)}
 .oz_star:active{transform:scale(.96)}
+html[data-theme="dark"] .oz_star{background:#232a31;border-color:var(--oz-line);color:#555}
+html[data-theme="dark"] .oz_star.oz_lit{color:#ffb300;border-color:#ffc933;background:#2b2618}
 .oz_actions{position:sticky;bottom:calc(var(--oz-tab) + var(--oz-safe-b));z-index:150;background:#fff;padding:12px 0 0;margin:8px 0 0;border-top:1px solid var(--oz-line)}
 .oz_submit{width:100%;min-height:50px;padding:14px;border:none;border-radius:12px;background:var(--oz-accent);color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.01em}
 .oz_submit:active{background:var(--oz-accent-h)}
@@ -262,8 +264,7 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 .oz_card h1{font-size:1.35rem}
 .oz_grid{grid-template-columns:1fr 1fr;gap:0 16px}
 .oz_field.oz_field_rate{text-align:left}
-.oz_stars{justify-content:flex-start;gap:8px;max-width:280px}
-.oz_star{flex:0 0 42px;max-width:42px;width:42px;height:42px;font-size:24px}
+.oz_stars{gap:8px;max-width:280px}
 .oz_field input,.oz_field textarea,.oz_field select,.oz_tag_pick,.oz_cat_btn{background:#fff}
 .oz_text_resize{display:none}
 .oz_page_scroller{display:none!important}
@@ -483,11 +484,11 @@ body{padding:18px 16px calc(18px + var(--oz-safe-b))}
 <button type="button" class="oz-i" data-tip="rating" aria-label="Подсказка: оценка">i</button>
 </div>
 <div class="oz_stars" id="oz_stars" role="group" aria-labelledby="oz_rate_label">
-<button type="button" class="oz_star" data-v="1" aria-label="1 звезда">★</button>
-<button type="button" class="oz_star" data-v="2" aria-label="2 звезды">★</button>
-<button type="button" class="oz_star" data-v="3" aria-label="3 звезды">★</button>
-<button type="button" class="oz_star" data-v="4" aria-label="4 звезды">★</button>
-<button type="button" class="oz_star" data-v="5" aria-label="5 звёзд">★</button>
+<button type="button" class="oz_star oz_lit" data-v="1" aria-label="1 звезда">★</button>
+<button type="button" class="oz_star oz_lit" data-v="2" aria-label="2 звезды">★</button>
+<button type="button" class="oz_star oz_lit" data-v="3" aria-label="3 звезды">★</button>
+<button type="button" class="oz_star oz_lit" data-v="4" aria-label="4 звезды">★</button>
+<button type="button" class="oz_star oz_lit" data-v="5" aria-label="5 звёзд">★</button>
 </div>
 <input type="hidden" name="rating" id="oz_in_rating" value="5">
 </div>
