@@ -2,5 +2,9 @@
   {
     "slug": "vvc-converter",
     "name": "vvc converter"
+  },
+  {
+    "slug": "corjs",
+    "name": "Corjs"
   }
 ]
