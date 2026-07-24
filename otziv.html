@@ -72,6 +72,17 @@ html[data-theme="dark"] .at{display:block}
 .ci{display:grid;gap:14px;margin-bottom:20px;padding-bottom:8px}
 .oz-meta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 16px;font-size:14px;color:var(--e)}
 .oz-meta .g{font-size:18px;letter-spacing:1px;line-height:1}
+.oz-rate-wrap{display:inline-flex;align-items:center;gap:6px}
+.oz-i{flex:none;width:28px;height:28px;margin:0;padding:0;border:1px solid var(--f);border-radius:50%;background:#f8f9fa;color:var(--e);font:italic 700 14px/26px Georgia,serif;text-align:center;cursor:pointer}
+.oz-i:hover,.oz-i:focus-visible{background:var(--b);border-color:var(--b);color:#fff;outline:none}
+.oz-pop{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:16px;padding-bottom:calc(16px + var(--i) + var(--c))}
+.oz-pop[hidden]{display:none!important}
+.oz-pop-bg{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.oz-pop-box{position:relative;z-index:1;width:100%;max-width:480px;max-height:min(78dvh,560px);overflow:auto;border:1px solid var(--f);border-radius:12px;background:#fff;padding:18px 16px 16px;box-shadow:0 12px 40px rgba(0,0,0,.2)}
+.oz-pop-x{position:absolute;top:8px;right:8px;width:36px;height:36px;border:none;border-radius:8px;background:transparent;font-size:24px;line-height:1;color:var(--e);cursor:pointer}
+.oz-pop-x:hover{background:#f0f2f5;color:var(--g)}
+.oz-pop-title{font-size:1.1rem;font-weight:700;margin:0 36px 10px 0;line-height:1.3}
+.oz-pop-lead{color:var(--e);font-size:15px;margin:0;line-height:1.5}
 .oz-bc{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:0 0 12px;font-size:13px;color:var(--e);line-height:1.4}
 .oz-bc a{color:#1a5276;text-decoration:none}
 .oz-bc a:hover{text-decoration:underline}
@@ -196,6 +207,11 @@ html[data-theme="dark"] .oz-c-form input:not([name="_gotcha"]):focus,html[data-t
 html[data-theme="dark"] .oz-c-form label,html[data-theme="dark"] .oz-rate>span{color:var(--g)}
 html[data-theme="dark"] .oz-tags a{background:#232a31;border-color:var(--f);color:var(--g)}
 html[data-theme="dark"] .oz-tags a:hover{background:var(--b);border-color:var(--b);color:#fff}
+html[data-theme="dark"] .oz-i{background:#232a31;border-color:#2a313a;color:#c9cdd2}
+html[data-theme="dark"] .oz-i:hover,html[data-theme="dark"] .oz-i:focus-visible{background:var(--b);border-color:var(--b);color:#fff}
+html[data-theme="dark"] .oz-pop-box{background:#1a1f26;border-color:#2a313a}
+html[data-theme="dark"] .oz-pop-x:hover{background:#232a31;color:#e8eaed}
+html[data-theme="dark"] .oz-pop-lead{color:#c9cdd2}
 html[data-theme="dark"] .ds{background:#232a31;border-color:var(--f);color:#555}
 html[data-theme="dark"] .ds.dv{color:#ffb300;border-color:#ffc933;background:#2b2618}
 html[data-theme="dark"] .de a{background:#232a31;color:var(--g)}
@@ -330,7 +346,11 @@ body{padding:18px 16px calc(18px + var(--c))}
 <h1 id="n"></h1>
 <div class="oz-meta" id="oz-meta" hidden>
 <span id="oz-cat"></span>
+<span class="oz-rate-wrap">
 <span class="g" id="oz-stars" aria-hidden="true"></span>
+<span id="oz-rating-meta" hidden></span>
+<button type="button" class="oz-i" id="oz-rating-info" aria-label="О рейтинге поста" title="О рейтинге">i</button>
+</span>
 <span id="oz-author">Автор: <span id="oz-author-name"></span></span>
 <span id="oz-date"></span>
 </div>
@@ -372,7 +392,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 <label for="oz-c-name">Ваше имя</label>
 <input type="text" id="oz-c-name" name="name" placeholder="Имя" maxlength="40" required autocomplete="name">
 <label for="oz-c-text">Комментарий</label>
-<textarea id="oz-c-text" name="comment" placeholder="Напишите комментарий…" rows="3" maxlength="1000" required></textarea>
+<textarea id="oz-c-text" name="comment" placeholder="Один комментарий к отзыву с вашего адреса — навсегда" rows="3" maxlength="1000" required></textarea>
 <div class="oz-rate">
 <span id="oz-rate-label">Оценка</span>
 <div class="db" id="oz-c-db" role="group" aria-labelledby="oz-rate-label">
@@ -397,6 +417,14 @@ body{padding:18px 16px calc(18px + var(--c))}
 </article>
 </div>
 </main>
+<div class="oz-pop" id="oz-rating-pop" hidden>
+<div class="oz-pop-bg" id="oz-rating-pop-bg"></div>
+<div class="oz-pop-box" role="dialog" aria-modal="true" aria-labelledby="oz-rating-pop-title">
+<button type="button" class="oz-pop-x" id="oz-rating-pop-x" aria-label="Закрыть">×</button>
+<h2 class="oz-pop-title" id="oz-rating-pop-title">Рейтинг поста</h2>
+<p class="oz-pop-lead" id="oz-rating-pop-lead">Звёзды в шапке отзыва считаются по оценкам из живых комментариев: каждый комментарий со своими ★ влияет на общий рейтинг. Пока комментариев нет — показывается оценка автора поста. К одному отзыву с одного адреса можно оставить только один комментарий — навсегда, чтобы рейтингом не злоупотребляли.</p>
+</div>
+</div>
 <footer class="oz-legal">
 <div class="da">
 <div class="ap">
@@ -687,8 +715,64 @@ body{padding:18px 16px calc(18px + var(--c))}
   }
 
   function stars(n) {
-    n = Math.min(5, Math.max(0, +n || 0));
-    return "★".repeat(n) + "☆".repeat(5 - n);
+    var v = Math.min(5, Math.max(0, Math.round(+n || 0)));
+    var s = "";
+    for (var i = 1; i <= 5; i++) s += i <= v ? "★" : "☆";
+    return s;
+  }
+
+  function applyDisplayRating(avg, count, authorRating) {
+    var starEl = document.getElementById("oz-stars");
+    var metaEl = document.getElementById("oz-rating-meta");
+    var n = Math.max(0, parseInt(count, 10) || 0);
+    var author = Math.min(5, Math.max(1, +authorRating || 5));
+    var value = n > 0 ? +avg || author : author;
+    if (n > 0 && !(+avg > 0)) value = author;
+    var show = n > 0 ? value : author;
+    var rounded = Math.min(5, Math.max(1, Math.round(show)));
+    if (starEl) {
+      starEl.setAttribute(
+        "aria-label",
+        (n > 0 ? show : author) + " из 5" + (n > 0 ? ", по " + n + " оценкам" : "")
+      );
+      starEl.innerHTML = stars(rounded);
+    }
+    if (metaEl) {
+      if (n > 0) {
+        var score = String(show).replace(/\.0$/, "");
+        metaEl.hidden = false;
+        metaEl.textContent = score + " · " + n;
+      } else {
+        metaEl.hidden = true;
+        metaEl.textContent = "";
+      }
+    }
+    if (currentReview) {
+      currentReview._displayRating = show;
+      currentReview._ratingCount = n;
+    }
+    // JSON-LD для людей/части ботов после JS
+    if (currentReview && currentReview.name && n > 0) {
+      try {
+        var el = document.getElementById("oz-ld-review");
+        if (el && el.textContent) {
+          var ld = JSON.parse(el.textContent);
+          if (ld && ld.reviewRating) {
+            ld.reviewRating.ratingValue = show;
+          }
+          if (ld && ld.itemReviewed) {
+            ld.itemReviewed.aggregateRating = {
+              "@type": "AggregateRating",
+              ratingValue: show,
+              ratingCount: n,
+              bestRating: 5,
+              worstRating: 1,
+            };
+          }
+          el.textContent = JSON.stringify(ld);
+        }
+      } catch (e) {}
+    }
   }
 
   function fmtDate(d) {
@@ -977,6 +1061,15 @@ body{padding:18px 16px calc(18px + var(--c))}
       })
       .then(function (d) {
         renderComments((d && d.comments) || []);
+        var authorR =
+          currentReview && currentReview.rating
+            ? currentReview.rating
+            : 5;
+        applyDisplayRating(
+          d && d.avgRating,
+          d && d.ratingCount,
+          authorR
+        );
       })
       .catch(function () {
         renderComments([]);
@@ -1355,6 +1448,39 @@ body{padding:18px 16px calc(18px + var(--c))}
         });
     });
   }
+
+  (function ratingInfoPop() {
+    var btn = document.getElementById("oz-rating-info");
+    var pop = document.getElementById("oz-rating-pop");
+    var bg = document.getElementById("oz-rating-pop-bg");
+    var closeBtn = document.getElementById("oz-rating-pop-x");
+    if (!btn || !pop) return;
+    function openPop() {
+      pop.hidden = false;
+      try {
+        btn.setAttribute("aria-expanded", "true");
+      } catch (e) {}
+    }
+    function closePop() {
+      pop.hidden = true;
+      try {
+        btn.setAttribute("aria-expanded", "false");
+      } catch (e) {}
+    }
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", "oz-rating-pop");
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (pop.hidden) openPop();
+      else closePop();
+    });
+    if (bg) bg.addEventListener("click", closePop);
+    if (closeBtn) closeBtn.addEventListener("click", closePop);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !pop.hidden) closePop();
+    });
+  })();
 })();
 </script>
 </body>
