@@ -356,15 +356,61 @@
       a.hidden = false;
       a.style.display = "block";
     }
-    function ozSetModBadge(badge, published) {
+    function ozMarkRejected(id, reason) {
+      if (!id) return;
+      try {
+        var all = JSON.parse(localStorage.getItem("c") || "{}");
+        if (all[id]) {
+          all[id].rejected = true;
+          all[id].published = false;
+          if (reason) all[id].reject_reason = reason;
+          localStorage.setItem("c", JSON.stringify(all));
+        }
+      } catch (e) {}
+    }
+    function ozSetModBadge(badge, status, reason) {
       if (!badge) return;
-      if (published) {
+      if (status === "published") {
         badge.className = "aw dw";
         badge.innerHTML = '<span class="du" aria-hidden="true">✓</span> Опубликован';
+      } else if (status === "rejected") {
+        badge.className = "aw";
+        badge.textContent =
+          "Не прошёл модерацию" +
+          (reason ? ": " + String(reason).slice(0, 120) : "");
       } else {
         badge.className = "aw";
         badge.textContent = "Не опубликован · на модерации";
       }
+    }
+    function ozResolveStatus(item) {
+      if (!item || !item.id) return Promise.resolve({ status: "unknown" });
+      if (item.published) return Promise.resolve({ status: "published" });
+      if (item.rejected) {
+        return Promise.resolve({
+          status: "rejected",
+          reason: item.reject_reason || "",
+        });
+      }
+      return ozCheckPublished(item).then(function (pub) {
+        if (pub) return { status: "published" };
+        if (typeof ozReviewStatus === "function") {
+          return ozReviewStatus(item.id).then(function (d) {
+            var st = (d && d.status) || "unknown";
+            if (st === "rejected") {
+              ozMarkRejected(item.id, (d && d.reason) || "");
+              return { status: "rejected", reason: (d && d.reason) || "" };
+            }
+            if (st === "published") {
+              ozMarkPublished(item.id);
+              return { status: "published" };
+            }
+            if (st === "moderation") return { status: "moderation" };
+            return { status: "moderation" };
+          });
+        }
+        return { status: "moderation" };
+      });
     }
     function showMyReview(wantId) {
       hideErr();
@@ -379,12 +425,17 @@
         if (empty) empty.hidden = true;
         if (badge) badge.hidden = false;
         if (box) box.hidden = false;
-        ozSetModBadge(badge, !!(item && item.published));
-        ozSetViewLink(item, !!(item && item.published));
+        var initial = item.published
+          ? "published"
+          : item.rejected
+            ? "rejected"
+            : "moderation";
+        ozSetModBadge(badge, initial, item.reject_reason || "");
+        ozSetViewLink(item, initial === "published");
         if (item) {
-          ozCheckPublished(item).then(function (pub) {
-            ozSetModBadge(badge, pub);
-            ozSetViewLink(item, pub);
+          ozResolveStatus(item).then(function (st) {
+            ozSetModBadge(badge, st.status, st.reason || "");
+            ozSetViewLink(item, st.status === "published");
           });
         }
       } else {

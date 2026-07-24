@@ -45,6 +45,8 @@ a{color:#8ab4f8}
 .mod-title{font-size:15px;font-weight:600;margin-bottom:4px}
 .mod-meta{font-size:12px;color:var(--muted);margin-bottom:8px}
 .mod-text{font-size:13px;white-space:pre-wrap;max-height:140px;overflow:auto;color:#c5cad0}
+.mod-actions{margin-top:10px}
+.btn.danger{background:#8b3a3a}
 .actions-bar{display:none;position:sticky;bottom:12px;z-index:2;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:16px 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .actions-bar.show{display:block}
 details.manual{margin-top:8px}
@@ -93,6 +95,7 @@ details.manual summary{cursor:pointer;color:var(--muted);font-size:14px;margin-b
 <div class="btns">
 <button type="button" class="btn" id="go">Сделать JSON</button>
 <button type="button" class="btn sec" id="publish" disabled>Опубликовать на GitHub</button>
+<button type="button" class="btn danger" id="reject_sel">Отклонить выбранные</button>
 </div>
 </div>
 
@@ -295,11 +298,14 @@ details.manual summary{cursor:pointer;color:var(--muted);font-size:14px;margin-b
         " · " +
         escapeHtml(it.id) +
         (it.ts ? " · " + escapeHtml(dateFromTs(it.ts)) : "") +
+        (it.mail ? " · " + escapeHtml(it.mail) : "") +
         "</div>" +
         '<div class="mod-text">' +
         escapeHtml(preview) +
         (String(it.text || "").length > 400 ? "…" : "") +
-        "</div></div>";
+        '</div><div class="mod-actions"><button type="button" class="btn danger" data-reject="' +
+        escapeHtml(it.id) +
+        '">Отклонить</button></div></div>';
       var cb = el.querySelector(".mod-check");
       cb.addEventListener("change", function () {
         if (cb.checked) selected[it.id] = it;
@@ -309,6 +315,14 @@ details.manual summary{cursor:pointer;color:var(--muted);font-size:14px;margin-b
         if ($("publish")) $("publish").disabled = true;
         updateActionsBar();
       });
+      var rejBtn = el.querySelector("[data-reject]");
+      if (rejBtn) {
+        rejBtn.addEventListener("click", function () {
+          rejectOne(it).then(function (ok) {
+            if (ok) loadQueue(true);
+          });
+        });
+      }
       box.appendChild(el);
     });
     var meta = $("queue_meta");
@@ -324,6 +338,82 @@ details.manual summary{cursor:pointer;color:var(--muted);font-size:14px;margin-b
         more.hidden = true;
       }
     }
+  }
+
+  function rejectOne(it, reasonPreset) {
+    if (!it || !it.id) return Promise.resolve(false);
+    var reason =
+      reasonPreset != null
+        ? reasonPreset
+        : window.prompt(
+            "Причина отклонения (увидит автор в «Мой отзыв»" +
+              (it.mail ? " и на e-mail, если указан" : "") +
+              "). Можно оставить пустым:",
+            ""
+          );
+    if (reason === null) return Promise.resolve(false);
+    var tok = token();
+    if (!tok) {
+      deny();
+      return Promise.resolve(false);
+    }
+    return fetch(API + "/admin/reject", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + tok,
+      },
+      body: JSON.stringify({ id: it.id, reason: String(reason || "").trim() }),
+    })
+      .then(function (r) {
+        return r.json().then(function (d) {
+          return { ok: r.ok, d: d };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          showErr((x.d && x.d.error) || "Не удалось отклонить " + it.id);
+          return false;
+        }
+        delete selected[it.id];
+        var msg = "Отклонён: " + it.id;
+        if (x.d.mailed) msg += " · письмо отправлено";
+        else if (x.d.had_mail) msg += " · письмо не ушло (Formspree)";
+        else msg += " · e-mail не был указан — статус в «Мой отзыв»";
+        showOk(msg);
+        return true;
+      })
+      .catch(function () {
+        showErr("Сеть недоступна");
+        return false;
+      });
+  }
+
+  function rejectSelected() {
+    var ids = Object.keys(selected);
+    if (!ids.length) {
+      showErr("Отметьте отзывы для отклонения.");
+      return;
+    }
+    var reason = window.prompt(
+      "Общая причина отклонения для " + ids.length + " шт. (можно пусто):",
+      ""
+    );
+    if (reason === null) return;
+    var chain = Promise.resolve(true);
+    var okN = 0;
+    ids.forEach(function (id) {
+      chain = chain.then(function () {
+        return rejectOne(selected[id] || { id: id }, reason).then(function (ok) {
+          if (ok) okN++;
+          return true;
+        });
+      });
+    });
+    chain.then(function () {
+      showOk("Отклонено: " + okN + " из " + ids.length);
+      loadQueue(true);
+    });
   }
 
   function loadQueue(reset) {
@@ -678,6 +768,7 @@ details.manual summary{cursor:pointer;color:var(--muted);font-size:14px;margin-b
   $("go").addEventListener("click", makeJsonFromSelection);
   $("go_paste").addEventListener("click", makeJsonFromPaste);
   $("publish").addEventListener("click", publishGithub);
+  $("reject_sel").addEventListener("click", rejectSelected);
   $("reload_q").addEventListener("click", function () {
     loadQueue(true);
   });
