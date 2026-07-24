@@ -730,22 +730,17 @@ body{padding:18px 16px calc(18px + var(--c))}
     if (n > 0 && !(+avg > 0)) value = author;
     var show = n > 0 ? value : author;
     var rounded = Math.min(5, Math.max(1, Math.round(show)));
+    var score = (Math.round(show * 10) / 10).toFixed(1);
     if (starEl) {
       starEl.setAttribute(
         "aria-label",
-        (n > 0 ? show : author) + " из 5" + (n > 0 ? ", по " + n + " оценкам" : "")
+        score + " из 5" + (n > 0 ? ", по оценкам в комментариях" : "")
       );
       starEl.innerHTML = stars(rounded);
     }
     if (metaEl) {
-      if (n > 0) {
-        var score = String(show).replace(/\.0$/, "");
-        metaEl.hidden = false;
-        metaEl.textContent = score + " · " + n;
-      } else {
-        metaEl.hidden = true;
-        metaEl.textContent = "";
-      }
+      metaEl.hidden = false;
+      metaEl.textContent = score;
     }
     if (currentReview) {
       currentReview._displayRating = show;
