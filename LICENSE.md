@@ -1,6 +1,7 @@
 # Copyright
 
-© 2026 Все права защищены.
+Author: kritikans
+© 2026. All rights reserved.
 
 ## All Rights Reserved
 
