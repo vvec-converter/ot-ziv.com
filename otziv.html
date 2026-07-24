@@ -1246,6 +1246,26 @@ body{padding:18px 16px calc(18px + var(--c))}
       cn.setAttribute("aria-hidden", open ? "false" : "true");
     });
   }
+  (function wireCatsScroll() {
+    var cats = document.getElementById("bn");
+    var cPrev = document.getElementById("ak");
+    var cNext = document.getElementById("aj");
+    if (!cats || !cPrev || !cNext) return;
+    function updCats() {
+      cPrev.disabled = cats.scrollLeft <= 2;
+      cNext.disabled =
+        cats.scrollLeft + cats.clientWidth >= cats.scrollWidth - 2;
+    }
+    cPrev.addEventListener("click", function () {
+      cats.scrollBy({ left: -180, behavior: "smooth" });
+    });
+    cNext.addEventListener("click", function () {
+      cats.scrollBy({ left: 180, behavior: "smooth" });
+    });
+    cats.addEventListener("scroll", updCats);
+    window.addEventListener("resize", updCats);
+    updCats();
+  })();
   function wireFoot(btnId, boxId) {
     var btn = document.getElementById(btnId);
     var box = document.getElementById(boxId);
