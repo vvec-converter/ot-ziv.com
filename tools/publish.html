@@ -55,6 +55,7 @@ a{color:#8ab4f8}
 <div class="row">
 <label for="paste">Полученный отзыв (вставить как есть)</label>
 <textarea id="paste" placeholder='review:mrrxw8ovoe7z79 {"id":"mrrxw8ovoe7z79",…}'></textarea>
+<p class="note">Если в KV «unprintable» — берите файл через <b>Download</b>, не копируйте кривое превью. Можно вставить и `review:id {…}`, и только `{…}`.</p>
 </div>
 <div class="row">
 <label for="date">Дата (если в отзыве нет ts)</label>
@@ -170,33 +171,83 @@ a{color:#8ab4f8}
   function normalizePaste(raw) {
     return String(raw || "")
       .replace(/^\uFEFF/, "")
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
       .replace(/[\u201C\u201D\u201E\u00AB\u00BB]/g, '"')
       .replace(/[\u2018\u2019]/g, "'")
       .trim();
+  }
+
+  /** Вырезать первый JSON-объект {...} с учётом строк (не lastIndexOf) */
+  function extractJsonObject(s) {
+    var i = s.indexOf("{");
+    if (i < 0) return "";
+    var depth = 0;
+    var inStr = false;
+    var esc = false;
+    for (var k = i; k < s.length; k++) {
+      var c = s.charAt(k);
+      if (inStr) {
+        if (esc) {
+          esc = false;
+          continue;
+        }
+        if (c === "\\") {
+          esc = true;
+          continue;
+        }
+        if (c === '"') inStr = false;
+        continue;
+      }
+      if (c === '"') {
+        inStr = true;
+        continue;
+      }
+      if (c === "{") depth++;
+      else if (c === "}") {
+        depth--;
+        if (depth === 0) return s.slice(i, k + 1);
+      }
+    }
+    return "";
   }
 
   function parseIncoming(raw) {
     var s = normalizePaste(raw);
     if (!s) return { error: "Вставьте полученный отзыв целиком." };
 
-    var i = s.indexOf("{");
-    var j = s.lastIndexOf("}");
-    if (i === -1 || j <= i) {
+    var jsonStr = extractJsonObject(s);
+    if (!jsonStr) {
       return { error: "Не найден JSON {...}." };
     }
 
     var data;
     try {
-      data = JSON.parse(s.slice(i, j + 1));
-    } catch (e) {
-      return { error: "JSON не разобрался." };
+      data = JSON.parse(jsonStr);
+    } catch (e1) {
+      // повтор: убрать прочие управляющие и «ломаные» пробелы
+      try {
+        data = JSON.parse(
+          jsonStr
+            .replace(/\u2028/g, "\\n")
+            .replace(/\u2029/g, "\\n")
+            .replace(/[\u0000-\u001F]/g, function (ch) {
+              if (ch === "\n" || ch === "\r" || ch === "\t") return ch;
+              return "";
+            })
+        );
+      } catch (e2) {
+        return {
+          error:
+            "JSON не разобрался. Скопируйте значение из KV через Download (не из превью), либо вставьте только блок от { до }.",
+        };
+      }
     }
     if (!data || typeof data !== "object") {
       return { error: "Внутри {...} нет объекта отзыва." };
     }
 
     var prefixId = "";
-    var head = s.slice(0, i).trim();
+    var head = s.slice(0, s.indexOf("{")).trim();
     var m = head.match(/review\s*:\s*([^\s]+)/i);
     if (m) prefixId = m[1].trim();
 
