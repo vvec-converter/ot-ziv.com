@@ -618,13 +618,14 @@ body{padding:18px 16px calc(18px + var(--c))}
       bcEl.hidden = false;
     }
 
-    var aboutType = "Thing";
-    if (/сайты/i.test(cat)) aboutType = "WebSite";
+    var aboutType = "Organization";
+    if (/сайт/i.test(cat)) aboutType = "SoftwareApplication";
     else if (/товар/i.test(cat)) aboutType = "Product";
-    else if (/услуг/i.test(cat)) aboutType = "Service";
-    else if (/мест/i.test(cat)) aboutType = "Place";
+    else if (/услуг/i.test(cat)) aboutType = "LocalBusiness";
+    else if (/мест/i.test(cat)) aboutType = "LocalBusiness";
     else if (/работ|карьер/i.test(cat)) aboutType = "Organization";
-    else if (/люд|персон/i.test(cat)) aboutType = "Person";
+    else if (/люд|персон/i.test(cat)) aboutType = "Organization";
+    else if (/обществ|государ/i.test(cat)) aboutType = "Organization";
 
     var about = {
       "@type": aboutType,
