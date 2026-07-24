@@ -16,10 +16,11 @@
 body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:16px}
 .wrap{max-width:720px;margin:0 auto}
 h1{font-size:1.25rem;margin-bottom:8px}
+h2{font-size:1.05rem;margin-bottom:10px}
 .lead{color:var(--muted);font-size:14px;margin-bottom:20px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
 label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
-textarea,input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px}
+textarea,input:not([type=checkbox]){width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px}
 textarea{min-height:120px;resize:vertical}
 .row{margin-bottom:14px}
 .btn{display:inline-block;margin-top:8px;padding:12px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none}
@@ -36,6 +37,18 @@ a{color:#8ab4f8}
 #err{color:#f5a8a5;font-size:14px;margin-top:10px;display:none}
 #ok{color:#a8e6b0;font-size:14px;margin-top:10px;display:none}
 #results{display:none}
+.queue-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.queue-meta{font-size:13px;color:var(--muted)}
+.mod-item{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#161b20}
+.mod-item.is-on{border-color:#3d7c47}
+.mod-check{width:22px;height:22px;margin-top:2px;accent-color:var(--accent);cursor:pointer}
+.mod-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.mod-meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+.mod-text{font-size:13px;white-space:pre-wrap;max-height:140px;overflow:auto;color:#c5cad0}
+.actions-bar{display:none;position:sticky;bottom:12px;z-index:2;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:16px 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.actions-bar.show{display:block}
+details.manual{margin-top:8px}
+details.manual summary{cursor:pointer;color:var(--muted);font-size:14px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -45,29 +58,44 @@ a{color:#8ab4f8}
 </div>
 <div class="wrap" id="app" hidden>
 <h1>Публикация отзыва</h1>
-<p class="lead">Вставьте отзыв как пришёл → JSON → кнопка отправит коммит в GitHub (<code>data/published.json</code>, <code>data/reviews.json</code>, тег в <code>data/tags.json</code> и canonical в <code>real-sitemap.xml</code>).</p>
+<p class="lead">Очередь из KV (только модерация) → галочки → JSON → коммит в GitHub.</p>
 <ol class="steps">
-<li>Вставьте блок <code>review:id {"id":"…",…}</code></li>
+<li>Отметьте один или несколько отзывов</li>
 <li>«Сделать JSON»</li>
 <li>«Опубликовать на GitHub»</li>
 </ol>
+
 <div class="card">
-<div class="row">
-<label for="paste">Полученный отзыв (вставить как есть)</label>
-<textarea id="paste" placeholder='review:mrrxw8ovoe7z79 {"id":"mrrxw8ovoe7z79",…}'></textarea>
-<p class="note">Если в KV «unprintable» — берите файл через <b>Download</b>, не копируйте кривое превью. Можно вставить и `review:id {…}`, и только `{…}`.</p>
-</div>
 <div class="row">
 <label for="date">Дата (если в отзыве нет ts)</label>
 <input type="date" id="date">
 </div>
+<p id="err"></p>
+<p id="ok"></p>
+</div>
+
+<div class="card">
+<div class="queue-head">
+<h2>Очередь модерации</h2>
+<div class="btns">
+<button type="button" class="btn sec" id="reload_q">Обновить</button>
+</div>
+</div>
+<p class="queue-meta" id="queue_meta">Загрузка…</p>
+<div id="queue"></div>
+<div class="btns">
+<button type="button" class="btn sec" id="more_q" hidden>Ещё</button>
+</div>
+</div>
+
+<div class="actions-bar" id="actions_bar">
+<p class="queue-meta" id="sel_meta">Выбрано: 0</p>
 <div class="btns">
 <button type="button" class="btn" id="go">Сделать JSON</button>
 <button type="button" class="btn sec" id="publish" disabled>Опубликовать на GitHub</button>
 </div>
-<p id="err"></p>
-<p id="ok"></p>
 </div>
+
 <div id="results">
 <div class="card">
 <label for="out_rev">JSON (будет записан в GitHub)</label>
@@ -81,13 +109,30 @@ a{color:#8ab4f8}
 </div>
 </div>
 </div>
+
+<details class="manual card">
+<summary>Вставить вручную (запасной путь)</summary>
+<div class="row">
+<label for="paste">Полученный отзыв (как есть из KV Download)</label>
+<textarea id="paste" placeholder='review:id {"id":"…",…}'></textarea>
+</div>
+<div class="btns">
+<button type="button" class="btn sec" id="go_paste">Сделать JSON из вставки</button>
+</div>
+</details>
+
 <p class="note"><a href="/admin/">← Назад</a> · <a href="/">Сайт</a></p>
 </div>
 <script>
 (function () {
   var API = "https://noisy-wood-0e6f.otziv.workers.dev";
   var TOKEN_KEY = "oz_admin_token";
-  var lastReview = null;
+  var PAGE = 20;
+  var lastReviews = null;
+  var queueItems = [];
+  var nextOffset = null;
+  var totalMod = 0;
+  var selected = {};
 
   function token() {
     try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
@@ -168,6 +213,167 @@ a{color:#8ab4f8}
     ok.style.display = "block";
   }
 
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function selectedCount() {
+    return Object.keys(selected).length;
+  }
+
+  function updateActionsBar() {
+    var n = selectedCount();
+    var bar = $("actions_bar");
+    var meta = $("sel_meta");
+    if (meta) meta.textContent = "Выбрано: " + n;
+    if (bar) {
+      if (n > 0) bar.classList.add("show");
+      else bar.classList.remove("show");
+    }
+    if ($("publish")) $("publish").disabled = !lastReviews || !lastReviews.length;
+  }
+
+  function toPublishObj(src) {
+    var dateEl = $("date");
+    var dateFallback = (dateEl && dateEl.value) || todayISO();
+    var obj = {
+      id: String(src.id || "").trim(),
+      category: String(src.category || "").trim(),
+      name: String(src.name || "").trim(),
+      user: String(src.user || "").trim() || "Аноним",
+      text: String(src.text || "").trim(),
+      rating: Math.min(5, Math.max(1, parseInt(src.rating, 10) || 5)),
+      tags: String(src.tags || "").trim(),
+      date: dateFromTs(src.ts) || dateFallback,
+    };
+    var mail = String(src.mail || "").trim();
+    if (mail) obj.mail = mail;
+    return obj;
+  }
+
+  function reviewUrl(obj) {
+    var slug = String(obj.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/ё/g, "е")
+      .replace(/[^a-z0-9а-я]+/gi, "-")
+      .replace(/^-+|-+$/g, "");
+    return pageOrigin() + "/otziv.html?id=" + encodeURIComponent(slug || obj.id);
+  }
+
+  function renderQueue(append) {
+    var box = $("queue");
+    if (!box) return;
+    if (!append) box.innerHTML = "";
+    if (!queueItems.length && !append) {
+      box.innerHTML = '<p class="queue-meta">Пусто — нет отзывов на модерации.</p>';
+    }
+    queueItems.forEach(function (it) {
+      if (append && box.querySelector('[data-id="' + String(it.id).replace(/"/g, "") + '"]')) return;
+      var on = !!selected[it.id];
+      var el = document.createElement("div");
+      el.className = "mod-item" + (on ? " is-on" : "");
+      el.setAttribute("data-id", it.id);
+      var preview = String(it.text || "").slice(0, 400);
+      el.innerHTML =
+        '<input class="mod-check" type="checkbox" ' +
+        (on ? "checked " : "") +
+        'aria-label="Выбрать">' +
+        '<div><div class="mod-title">' +
+        escapeHtml(it.name) +
+        "</div>" +
+        '<div class="mod-meta">' +
+        escapeHtml(it.category) +
+        " · " +
+        escapeHtml(it.user || "Аноним") +
+        " · ★" +
+        escapeHtml(String(it.rating || 5)) +
+        " · " +
+        escapeHtml(it.id) +
+        (it.ts ? " · " + escapeHtml(dateFromTs(it.ts)) : "") +
+        "</div>" +
+        '<div class="mod-text">' +
+        escapeHtml(preview) +
+        (String(it.text || "").length > 400 ? "…" : "") +
+        "</div></div>";
+      var cb = el.querySelector(".mod-check");
+      cb.addEventListener("change", function () {
+        if (cb.checked) selected[it.id] = it;
+        else delete selected[it.id];
+        el.classList.toggle("is-on", cb.checked);
+        lastReviews = null;
+        if ($("publish")) $("publish").disabled = true;
+        updateActionsBar();
+      });
+      box.appendChild(el);
+    });
+    var meta = $("queue_meta");
+    if (meta) {
+      meta.textContent =
+        "На модерации: " + totalMod + " · показано: " + queueItems.length;
+    }
+    var more = $("more_q");
+    if (more) {
+      if (nextOffset !== null && nextOffset !== undefined) {
+        more.hidden = false;
+      } else {
+        more.hidden = true;
+      }
+    }
+  }
+
+  function loadQueue(reset) {
+    var tok = token();
+    if (!tok) { deny(); return; }
+    var offset = reset ? 0 : nextOffset || 0;
+    if (reset) {
+      queueItems = [];
+      nextOffset = null;
+      selected = {};
+      lastReviews = null;
+      if ($("publish")) $("publish").disabled = true;
+      updateActionsBar();
+    }
+    var meta = $("queue_meta");
+    if (meta) meta.textContent = "Загрузка…";
+    fetch(API + "/admin/moderation?limit=" + PAGE + "&offset=" + offset, {
+      headers: { Authorization: "Bearer " + tok },
+    })
+      .then(function (r) {
+        return r.json().then(function (d) {
+          return { ok: r.ok, d: d };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          showErr((x.d && x.d.error) || "Не удалось загрузить очередь");
+          if (meta) meta.textContent = "Ошибка загрузки";
+          return;
+        }
+        totalMod = x.d.total || 0;
+        nextOffset = x.d.next_offset;
+        var list = Array.isArray(x.d.items) ? x.d.items : [];
+        if (reset) queueItems = list;
+        else {
+          list.forEach(function (it) {
+            if (!queueItems.some(function (q) { return q.id === it.id; })) {
+              queueItems.push(it);
+            }
+          });
+        }
+        renderQueue(!reset);
+        showOk("Очередь обновлена.");
+      })
+      .catch(function () {
+        showErr("Сеть недоступна");
+        if (meta) meta.textContent = "Сеть недоступна";
+      });
+  }
+
   function normalizePaste(raw) {
     return String(raw || "")
       .replace(/^\uFEFF/, "")
@@ -177,7 +383,6 @@ a{color:#8ab4f8}
       .trim();
   }
 
-  /** Вырезать первый JSON-объект {...} с учётом строк (не lastIndexOf) */
   function extractJsonObject(s) {
     var i = s.indexOf("{");
     if (i < 0) return "";
@@ -211,55 +416,107 @@ a{color:#8ab4f8}
     return "";
   }
 
+  function unescapeJsonText(t) {
+    return String(t || "")
+      .replace(/\\n/g, "\n")
+      .replace(/\\r/g, "\r")
+      .replace(/\\t/g, "\t")
+      .replace(/\\"/g, '"')
+      .replace(/\\\\/g, "\\");
+  }
+
+  function parseIncomingLoose(s) {
+    var blob = extractJsonObject(s) || s;
+    function simpleField(key) {
+      var re = new RegExp('"' + key + '"\\s*:\\s*"((?:\\\\.|[^"\\\\])*)"', "i");
+      var m = blob.match(re);
+      if (m) return unescapeJsonText(m[1]);
+      var re2 = new RegExp('"' + key + '"\\s*:\\s*([0-9]+)', "i");
+      var m2 = blob.match(re2);
+      return m2 ? m2[1] : "";
+    }
+    var text = "";
+    var tMark = '"text":"';
+    var tAt = blob.indexOf(tMark);
+    if (tAt < 0) tAt = blob.indexOf('"text": "');
+    if (tAt >= 0) {
+      var start = blob.indexOf('"', tAt + 6) + 1;
+      var endTags = blob.indexOf('","tags":', start);
+      var endRating = blob.indexOf('","rating":', start);
+      var end = -1;
+      if (endTags > start) end = endTags;
+      else if (endRating > start) end = endRating;
+      if (end > start) text = unescapeJsonText(blob.slice(start, end));
+    }
+    var prefixId = "";
+    var brace = s.indexOf("{");
+    var head = brace > 0 ? s.slice(0, brace).trim() : "";
+    var pm = head.match(/review\s*:\s*([^\s]+)/i);
+    if (pm) prefixId = pm[1].trim();
+    var id = simpleField("id") || prefixId;
+    var category = simpleField("category");
+    var name = simpleField("name");
+    var user = simpleField("user");
+    var mail = simpleField("mail");
+    var tags = simpleField("tags");
+    var rating = simpleField("rating") || "5";
+    var ts = simpleField("ts");
+    if (!id || !category || !name || !text) {
+      return { error: "JSON не разобрался. Лучше выберите отзыв из очереди выше." };
+    }
+    return {
+      ok: true,
+      id: id,
+      category: category,
+      name: name,
+      user: user,
+      mail: mail,
+      text: text,
+      tags: tags,
+      rating: rating,
+      ts: ts ? +ts : undefined,
+    };
+  }
+
   function parseIncoming(raw) {
     var s = normalizePaste(raw);
     if (!s) return { error: "Вставьте полученный отзыв целиком." };
-
     var jsonStr = extractJsonObject(s);
-    if (!jsonStr) {
-      return { error: "Не найден JSON {...}." };
-    }
-
+    if (!jsonStr) return { error: "Не найден JSON {...}." };
     var data;
     try {
       data = JSON.parse(jsonStr);
     } catch (e1) {
-      // повтор: убрать прочие управляющие и «ломаные» пробелы
       try {
         data = JSON.parse(
           jsonStr
-            .replace(/\u2028/g, "\\n")
-            .replace(/\u2029/g, "\\n")
+            .replace(/\\u2028/g, "\\n")
+            .replace(/\\u2029/g, "\\n")
             .replace(/[\u0000-\u001F]/g, function (ch) {
-              if (ch === "\n" || ch === "\r" || ch === "\t") return ch;
+              if (ch === "\n") return "\\n";
+              if (ch === "\r") return "\\r";
+              if (ch === "\t") return "\\t";
               return "";
             })
         );
       } catch (e2) {
-        return {
-          error:
-            "JSON не разобрался. Скопируйте значение из KV через Download (не из превью), либо вставьте только блок от { до }.",
-        };
+        return parseIncomingLoose(s);
       }
     }
     if (!data || typeof data !== "object") {
       return { error: "Внутри {...} нет объекта отзыва." };
     }
-
     var prefixId = "";
     var head = s.slice(0, s.indexOf("{")).trim();
     var m = head.match(/review\s*:\s*([^\s]+)/i);
     if (m) prefixId = m[1].trim();
-
     var id = String(data.id || prefixId || "").trim();
     var category = String(data.category || "").trim();
     var name = String(data.name || "").trim();
     var text = String(data.text || "").trim();
-
     if (!id || !category || !name || !text) {
       return { error: "Нужны id, category, name, text." };
     }
-
     return {
       ok: true,
       id: id,
@@ -274,63 +531,77 @@ a{color:#8ab4f8}
     };
   }
 
-  function makeJson() {
+  function showPrepared(list) {
+    lastReviews = list;
+    $("out_rev").value =
+      list.length === 1
+        ? JSON.stringify(list[0], null, 2)
+        : JSON.stringify(list, null, 2);
+    var urls = list.map(reviewUrl);
+    $("out_url").value = urls.join("\n");
+    var openBtn = $("open_url");
+    if (openBtn) {
+      openBtn.href = urls[0];
+      openBtn.removeAttribute("hidden");
+    }
+    $("results").style.display = "block";
+    $("publish").disabled = false;
+    updateActionsBar();
+    showOk(
+      list.length === 1
+        ? "JSON готов. Нажмите «Опубликовать на GitHub»."
+        : "JSON готов для " + list.length + " отзывов. Можно публиковать пакетно."
+    );
+  }
+
+  function makeJsonFromSelection() {
+    try {
+      var ids = Object.keys(selected);
+      if (!ids.length) {
+        showErr("Отметьте хотя бы один отзыв галочкой.");
+        return;
+      }
+      if (ids.length > 20) {
+        showErr("За раз не больше 20 отзывов.");
+        return;
+      }
+      var list = ids.map(function (id) {
+        return toPublishObj(selected[id]);
+      });
+      for (var i = 0; i < list.length; i++) {
+        if (!list[i].id || !list[i].category || !list[i].name || !list[i].text) {
+          showErr("У выбранного отзыва не хватает полей: " + (list[i].id || "?"));
+          return;
+        }
+      }
+      showPrepared(list);
+    } catch (e) {
+      lastReviews = null;
+      $("publish").disabled = true;
+      showErr("Ошибка: " + (e && e.message ? e.message : String(e)));
+    }
+  }
+
+  function makeJsonFromPaste() {
     try {
       var raw = $("paste") ? $("paste").value : "";
       var parsed = parseIncoming(raw);
       if (!parsed || parsed.error) {
-        lastReview = null;
+        lastReviews = null;
         $("publish").disabled = true;
         showErr((parsed && parsed.error) || "Не удалось разобрать.");
         return;
       }
-
-      var dateEl = $("date");
-      var dateFallback = (dateEl && dateEl.value) || todayISO();
-
-      var obj = {
-        id: parsed.id,
-        category: parsed.category,
-        name: parsed.name,
-        user: parsed.user || "Аноним",
-        text: parsed.text,
-        rating: Math.min(5, Math.max(1, parseInt(parsed.rating, 10) || 5)),
-        tags: parsed.tags,
-        date: dateFromTs(parsed.ts) || dateFallback,
-      };
-      if (parsed.mail) obj.mail = parsed.mail;
-      lastReview = obj;
-
-      $("out_rev").value = JSON.stringify(obj, null, 2);
-
-      var slug = String(obj.name || "")
-        .trim()
-        .toLowerCase()
-        .replace(/ё/g, "е")
-        .replace(/[^a-z0-9а-я]+/gi, "-")
-        .replace(/^-+|-+$/g, "");
-      var urlKey = slug || parsed.id;
-      var url = pageOrigin() + "/otziv.html?id=" + encodeURIComponent(urlKey);
-      $("out_url").value = url;
-
-      var openBtn = $("open_url");
-      if (openBtn) {
-        openBtn.href = url;
-        openBtn.removeAttribute("hidden");
-      }
-
-      $("results").style.display = "block";
-      $("publish").disabled = false;
-      showOk("JSON готов. Нажмите «Опубликовать на GitHub».");
+      showPrepared([toPublishObj(parsed)]);
     } catch (e) {
-      lastReview = null;
+      lastReviews = null;
       $("publish").disabled = true;
       showErr("Ошибка: " + (e && e.message ? e.message : String(e)));
     }
   }
 
   function publishGithub() {
-    if (!lastReview) {
+    if (!lastReviews || !lastReviews.length) {
       showErr("Сначала нажмите «Сделать JSON».");
       return;
     }
@@ -339,13 +610,17 @@ a{color:#8ab4f8}
     var btn = $("publish");
     btn.disabled = true;
     showOk("Публикация…");
+    var body =
+      lastReviews.length === 1
+        ? { review: lastReviews[0] }
+        : { reviews: lastReviews };
     fetch(API + "/admin/publish", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + tok,
       },
-      body: JSON.stringify({ review: lastReview }),
+      body: JSON.stringify(body),
     })
       .then(function (r) {
         return r.json().then(function (d) {
@@ -358,19 +633,30 @@ a{color:#8ab4f8}
           showErr((x.d && x.d.error) || "Ошибка публикации");
           return;
         }
-        if (x.d.url) {
-          $("out_url").value = x.d.url;
+        if (x.d.results && x.d.results.length) {
+          $("out_url").value = x.d.results
+            .map(function (r) {
+              return r.url;
+            })
+            .join("\n");
           var openBtn = $("open_url");
-          if (openBtn) {
-            openBtn.href = x.d.url;
+          if (openBtn && x.d.results[0].url) {
+            openBtn.href = x.d.results[0].url;
             openBtn.removeAttribute("hidden");
           }
+        } else if (x.d.url) {
+          $("out_url").value = x.d.url;
         }
+        var n = (x.d.count || lastReviews.length);
         showOk(
-          x.d.updated
-            ? "Обновлено в GitHub. Через минуту появится на сайте."
-            : "Опубликовано в GitHub. Через минуту появится на сайте."
+          n > 1
+            ? "Опубликовано в GitHub: " + n + ". Через минуту на сайте."
+            : x.d.updated
+              ? "Обновлено в GitHub. Через минуту появится на сайте."
+              : "Опубликовано в GitHub. Через минуту появится на сайте."
         );
+        lastReviews = null;
+        loadQueue(true);
       })
       .catch(function () {
         btn.disabled = false;
@@ -389,8 +675,18 @@ a{color:#8ab4f8}
     }
   } catch (e2) {}
 
-  $("go").addEventListener("click", makeJson);
+  $("go").addEventListener("click", makeJsonFromSelection);
+  $("go_paste").addEventListener("click", makeJsonFromPaste);
   $("publish").addEventListener("click", publishGithub);
+  $("reload_q").addEventListener("click", function () {
+    loadQueue(true);
+  });
+  $("more_q").addEventListener("click", function () {
+    if (nextOffset === null || nextOffset === undefined) return;
+    loadQueue(false);
+  });
+
+  loadQueue(true);
   }
 })();
 </script>
