@@ -9,8 +9,9 @@
 
   function safeUrl(url) {
     var u = String(url || "").trim();
-    if (!/^https?:\/\//i.test(u)) return "";
-    return u;
+    if (/^https?:\/\//i.test(u)) return u;
+    if (/^mailto:[^\s<>"@]+@[^\s<>"]+$/i.test(u)) return u;
+    return "";
   }
 
   function host(url) {
@@ -193,12 +194,17 @@
       var href = safeUrl(url);
       if (!href) return esc("[" + label + "](" + url + ")");
       var t = String(label || "").trim();
+      var blank = /^mailto:/i.test(href)
+        ? ""
+        : ' rel="noopener noreferrer" target="_blank"';
       return (
         '<a href="' +
         esc(href) +
         '" title="' +
         esc(t) +
-        '" rel="noopener noreferrer" target="_blank">' +
+        '"' +
+        blank +
+        ">" +
         esc(label) +
         "</a>"
       );
