@@ -102,6 +102,32 @@
     return "";
   }
 
+  function parseMediaRef(raw) {
+    var s = String(raw || "").trim();
+    var size = null;
+    var pos = "";
+    for (;;) {
+      var mPos = s.match(/^(.*?)\s+(leftup|leftdown|rightup|rightdown|center)\s*$/i);
+      if (mPos) {
+        s = mPos[1].trim();
+        pos = mPos[2].toLowerCase();
+        continue;
+      }
+      var mSize = s.match(/^(.*?)\s+=(\d{1,4})x(\d{1,4})\s*$/i);
+      if (mSize) {
+        s = mSize[1].trim();
+        size = {
+          w: Math.min(4096, Math.max(1, parseInt(mSize[2], 10) || 0)),
+          h: Math.min(4096, Math.max(1, parseInt(mSize[3], 10) || 0)),
+        };
+        if (!size.w || !size.h) size = null;
+        continue;
+      }
+      break;
+    }
+    return { url: s, size: size, pos: pos };
+  }
+
   function mediaAllowed(url) {
     var u = safeUrl(url);
     if (!u) return { kind: "", url: "" };
@@ -147,39 +173,74 @@
     );
   }
 
-  function imageHtml(url, alt) {
+  function sizeAttrs(size) {
+    if (!size || !size.w || !size.h) return "";
+    return (
+      ' width="' +
+      size.w +
+      '" height="' +
+      size.h +
+      '" style="width:min(100%,' +
+      size.w +
+      "px);height:auto;max-width:100%\""
+    );
+  }
+
+  function posClass(pos) {
+    var p = String(pos || "").toLowerCase();
+    if (
+      p === "leftup" ||
+      p === "leftdown" ||
+      p === "rightup" ||
+      p === "rightdown" ||
+      p === "center"
+    ) {
+      return " oz-md-pos-" + p;
+    }
+    return "";
+  }
+
+  function imageHtml(url, alt, size, pos) {
     var src = imageAllowed(url);
     if (!src) return esc("::img " + url);
     var t = String(alt || "").trim();
     return (
-      '<figure class="oz-md-media"><img src="' +
+      '<figure class="oz-md-media' +
+      posClass(pos) +
+      '"><img src="' +
       esc(src) +
       '" alt="' +
       esc(t) +
       '" title="' +
       esc(t) +
-      '" loading="lazy" decoding="async"></figure>'
+      '"' +
+      sizeAttrs(size) +
+      ' loading="lazy" decoding="async"></figure>'
     );
   }
 
-  function videoHtml(url, label) {
+  function videoHtml(url, label, size, pos) {
     var src = videoAllowed(url);
     if (!src) return esc("::video " + url);
     var t = String(label || "").trim();
     return (
-      '<figure class="oz-md-media"><video src="' +
+      '<figure class="oz-md-media' +
+      posClass(pos) +
+      '"><video src="' +
       esc(src) +
       '" controls playsinline preload="metadata"' +
+      sizeAttrs(size) +
       (t ? ' title="' + esc(t) + '" aria-label="' + esc(t) + '"' : "") +
       "></video></figure>"
     );
   }
 
-  function mediaHtml(url, alt) {
-    var m = mediaAllowed(url);
-    if (m.kind === "video") return videoHtml(url, alt);
-    if (m.kind === "image") return imageHtml(url, alt);
-    return esc((alt ? "![" + alt + "]" : "::media") + "(" + url + ")");
+  function mediaHtml(rawUrl, alt) {
+    var ref = parseMediaRef(rawUrl);
+    var m = mediaAllowed(ref.url);
+    if (m.kind === "video") return videoHtml(ref.url, alt, ref.size, ref.pos);
+    if (m.kind === "image") return imageHtml(ref.url, alt, ref.size, ref.pos);
+    return esc((alt ? "![" + alt + "]" : "::media") + "(" + rawUrl + ")");
   }
 
   function processInline(line) {
@@ -212,6 +273,48 @@
     return s;
   }
 
+  function splitImgArgs(rest) {
+    var s = String(rest || "").trim();
+    var size = null;
+    var pos = "";
+    for (;;) {
+      var mStartSize = s.match(/^=(\d{1,4})x(\d{1,4})(?:\s+(.*))?$/i);
+      if (mStartSize && !size) {
+        size = {
+          w: Math.min(4096, Math.max(1, parseInt(mStartSize[1], 10) || 0)),
+          h: Math.min(4096, Math.max(1, parseInt(mStartSize[2], 10) || 0)),
+        };
+        if (!size.w || !size.h) size = null;
+        s = String(mStartSize[3] || "").trim();
+        continue;
+      }
+      var mStartPos = s.match(/^(leftup|leftdown|rightup|rightdown|center)(?:\s+(.*))?$/i);
+      if (mStartPos && !pos) {
+        pos = mStartPos[1].toLowerCase();
+        s = String(mStartPos[2] || "").trim();
+        continue;
+      }
+      var mEndPos = s.match(/^(.*?)\s+(leftup|leftdown|rightup|rightdown|center)\s*$/i);
+      if (mEndPos && !pos) {
+        pos = mEndPos[2].toLowerCase();
+        s = mEndPos[1].trim();
+        continue;
+      }
+      var mEndSize = s.match(/^(.*?)\s+=(\d{1,4})x(\d{1,4})\s*$/i);
+      if (mEndSize && !size) {
+        size = {
+          w: Math.min(4096, Math.max(1, parseInt(mEndSize[2], 10) || 0)),
+          h: Math.min(4096, Math.max(1, parseInt(mEndSize[3], 10) || 0)),
+        };
+        if (!size.w || !size.h) size = null;
+        s = mEndSize[1].trim();
+        continue;
+      }
+      break;
+    }
+    return { size: size, pos: pos, alt: s };
+  }
+
   function toHtml(raw) {
     var parts = String(raw || "").split("\n");
     var out = [];
@@ -224,12 +327,28 @@
       }
       var imgLine = line.match(/^\s*::img\s+(\S+)(?:\s+(.+))?\s*$/i);
       if (imgLine) {
-        out.push(mediaHtml(imgLine[1], imgLine[2] || ""));
+        var imgArgs = splitImgArgs(imgLine[2] || "");
+        var imgRef = parseMediaRef(imgLine[1]);
+        var imgSize = imgRef.size || imgArgs.size;
+        var imgPos = imgRef.pos || imgArgs.pos;
+        var imgAlt = imgArgs.alt;
+        var imgKind = mediaAllowed(imgRef.url);
+        if (imgKind.kind === "video") out.push(videoHtml(imgRef.url, imgAlt, imgSize, imgPos));
+        else out.push(imageHtml(imgRef.url, imgAlt, imgSize, imgPos));
         continue;
       }
       var videoLine = line.match(/^\s*::video\s+(\S+)(?:\s+(.+))?\s*$/i);
       if (videoLine) {
-        out.push(videoHtml(videoLine[1], videoLine[2] || ""));
+        var vidArgs = splitImgArgs(videoLine[2] || "");
+        var vidRef = parseMediaRef(videoLine[1]);
+        out.push(
+          videoHtml(
+            vidRef.url,
+            vidArgs.alt,
+            vidRef.size || vidArgs.size,
+            vidRef.pos || vidArgs.pos
+          )
+        );
         continue;
       }
       var onlyImg = line.match(/^\s*!\[([^\]]*)\]\(([^)]+)\)\s*$/);

@@ -91,13 +91,21 @@ html[data-theme="dark"] .at{display:block}
 .oz-tags:empty{display:none}
 .oz-tags a{display:inline-block;padding:6px 12px;border:1px solid var(--f);border-radius:999px;background:#f8f9fa;color:var(--g);font-size:13px;font-weight:600;text-decoration:none}
 .oz-tags a:hover{background:var(--b);border-color:var(--b);color:#fff;text-decoration:none}
-.oz-body{font-size:16px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.oz-body{position:relative;font-size:16px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
 .oz-body a{color:#1a5276;text-decoration:underline}
 .oz-body a:hover{color:var(--a)}
 .oz-embed{position:relative;width:100%;max-width:720px;margin:12px auto;padding-top:56.25%;background:#000;border-radius:12px;overflow:hidden}
 .oz-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .oz-md-media{display:block;width:100%;max-width:720px;margin:12px auto}
 .oz-md-media img,.oz-md-media video{display:block;width:100%;height:auto;border-radius:12px;background:#f0f2f5}
+.oz-md-media.oz-md-pos-leftup,.oz-md-media.oz-md-pos-leftdown,.oz-md-media.oz-md-pos-rightup,.oz-md-media.oz-md-pos-rightdown{position:absolute;z-index:1;width:auto;max-width:min(48%,320px);margin:0}
+.oz-md-media.oz-md-pos-leftup{top:0;left:0}
+.oz-md-media.oz-md-pos-leftdown{bottom:0;left:0}
+.oz-md-media.oz-md-pos-rightup{top:0;right:0}
+.oz-md-media.oz-md-pos-rightdown{bottom:0;right:0}
+.oz-md-media.oz-md-pos-center{margin-left:auto;margin-right:auto}
+.oz-md-media.oz-md-pos-leftup img,.oz-md-media.oz-md-pos-leftdown img,.oz-md-media.oz-md-pos-rightup img,.oz-md-media.oz-md-pos-rightdown img,
+.oz-md-media.oz-md-pos-leftup video,.oz-md-media.oz-md-pos-leftdown video,.oz-md-media.oz-md-pos-rightup video,.oz-md-media.oz-md-pos-rightdown video{width:auto;max-width:100%;height:auto}
 html[data-theme="dark"] .oz-md-media img,html[data-theme="dark"] .oz-md-media video{background:#232a31}
 html[data-theme="dark"] .oz-body a{color:#8ec5f0}
 .oz-admin-form{display:grid;gap:10px;margin:0 0 16px;padding:14px;border:1px solid var(--f);border-radius:12px;background:#f8f9fa}
@@ -481,7 +489,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 </nav>
 </div>
 <script src="clock.js"></script>
-<script src="md.js?v=20260725"></script>
+<script src="md.js?v=20260727b"></script>
 <script src="tags.js"></script>
 <script>
 (function () {
