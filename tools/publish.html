@@ -54,11 +54,26 @@ a{color:#8ab4f8}
 .oz-tags:empty{display:none}
 .oz-tags span,.oz-tags a{display:inline-block;padding:6px 12px;border:1px solid var(--f);border-radius:999px;background:#232a31;color:var(--g);font-size:13px;font-weight:600;text-decoration:none}
 .mod-tech{font-size:12px;color:var(--muted);margin-top:10px;word-break:break-all}
-.mod-actions{margin-top:12px}
+.mod-actions{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+.mod-actions .btn{margin:0}
 .actions-bar{display:none;position:sticky;bottom:12px;z-index:2;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:16px 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .actions-bar.show{display:block}
 #results{display:none}
 .out{font-family:Consolas,monospace;font-size:13px;min-height:48px;white-space:pre-wrap;width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);resize:vertical}
+.edit-pop{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;background:rgba(0,0,0,.55)}
+.edit-pop[hidden]{display:none!important}
+.edit-box{width:100%;max-width:680px;margin:24px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.edit-box h2{font-size:1.1rem;margin:0 0 12px}
+.edit-box .row{margin-bottom:12px}
+.edit-box textarea{width:100%;min-height:160px;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px;resize:vertical;line-height:1.45}
+.edit-box select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px}
+.edit-hint{font-size:12px;color:var(--muted);margin:0 0 8px;line-height:1.4}
+.oz-admin-tags{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#161b20}
+.oz-admin-tags:empty::before{content:"Нет тегов для категории";color:var(--muted);font-size:13px;font-weight:400}
+.oz-admin-tag{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#232a31;color:var(--g);font-size:13px;font-weight:600;cursor:pointer;user-select:none;position:relative}
+.oz-admin-tag input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.oz-admin-tag.oz-name{border-style:dashed}
+.oz-admin-tag.oz-on{background:var(--accent);border-color:var(--accent);color:#fff;border-style:solid}
 </style>
 </head>
 <body>
@@ -116,8 +131,50 @@ a{color:#8ab4f8}
 </div>
 </div>
 
-<p class="note"><a href="/admin/">← Назад</a> · <a href="/">Сайт</a> · правки текста — на <a href="/otziv.html">карточке отзыва</a> в режиме админа</p>
+<p class="note"><a href="/admin/">← Назад</a> · <a href="/">Сайт</a></p>
 </div>
+
+<div class="edit-pop" id="edit_pop" hidden>
+<div class="edit-box" role="dialog" aria-modal="true" aria-labelledby="edit_title">
+<h2 id="edit_title">Редактировать отзыв</h2>
+<div class="row">
+<label for="edit_name">Название</label>
+<input type="text" id="edit_name" maxlength="120">
+</div>
+<div class="row">
+<label for="edit_category">Категория</label>
+<select id="edit_category"></select>
+</div>
+<div class="row">
+<label for="edit_user">Автор</label>
+<input type="text" id="edit_user" maxlength="40">
+</div>
+<div class="row">
+<label for="edit_rating">Оценка</label>
+<select id="edit_rating">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+</select>
+</div>
+<div class="row">
+<label for="edit_text">Текст</label>
+<textarea id="edit_text" maxlength="2500"></textarea>
+</div>
+<div class="row">
+<label id="edit_tags_label">Теги</label>
+<p class="edit-hint">Админ — без лимита в 2 тега.</p>
+<div class="oz-admin-tags" id="edit_tags" role="group" aria-labelledby="edit_tags_label"></div>
+</div>
+<div class="btns">
+<button type="button" class="btn" id="edit_save">Сохранить</button>
+<button type="button" class="btn sec" id="edit_cancel">Отмена</button>
+</div>
+</div>
+</div>
+
 <script src="/md.js"></script>
 <script src="/tags.js"></script>
 <script>
@@ -129,6 +186,7 @@ a{color:#8ab4f8}
   var nextOffset = null;
   var totalMod = 0;
   var selected = {};
+  var editingId = null;
 
   function token() {
     try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
@@ -330,7 +388,11 @@ a{color:#8ab4f8}
         escapeHtml(it.id) +
         (it.mail ? " · " + escapeHtml(it.mail) : "") +
         "</div>" +
-        '<div class="mod-actions"><button type="button" class="btn danger" data-reject="' +
+        '<div class="mod-actions">' +
+        '<button type="button" class="btn sec" data-edit="' +
+        escapeHtml(it.id) +
+        '">Редактировать</button>' +
+        '<button type="button" class="btn danger" data-reject="' +
         escapeHtml(it.id) +
         '">Отклонить</button></div></div>';
       var cb = el.querySelector(".mod-check");
@@ -340,6 +402,12 @@ a{color:#8ab4f8}
         el.classList.toggle("is-on", cb.checked);
         updateActionsBar();
       });
+      var editBtn = el.querySelector("[data-edit]");
+      if (editBtn) {
+        editBtn.addEventListener("click", function () {
+          openEdit(it);
+        });
+      }
       var rejBtn = el.querySelector("[data-reject]");
       if (rejBtn) {
         rejBtn.addEventListener("click", function () {
@@ -363,6 +431,204 @@ a{color:#8ab4f8}
         more.hidden = true;
       }
     }
+  }
+
+  function editPickedTags() {
+    var box = $("edit_tags");
+    if (!box) return [];
+    var out = [];
+    var seen = {};
+    box.querySelectorAll("input[type=checkbox]:checked").forEach(function (inp) {
+      var slug = String(inp.value || "").trim();
+      if (!slug || seen[slug]) return;
+      seen[slug] = true;
+      out.push(slug);
+    });
+    return out;
+  }
+
+  function fillEditCategories(selectedCat) {
+    var sel = $("edit_category");
+    if (!sel) return;
+    var cats =
+      window.OZ_TAGS && OZ_TAGS.byCat
+        ? Object.keys(OZ_TAGS.byCat)
+        : ["Товары", "Места", "Услуги", "Сайты", "Работа и Карьера", "Люди и Персоны", "Общество и Государство"];
+    sel.innerHTML = "";
+    cats.forEach(function (c) {
+      var opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      if (c === selectedCat) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    if (selectedCat && cats.indexOf(selectedCat) < 0) {
+      var extra = document.createElement("option");
+      extra.value = selectedCat;
+      extra.textContent = selectedCat;
+      extra.selected = true;
+      sel.appendChild(extra);
+    }
+  }
+
+  function renderEditTags(keepSlugs) {
+    var box = $("edit_tags");
+    if (!box) return;
+    var cat = ($("edit_category") && $("edit_category").value) || "";
+    var name = ($("edit_name") && $("edit_name").value.trim()) || "";
+    var prev =
+      keepSlugs != null
+        ? keepSlugs
+        : editPickedTags().length
+          ? editPickedTags()
+          : [];
+    var list = [];
+    var seen = {};
+    function pushTag(t) {
+      if (!t || !t.slug || seen[t.slug]) return;
+      seen[t.slug] = true;
+      list.push(t);
+    }
+    if (window.OZ_TAGS) {
+      var nameTag = OZ_TAGS.fromName(name);
+      if (nameTag) pushTag({ slug: nameTag.slug, name: nameTag.name, kind: "name" });
+      (OZ_TAGS.forCategory(cat) || []).forEach(function (t) {
+        pushTag({ slug: t.slug, name: t.name, kind: "cat" });
+      });
+    }
+    prev.forEach(function (slug) {
+      if (seen[slug]) return;
+      pushTag({
+        slug: slug,
+        name: window.OZ_TAGS ? OZ_TAGS.name(slug) : slug,
+        kind: "extra",
+      });
+    });
+    box.innerHTML = "";
+    list.forEach(function (t) {
+      var lab = document.createElement("label");
+      lab.className =
+        "oz-admin-tag" +
+        (t.kind === "name" ? " oz-name" : "") +
+        (prev.indexOf(t.slug) !== -1 ? " oz-on" : "");
+      var inp = document.createElement("input");
+      inp.type = "checkbox";
+      inp.value = t.slug;
+      inp.checked = prev.indexOf(t.slug) !== -1;
+      inp.addEventListener("change", function () {
+        lab.classList.toggle("oz-on", inp.checked);
+      });
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode("#" + t.name));
+      box.appendChild(lab);
+    });
+  }
+
+  function openEdit(it) {
+    if (!it || !it.id) return;
+    editingId = it.id;
+    fillEditCategories(it.category || "");
+    $("edit_name").value = it.name || "";
+    $("edit_user").value = it.user || "";
+    $("edit_text").value = it.text || "";
+    $("edit_rating").value = String(Math.min(5, Math.max(1, parseInt(it.rating, 10) || 5)));
+    var prev = window.OZ_TAGS
+      ? OZ_TAGS.parse(it.tags || "")
+      : String(it.tags || "")
+          .split(",")
+          .map(function (x) {
+            return x.trim();
+          })
+          .filter(Boolean);
+    renderEditTags(prev);
+    $("edit_pop").hidden = false;
+    $("edit_name").focus();
+  }
+
+  function closeEdit() {
+    editingId = null;
+    var pop = $("edit_pop");
+    if (pop) pop.hidden = true;
+  }
+
+  function applyEditedItem(item) {
+    if (!item || !item.id) return;
+    for (var i = 0; i < queueItems.length; i++) {
+      if (queueItems[i].id === item.id) {
+        queueItems[i] = Object.assign({}, queueItems[i], item);
+        break;
+      }
+    }
+    if (selected[item.id]) {
+      selected[item.id] = Object.assign({}, selected[item.id], item);
+    }
+    renderQueue(false);
+  }
+
+  function saveEdit() {
+    if (!editingId) return;
+    var name = ($("edit_name").value || "").trim();
+    var category = ($("edit_category").value || "").trim();
+    var user = ($("edit_user").value || "").trim();
+    var text = ($("edit_text").value || "").trim();
+    var rating = $("edit_rating").value;
+    var tags = editPickedTags().join(",");
+    if (!name || !category || !text) {
+      showErr("Нужны название, категория и текст.");
+      return;
+    }
+    var tok = token();
+    if (!tok) {
+      deny();
+      return;
+    }
+    var btn = $("edit_save");
+    if (btn) btn.disabled = true;
+    showOk("Сохранение…");
+    fetch(API + "/admin/moderation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + tok,
+      },
+      body: JSON.stringify({
+        id: editingId,
+        name: name,
+        category: category,
+        user: user,
+        text: text,
+        rating: rating,
+        tags: tags,
+      }),
+    })
+      .then(function (r) {
+        return r.json().then(function (d) {
+          return { ok: r.ok, d: d };
+        });
+      })
+      .then(function (x) {
+        if (btn) btn.disabled = false;
+        if (!x.ok) {
+          showErr((x.d && x.d.error) || "Не удалось сохранить");
+          return;
+        }
+        var savedId = editingId;
+        applyEditedItem(x.d.item || {
+          id: savedId,
+          name: name,
+          category: category,
+          user: user || "Аноним",
+          text: text,
+          rating: rating,
+          tags: tags,
+        });
+        closeEdit();
+        showOk("Сохранено в очереди: " + savedId);
+      })
+      .catch(function () {
+        if (btn) btn.disabled = false;
+        showErr("Сеть недоступна");
+      });
   }
 
   function rejectOne(it, reasonPreset) {
@@ -586,6 +852,22 @@ a{color:#8ab4f8}
   $("more_q").addEventListener("click", function () {
     if (nextOffset === null || nextOffset === undefined) return;
     loadQueue(false);
+  });
+  $("edit_save").addEventListener("click", saveEdit);
+  $("edit_cancel").addEventListener("click", closeEdit);
+  $("edit_name").addEventListener("input", function () {
+    if ($("edit_pop").hidden) return;
+    renderEditTags(editPickedTags());
+  });
+  $("edit_category").addEventListener("change", function () {
+    if ($("edit_pop").hidden) return;
+    renderEditTags(editPickedTags());
+  });
+  $("edit_pop").addEventListener("click", function (e) {
+    if (e.target === $("edit_pop")) closeEdit();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && $("edit_pop") && !$("edit_pop").hidden) closeEdit();
   });
 
   function start() {
