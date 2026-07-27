@@ -107,6 +107,15 @@ html[data-theme="dark"] .oz-body a{color:#8ec5f0}
 .oz-admin-form textarea{min-height:140px;resize:vertical;line-height:1.45}
 .oz-admin-form .oz-md-hint{margin:0;font-size:12px;color:var(--e);line-height:1.4}
 .oz-admin-form .oz-admin-actions{display:flex;flex-wrap:wrap;gap:8px}
+.oz-admin-tags{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:10px;border:1px solid var(--f);border-radius:10px;background:#fff}
+.oz-admin-tags:empty::before{content:"Нет тегов для категории";color:var(--e);font-size:13px;font-weight:400}
+.oz-admin-tag{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border:1px solid var(--f);border-radius:999px;background:#f8f9fa;color:var(--g);font-size:13px;font-weight:600;cursor:pointer;user-select:none;position:relative}
+.oz-admin-tag input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.oz-admin-tag.oz-name{border-style:dashed}
+.oz-admin-tag.oz-on{background:var(--b);border-color:var(--b);color:#fff;border-style:solid}
+html[data-theme="dark"] .oz-admin-tags{background:#1a1f24;border-color:var(--f)}
+html[data-theme="dark"] .oz-admin-tag{background:#232a31;border-color:var(--f);color:var(--g)}
+html[data-theme="dark"] .oz-admin-tag.oz-on{background:var(--b);border-color:var(--b);color:#fff}
 html[data-theme="dark"] .oz-admin-form{background:#232a31;border-color:var(--f)}
 html[data-theme="dark"] .oz-admin-form input,html[data-theme="dark"] .oz-admin-form textarea,html[data-theme="dark"] .oz-admin-form select{background:#1a1f24;color:var(--g)}
 .oz-admin{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
@@ -385,6 +394,9 @@ body{padding:18px 16px calc(18px + var(--c))}
 <label for="oz-admin-edit-text">Текст отзыва</label>
 <p class="oz-md-hint">Картинка: <code>![описание](https://...png|jpg|gif|webp|avif)</code> → alt+title · WebM: <code>![описание](https://...webm)</code> или <code>::video https://...webm описание</code> · Видео: <code>[iframe название](https://...)</code> · Ссылка: <code>[текст](https://...)</code> → title</p>
 <textarea id="oz-admin-edit-text" required maxlength="2500"></textarea>
+<label id="oz-admin-edit-tags-label">Теги</label>
+<p class="oz-md-hint">Только админ: можно выбрать больше 2 (у пользователей на форме лимит 2).</p>
+<div class="oz-admin-tags" id="oz-admin-edit-tags" role="group" aria-labelledby="oz-admin-edit-tags-label"></div>
 <div class="oz-admin-actions">
 <button type="submit">Сохранить</button>
 <button type="button" id="oz-admin-edit-cancel">Отмена</button>
@@ -469,7 +481,7 @@ body{padding:18px 16px calc(18px + var(--c))}
 </nav>
 </div>
 <script src="clock.js"></script>
-<script src="md.js"></script>
+<script src="md.js?v=20260725"></script>
 <script src="tags.js"></script>
 <script>
 (function () {
@@ -957,6 +969,74 @@ body{padding:18px 16px calc(18px + var(--c))}
     });
   }
 
+  function adminPickedTagSlugs() {
+    var box = document.getElementById("oz-admin-edit-tags");
+    if (!box) return [];
+    var out = [];
+    var seen = {};
+    box.querySelectorAll("input[type=checkbox]:checked").forEach(function (inp) {
+      var slug = String(inp.value || "").trim();
+      if (!slug || seen[slug]) return;
+      seen[slug] = true;
+      out.push(slug);
+    });
+    return out;
+  }
+
+  function renderAdminTagPick(keepSlugs) {
+    var box = document.getElementById("oz-admin-edit-tags");
+    var nameEl = document.getElementById("oz-admin-edit-name");
+    var catEl = document.getElementById("oz-admin-edit-category");
+    if (!box) return;
+    var cat = catEl ? catEl.value.trim() : "";
+    var name = nameEl ? nameEl.value.trim() : "";
+    var prev =
+      keepSlugs != null
+        ? keepSlugs
+        : adminPickedTagSlugs().length
+          ? adminPickedTagSlugs()
+          : window.OZ_TAGS
+            ? OZ_TAGS.parse((currentReview && currentReview.tags) || "")
+            : [];
+    var list = [];
+    var seen = {};
+    function pushTag(t) {
+      if (!t || !t.slug || seen[t.slug]) return;
+      seen[t.slug] = true;
+      list.push(t);
+    }
+    if (window.OZ_TAGS) {
+      var nameTag = OZ_TAGS.fromName(name);
+      if (nameTag) pushTag({ slug: nameTag.slug, name: nameTag.name, kind: "name" });
+      (OZ_TAGS.forCategory(cat) || []).forEach(function (t) {
+        pushTag({ slug: t.slug, name: t.name, kind: "cat" });
+      });
+    }
+    prev.forEach(function (slug) {
+      if (seen[slug]) return;
+      var nm = window.OZ_TAGS ? OZ_TAGS.name(slug) : slug;
+      pushTag({ slug: slug, name: nm, kind: "extra" });
+    });
+    box.innerHTML = "";
+    list.forEach(function (t) {
+      var lab = document.createElement("label");
+      lab.className =
+        "oz-admin-tag" +
+        (t.kind === "name" ? " oz-name" : "") +
+        (prev.indexOf(t.slug) !== -1 ? " oz-on" : "");
+      var inp = document.createElement("input");
+      inp.type = "checkbox";
+      inp.value = t.slug;
+      inp.checked = prev.indexOf(t.slug) !== -1;
+      inp.addEventListener("change", function () {
+        lab.classList.toggle("oz-on", inp.checked);
+      });
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode("#" + t.name));
+      box.appendChild(lab);
+    });
+  }
+
   function openAdminEditForm() {
     if (!isAdmin || !currentReview || currentReview.id === "site") return;
     var r = currentReview;
@@ -972,6 +1052,9 @@ body{padding:18px 16px calc(18px + var(--c))}
     userEl.value = r.user || "";
     textEl.value = r.text || "";
     rateEl.value = String(Math.min(5, Math.max(1, +r.rating || 5)));
+    renderAdminTagPick(
+      window.OZ_TAGS ? OZ_TAGS.parse(r.tags || "") : String(r.tags || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean)
+    );
     form.hidden = false;
     textEl.focus();
   }
@@ -990,6 +1073,7 @@ body{padding:18px 16px calc(18px + var(--c))}
     var user = document.getElementById("oz-admin-edit-user").value.trim();
     var text = document.getElementById("oz-admin-edit-text").value.trim();
     var rating = document.getElementById("oz-admin-edit-rating").value;
+    var tags = adminPickedTagSlugs().join(",");
     if (!name || !category || !text) return;
     var tok = adminToken();
     fetch(API + "/admin/review", {
@@ -1006,7 +1090,7 @@ body{padding:18px 16px calc(18px + var(--c))}
         user: user,
         text: text,
         rating: rating,
-        tags: r.tags || "",
+        tags: tags,
         date: r.date || "",
         mail: r.mail || "",
       }),
@@ -1283,6 +1367,17 @@ body{padding:18px 16px calc(18px + var(--c))}
   document.getElementById("oz-edit-review").addEventListener("click", openAdminEditForm);
   document.getElementById("oz-admin-edit-cancel").addEventListener("click", closeAdminEditForm);
   document.getElementById("oz-admin-edit-form").addEventListener("submit", saveAdminEditForm);
+  (function () {
+    var nameEl = document.getElementById("oz-admin-edit-name");
+    var catEl = document.getElementById("oz-admin-edit-category");
+    function refreshTags() {
+      var form = document.getElementById("oz-admin-edit-form");
+      if (!form || form.hidden) return;
+      renderAdminTagPick(adminPickedTagSlugs());
+    }
+    if (nameEl) nameEl.addEventListener("input", refreshTags);
+    if (catEl) catEl.addEventListener("input", refreshTags);
+  })();
 
   document.getElementById("oz-del-review").addEventListener("click", function () {
     if (!isAdmin || !currentReview || currentReview.id === "site") return;
