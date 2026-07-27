@@ -68,12 +68,16 @@ a{color:#8ab4f8}
 .edit-box textarea{width:100%;min-height:160px;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px;resize:vertical;line-height:1.45}
 .edit-box select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#232a31;color:var(--text);font:inherit;font-size:14px}
 .edit-hint{font-size:12px;color:var(--muted);margin:0 0 8px;line-height:1.4}
-.oz-admin-tags{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#161b20}
-.oz-admin-tags:empty::before{content:"Нет тегов для категории";color:var(--muted);font-size:13px;font-weight:400}
+.oz-admin-tags{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:44px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#161b20}
 .oz-admin-tag{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#232a31;color:var(--g);font-size:13px;font-weight:600;cursor:pointer;user-select:none;position:relative}
 .oz-admin-tag input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 .oz-admin-tag.oz-name{border-style:dashed}
 .oz-admin-tag.oz-on{background:var(--accent);border-color:var(--accent);color:#fff;border-style:solid}
+.oz-tag-plus{flex:none;width:36px;height:36px;border:1px dashed var(--line);border-radius:999px;background:#232a31;color:var(--g);font-size:22px;line-height:1;cursor:pointer}
+.oz-tag-plus:hover{border-color:var(--accent);color:#fff;background:var(--accent);border-style:solid}
+.oz-tag-new{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.oz-tag-new[hidden]{display:none!important}
+.oz-tag-new input{flex:1;min-width:160px;margin:0}
 </style>
 </head>
 <body>
@@ -165,8 +169,13 @@ a{color:#8ab4f8}
 </div>
 <div class="row">
 <label id="edit_tags_label">Теги</label>
-<p class="edit-hint">Админ — без лимита в 2 тега.</p>
+<p class="edit-hint">Админ — без лимита в 2 тега. «+» — свой тег в систему.</p>
 <div class="oz-admin-tags" id="edit_tags" role="group" aria-labelledby="edit_tags_label"></div>
+<div class="oz-tag-new" id="edit_tag_new_row" hidden>
+<input type="text" id="edit_tag_new" maxlength="60" placeholder="Название тега">
+<button type="button" class="btn sec" id="edit_tag_new_ok">Добавить</button>
+<button type="button" class="btn sec" id="edit_tag_new_cancel">Отмена</button>
+</div>
 </div>
 <div class="btns">
 <button type="button" class="btn" id="edit_save">Сохранить</button>
@@ -187,6 +196,7 @@ a{color:#8ab4f8}
   var totalMod = 0;
   var selected = {};
   var editingId = null;
+  var editCustomTags = {};
 
   function token() {
     try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
@@ -447,6 +457,63 @@ a{color:#8ab4f8}
     return out;
   }
 
+  function editUserTagsForSave() {
+    var picked = editPickedTags();
+    var out = [];
+    var seen = {};
+    picked.forEach(function (slug) {
+      if (!slug || seen[slug]) return;
+      if (window.OZ_TAGS && OZ_TAGS.isCategory && OZ_TAGS.isCategory(slug)) return;
+      seen[slug] = true;
+      var nm =
+        editCustomTags[slug] ||
+        (window.OZ_TAGS ? OZ_TAGS.name(slug) : slug) ||
+        slug;
+      out.push({ slug: slug, name: String(nm).trim() || slug });
+    });
+    return out;
+  }
+
+  function hideNewTagRow() {
+    var row = $("edit_tag_new_row");
+    var inp = $("edit_tag_new");
+    if (row) row.hidden = true;
+    if (inp) inp.value = "";
+  }
+
+  function showNewTagRow() {
+    var row = $("edit_tag_new_row");
+    var inp = $("edit_tag_new");
+    if (row) row.hidden = false;
+    if (inp) {
+      inp.value = "";
+      inp.focus();
+    }
+  }
+
+  function addCustomTagFromInput() {
+    var inp = $("edit_tag_new");
+    var raw = inp ? String(inp.value || "").trim() : "";
+    if (!raw) {
+      showErr("Введите название тега.");
+      return;
+    }
+    var slug = window.OZ_TAGS && OZ_TAGS.slugify ? OZ_TAGS.slugify(raw) : raw.toLowerCase().replace(/\s+/g, "-");
+    if (!slug) {
+      showErr("Не удалось сделать slug тега.");
+      return;
+    }
+    editCustomTags[slug] = raw;
+    if (window.OZ_TAGS && OZ_TAGS.mergeUserTags) {
+      OZ_TAGS.mergeUserTags([{ slug: slug, name: raw }]);
+    }
+    var prev = editPickedTags();
+    if (prev.indexOf(slug) < 0) prev.push(slug);
+    hideNewTagRow();
+    renderEditTags(prev);
+    showOk("Тег добавлен: #" + raw);
+  }
+
   function fillEditCategories(selectedCat) {
     var sel = $("edit_category");
     if (!sel) return;
@@ -496,11 +563,18 @@ a{color:#8ab4f8}
         pushTag({ slug: t.slug, name: t.name, kind: "cat" });
       });
     }
+    Object.keys(editCustomTags).forEach(function (slug) {
+      pushTag({
+        slug: slug,
+        name: editCustomTags[slug] || (window.OZ_TAGS ? OZ_TAGS.name(slug) : slug),
+        kind: "extra",
+      });
+    });
     prev.forEach(function (slug) {
       if (seen[slug]) return;
       pushTag({
         slug: slug,
-        name: window.OZ_TAGS ? OZ_TAGS.name(slug) : slug,
+        name: editCustomTags[slug] || (window.OZ_TAGS ? OZ_TAGS.name(slug) : slug),
         kind: "extra",
       });
     });
@@ -510,6 +584,7 @@ a{color:#8ab4f8}
       lab.className =
         "oz-admin-tag" +
         (t.kind === "name" ? " oz-name" : "") +
+        (t.kind === "extra" ? " oz-name" : "") +
         (prev.indexOf(t.slug) !== -1 ? " oz-on" : "");
       var inp = document.createElement("input");
       inp.type = "checkbox";
@@ -522,11 +597,21 @@ a{color:#8ab4f8}
       lab.appendChild(document.createTextNode("#" + t.name));
       box.appendChild(lab);
     });
+    var plus = document.createElement("button");
+    plus.type = "button";
+    plus.className = "oz-tag-plus";
+    plus.id = "edit_tag_add";
+    plus.setAttribute("aria-label", "Добавить тег");
+    plus.textContent = "+";
+    plus.addEventListener("click", showNewTagRow);
+    box.appendChild(plus);
   }
 
   function openEdit(it) {
     if (!it || !it.id) return;
     editingId = it.id;
+    editCustomTags = {};
+    hideNewTagRow();
     fillEditCategories(it.category || "");
     $("edit_name").value = it.name || "";
     $("edit_user").value = it.user || "";
@@ -540,6 +625,10 @@ a{color:#8ab4f8}
             return x.trim();
           })
           .filter(Boolean);
+    prev.forEach(function (slug) {
+      if (window.OZ_TAGS && OZ_TAGS.isCategory && OZ_TAGS.isCategory(slug)) return;
+      editCustomTags[slug] = window.OZ_TAGS ? OZ_TAGS.name(slug) : slug;
+    });
     renderEditTags(prev);
     $("edit_pop").hidden = false;
     $("edit_name").focus();
@@ -547,6 +636,8 @@ a{color:#8ab4f8}
 
   function closeEdit() {
     editingId = null;
+    editCustomTags = {};
+    hideNewTagRow();
     var pop = $("edit_pop");
     if (pop) pop.hidden = true;
   }
@@ -573,6 +664,7 @@ a{color:#8ab4f8}
     var text = ($("edit_text").value || "").trim();
     var rating = $("edit_rating").value;
     var tags = editPickedTags().join(",");
+    var user_tags = editUserTagsForSave();
     if (!name || !category || !text) {
       showErr("Нужны название, категория и текст.");
       return;
@@ -599,6 +691,7 @@ a{color:#8ab4f8}
         text: text,
         rating: rating,
         tags: tags,
+        user_tags: user_tags,
       }),
     })
       .then(function (r) {
@@ -622,8 +715,15 @@ a{color:#8ab4f8}
           rating: rating,
           tags: tags,
         });
+        if (user_tags.length && window.OZ_TAGS && OZ_TAGS.mergeUserTags) {
+          OZ_TAGS.mergeUserTags(user_tags);
+        }
         closeEdit();
-        showOk("Сохранено в очереди: " + savedId);
+        showOk(
+          "Сохранено в очереди: " +
+            savedId +
+            (x.d.tags_saved ? " · тегов в tags.json: " + x.d.tags_saved : "")
+        );
       })
       .catch(function () {
         if (btn) btn.disabled = false;
@@ -855,6 +955,14 @@ a{color:#8ab4f8}
   });
   $("edit_save").addEventListener("click", saveEdit);
   $("edit_cancel").addEventListener("click", closeEdit);
+  $("edit_tag_new_ok").addEventListener("click", addCustomTagFromInput);
+  $("edit_tag_new_cancel").addEventListener("click", hideNewTagRow);
+  $("edit_tag_new").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addCustomTagFromInput();
+    }
+  });
   $("edit_name").addEventListener("input", function () {
     if ($("edit_pop").hidden) return;
     renderEditTags(editPickedTags());
