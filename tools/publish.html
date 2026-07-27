@@ -44,18 +44,16 @@ a{color:#8ab4f8}
 .oz-meta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px;font-size:13px;color:var(--e)}
 .oz-meta .g{color:#ffb300;font-size:18px;letter-spacing:1px;line-height:1}
 .oz-body{position:relative;font-size:15px;line-height:1.55;white-space:pre-wrap;word-break:break-word;color:var(--g);min-height:80px}
+.oz-body::after{content:"";display:table;clear:both}
 .oz-body a{color:#8ec5f0;text-decoration:underline}
 .oz-body a:hover{color:#b8daf8}
 .oz-embed{position:relative;width:100%;max-width:720px;margin:12px auto;padding-top:56.25%;background:#000;border-radius:12px;overflow:hidden}
 .oz-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .oz-md-media{display:block;width:100%;max-width:720px;margin:12px auto}
 .oz-md-media img,.oz-md-media video{display:block;width:100%;height:auto;border-radius:12px;background:#232a31}
-.oz-md-media.oz-md-pos-leftup,.oz-md-media.oz-md-pos-leftdown,.oz-md-media.oz-md-pos-rightup,.oz-md-media.oz-md-pos-rightdown{position:absolute;z-index:1;width:auto;max-width:min(48%,320px);margin:0}
-.oz-md-media.oz-md-pos-leftup{top:0;left:0}
-.oz-md-media.oz-md-pos-leftdown{bottom:0;left:0}
-.oz-md-media.oz-md-pos-rightup{top:0;right:0}
-.oz-md-media.oz-md-pos-rightdown{bottom:0;right:0}
-.oz-md-media.oz-md-pos-center{margin-left:auto;margin-right:auto}
+.oz-md-media.oz-md-pos-leftup,.oz-md-media.oz-md-pos-leftdown{float:left;width:auto;max-width:min(48%,320px);margin:0 14px 12px 0}
+.oz-md-media.oz-md-pos-rightup,.oz-md-media.oz-md-pos-rightdown{float:right;width:auto;max-width:min(48%,320px);margin:0 0 12px 14px}
+.oz-md-media.oz-md-pos-center{float:none;display:block;margin:12px auto;clear:both}
 .oz-md-media.oz-md-pos-leftup img,.oz-md-media.oz-md-pos-leftdown img,.oz-md-media.oz-md-pos-rightup img,.oz-md-media.oz-md-pos-rightdown img,
 .oz-md-media.oz-md-pos-leftup video,.oz-md-media.oz-md-pos-leftdown video,.oz-md-media.oz-md-pos-rightup video,.oz-md-media.oz-md-pos-rightdown video{width:auto;max-width:100%;height:auto}
 .oz-tags{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
