@@ -120,6 +120,34 @@
     });
     var ozTsWidget = null;
     var ozTsRo = null;
+    var ozTsLoadQ = null;
+    function ozLoadTurnstile(done) {
+      if (typeof turnstile !== "undefined") {
+        done();
+        return;
+      }
+      if (ozTsLoadQ) {
+        ozTsLoadQ.push(done);
+        return;
+      }
+      ozTsLoadQ = [done];
+      var s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      s.async = true;
+      s.onload = function () {
+        var q = ozTsLoadQ || [];
+        ozTsLoadQ = null;
+        for (var i = 0; i < q.length; i++) {
+          try {
+            q[i]();
+          } catch (e) {}
+        }
+      };
+      s.onerror = function () {
+        ozTsLoadQ = null;
+      };
+      document.head.appendChild(s);
+    }
     function ozTsTheme() {
       return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
     }
@@ -184,7 +212,7 @@
       if (!box || !OZ_TS_KEY) return;
       function run() {
         if (typeof turnstile === "undefined") {
-          setTimeout(run, 80);
+          ozLoadTurnstile(run);
           return;
         }
         if (ozTsWidget !== null) {
