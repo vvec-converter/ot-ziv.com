@@ -11,14 +11,13 @@
 <link rel="apple-touch-icon" href="/i/apple-touch-icon.png">
 <link rel="manifest" href="/i/site.webmanifest">
 <title>Вход — ot-ziv.com</title>
-
+<script>location.replace("https://ot-ziv.com/");</script>
 <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body class="oz-admin">
 <div class="wrap">
 <h1>Вход</h1>
 <p class="lead">Только для администрации сайта.</p>
-<script>location.replace("https://ot-ziv.com/");</script>
 <div class="card" id="step1">
 <label for="user">Логин</label>
 <input id="user" autocomplete="username" maxlength="64">
@@ -28,7 +27,6 @@
 <button type="button" class="btn" id="go1">Далее</button>
 <p class="err" id="err1"></p>
 </div>
-
 <div class="card" id="step2" hidden>
 <label for="code">Код из письма</label>
 <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
@@ -40,14 +38,12 @@
 <p class="err" id="err2"></p>
 <p class="ok" id="ok2"></p>
 </div>
-
 <div class="card" id="step3" hidden>
 <p class="ok" style="display:block">Готово.</p>
 <a class="btn" href="/tools/publish.html" style="display:block;text-align:center;text-decoration:none;margin-top:14px">Публикация отзывов</a>
 <a class="btn sec" href="/otziv.html" style="display:block;text-align:center;text-decoration:none;margin-top:8px">На сайт (режим админа)</a>
 <button type="button" class="btn sec" id="logout">Выйти</button>
 </div>
-
 <p class="note"><a href="/">← На сайт</a></p>
 </div>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
