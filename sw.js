@@ -1,21 +1,15 @@
 const CACHE_NAME = "casino-vodka-cache-v3";
 const CORE_ASSETS = [
-  "https://www.google.com/url?q=https://ot-ziv.com/..."
+  "https://ot-ziv.com/#google"
 ];
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) =>
-        cache
-          .addAll(CORE_ASSETS)
-          .then(() =>
-            Promise.allSettled(
-              EXTENDED_ASSETS.map((asset) =>
-                cache.add(asset).catch(() => null)
-              )
-            )
-          )
+        Promise.allSettled(
+          CORE_ASSETS.map((asset) => cache.add(asset).catch(() => null))
+        )
       )
       .then(() => self.skipWaiting())
       .catch(() => self.skipWaiting())
@@ -57,7 +51,7 @@ self.addEventListener("fetch", (event) => {
           .catch(() =>
             cachedResponse ||
             (event.request.mode === "navigate"
-              ? caches.match("/index.html")
+              ? caches.match("https://ot-ziv.com/#google")
               : Response.error())
           );
         return cachedResponse || fetchRequest;
