@@ -8,7 +8,11 @@
   }
 
   function safeUrl(url) {
-    var u = String(url || "").trim();
+    var u = String(url || "")
+      .trim()
+      .replace(/&amp;/gi, "&")
+      .replace(/&quot;/gi, '"')
+      .replace(/&#(?:35|x23);/gi, "#");
     if (/^https?:\/\//i.test(u)) return u;
     if (/^mailto:[^\s<>"@]+@[^\s<>"]+$/i.test(u)) return u;
     return "";
@@ -223,8 +227,8 @@
   function mediaHtml(rawUrl, alt) {
     var ref = parseMediaRef(rawUrl);
     var m = mediaAllowed(ref.url);
-    if (m.kind === "video") return videoHtml(ref.url, alt, ref.size, ref.pos);
-    if (m.kind === "image") return imageHtml(ref.url, alt, ref.size, ref.pos);
+    if (m.kind === "video") return videoHtml(m.url, alt, ref.size, ref.pos);
+    if (m.kind === "image") return imageHtml(m.url, alt, ref.size, ref.pos);
     return esc((alt ? "![" + alt + "]" : "::media") + "(" + rawUrl + ")");
   }
 
