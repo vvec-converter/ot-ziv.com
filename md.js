@@ -131,23 +131,8 @@
   function mediaAllowed(url) {
     var u = safeUrl(url);
     if (!u) return { kind: "", url: "" };
-    if (/\.(jpe?g|png|gif|webp|avif)(\?|#|$)/i.test(u)) return { kind: "image", url: u };
-    if (/\.webm(\?|#|$)/i.test(u)) return { kind: "video", url: u };
-    var h = host(u);
-    if (
-      h === "i.imgur.com" ||
-      h === "imgur.com" ||
-      h === "cdn.discordapp.com" ||
-      h === "media.discordapp.net" ||
-      h === "pbs.twimg.com" ||
-      h === "images.unsplash.com" ||
-      h === "i.ibb.co" ||
-      h === "postimg.cc" ||
-      h === "i.postimg.cc"
-    ) {
-      return { kind: "image", url: u };
-    }
-    return { kind: "", url: "" };
+    if (/\.(webm|mp4|ogg|ogv|mov|m4v)(\?|#|$)/i.test(u)) return { kind: "video", url: u };
+    return { kind: "image", url: u };
   }
 
   function imageAllowed(url) {
@@ -244,32 +229,46 @@
   }
 
   function processInline(line) {
-    var s = esc(line);
-    s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function (_, alt, url) {
-      return mediaHtml(url, alt);
+    var raw = String(line || "");
+    var slots = [];
+    raw = raw.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function (_, alt, url) {
+      var key = "\u0000MD" + slots.length + "\u0000";
+      slots.push(mediaHtml(url, alt));
+      return key;
     });
-    s = s.replace(/\[iframe(?:\s+([^\]]*))?\]\(([^)]+)\)/gi, function (_, title, url) {
-      return iframeHtml(url, title);
+    raw = raw.replace(/\[iframe(?:\s+([^\]]*))?\]\(([^)]+)\)/gi, function (_, title, url) {
+      var key = "\u0000MD" + slots.length + "\u0000";
+      slots.push(iframeHtml(url, title));
+      return key;
     });
-    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_, label, url) {
+    raw = raw.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_, label, url) {
       var href = safeUrl(url);
-      if (!href) return esc("[" + label + "](" + url + ")");
+      var key = "\u0000MD" + slots.length + "\u0000";
+      if (!href) {
+        slots.push(esc("[" + label + "](" + url + ")"));
+        return key;
+      }
       var t = String(label || "").trim();
       var blank = /^mailto:/i.test(href)
         ? ""
         : ' rel="noopener noreferrer" target="_blank"';
-      return (
+      slots.push(
         '<a href="' +
-        esc(href) +
-        '" title="' +
-        esc(t) +
-        '"' +
-        blank +
-        ">" +
-        esc(label) +
-        "</a>"
+          esc(href) +
+          '" title="' +
+          esc(t) +
+          '"' +
+          blank +
+          ">" +
+          esc(label) +
+          "</a>"
       );
+      return key;
     });
+    var s = esc(raw);
+    for (var i = 0; i < slots.length; i++) {
+      s = s.split("\u0000MD" + i + "\u0000").join(slots[i]);
+    }
     return s;
   }
 
