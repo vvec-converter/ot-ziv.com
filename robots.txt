@@ -1,11 +1,11 @@
 User-agent: *
-Disallow: /data
+Allow: /sitemap.xml
+Allow: /data/published.json
+Allow: /data/tags.json
 Disallow: /go.js
 Disallow: /messag.js
 Disallow: /massag.js
 Disallow: /v
 Disallow: /admin
 Disallow: /tools
-Allow: /sitemap.xml
-
 Sitemap: https://ot-ziv.com/sitemap.xml
