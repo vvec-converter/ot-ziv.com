@@ -18,6 +18,17 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" id="oz-tw-image" content="https://ot-ziv.com/i/android-chrome-512x512.png">
 <link rel="canonical" id="oz-canon" href="https://ot-ziv.com/otziv.html">
+<script>
+(function () {
+  try {
+    var p = new URLSearchParams(location.search);
+    var id = (p.get("id") || p.get("n") || p.get("name") || "").trim();
+    if (!id) return;
+    var el = document.getElementById("oz-canon");
+    if (el) el.setAttribute("href", "https://ot-ziv.com/otziv.html?id=" + encodeURIComponent(id));
+  } catch (e) {}
+})();
+</script>
 <title>Отзыв — ot-ziv.com</title>
 <link rel="stylesheet" href="/css/otziv.css">
 </head>
