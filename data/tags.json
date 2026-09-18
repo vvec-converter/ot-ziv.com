@@ -236,55 +236,163 @@
     "name": "ross name"
   },
   {
-    "slug": "политика",
-    "name": "политика"
+    "slug": "elektronika",
+    "name": "Электроника и гаджеты"
   },
   {
-    "slug": "новости",
-    "name": "новости"
+    "slug": "bytovaya-tehnika",
+    "name": "Бытовая техника"
   },
   {
-    "slug": "инфоррмационный-ютуб-канал",
-    "name": "инфоррмационный ютуб канал"
+    "slug": "transport",
+    "name": "Транспортные средства"
   },
   {
-    "slug": "новое-видео-ross-name",
-    "name": "новое видео ross name"
+    "slug": "krasota-zdorove",
+    "name": "Красота и здоровье"
   },
   {
-    "slug": "rossname",
-    "name": "rossname"
+    "slug": "odezhda",
+    "name": "Одежда, обувь и аксессуары"
   },
   {
-    "slug": "топ-10-новостных-каналов-на-ютубе",
-    "name": "топ 10 новостных каналов на ютубе"
+    "slug": "dom-remont",
+    "name": "Дом и ремонт"
   },
   {
-    "slug": "россия-новости",
-    "name": "Россия новости"
+    "slug": "detskie-tovary",
+    "name": "Детские товары"
   },
   {
-    "slug": "украина-новости",
-    "name": "Украина новости"
+    "slug": "knigi-hobbi",
+    "name": "Книги и хобби"
   },
   {
-    "slug": "иран-новости",
-    "name": "Иран новости"
+    "slug": "obshchepit",
+    "name": "Общепит"
   },
   {
-    "slug": "аоэ-новости",
-    "name": "АОЭ новости"
+    "slug": "oteli-turizm",
+    "name": "Отели и туризм"
   },
   {
-    "slug": "новости-мира",
-    "name": "новости мира"
+    "slug": "razvlecheniya",
+    "name": "Развлечения и отдых"
   },
   {
-    "slug": "что-происходит",
-    "name": "что происходит"
+    "slug": "krasota-sport",
+    "name": "Красота и спорт"
   },
   {
-    "slug": "что-в-мире",
-    "name": "что в мире"
+    "slug": "medicina-mesta",
+    "name": "Медицинские заведения"
+  },
+  {
+    "slug": "torgovlya",
+    "name": "Торговля"
+  },
+  {
+    "slug": "finansy",
+    "name": "Финансы и страхование"
+  },
+  {
+    "slug": "bytovye-uslugi",
+    "name": "Бытовые услуги"
+  },
+  {
+    "slug": "transport-logistika",
+    "name": "Транспорт и логистика"
+  },
+  {
+    "slug": "remont-avtoservis",
+    "name": "Ремонт и автосервис"
+  },
+  {
+    "slug": "svyaz-internet",
+    "name": "Связь и интернет"
+  },
+  {
+    "slug": "obuchenie",
+    "name": "Обучение"
+  },
+  {
+    "slug": "meropriyatiya",
+    "name": "Организация мероприятий"
+  },
+  {
+    "slug": "marketplejsy",
+    "name": "Маркетплейсы и магазины"
+  },
+  {
+    "slug": "striming",
+    "name": "Стриминг и медиа"
+  },
+  {
+    "slug": "igry",
+    "name": "Игры"
+  },
+  {
+    "slug": "obyavleniya",
+    "name": "Сервисы объявлений"
+  },
+  {
+    "slug": "soft",
+    "name": "Полезный софт"
+  },
+  {
+    "slug": "setevoj-biznes",
+    "name": "Крупный сетевой бизнес"
+  },
+  {
+    "slug": "it-digital",
+    "name": "IT и digital"
+  },
+  {
+    "slug": "proizvodstvo",
+    "name": "Производство и заводы"
+  },
+  {
+    "slug": "kadrovye",
+    "name": "Кадровые агентства"
+  },
+  {
+    "slug": "frilans",
+    "name": "Фриланс и подработка"
+  },
+  {
+    "slug": "chastnye-mastera",
+    "name": "Частные мастера"
+  },
+  {
+    "slug": "byuti-mastera",
+    "name": "Бьюти-мастера"
+  },
+  {
+    "slug": "vrachi-psihologi",
+    "name": "Здоровье и психология"
+  },
+  {
+    "slug": "infobiznes",
+    "name": "Инфобизнес и блогеры"
+  },
+  {
+    "slug": "gosuslugi",
+    "name": "Госуслуги и ведомства"
+  },
+  {
+    "slug": "obrazovanie",
+    "name": "Образование"
+  },
+  {
+    "slug": "medicina-gos",
+    "name": "Государственная медицина"
+  },
+  {
+    "slug": "gorodskaya-sreda",
+    "name": "Городская среда"
+  },
+  {
+    "slug": "zhkh",
+    "name": "Инфраструктура и ЖКХ"
   }
 ]
