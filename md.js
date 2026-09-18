@@ -162,6 +162,22 @@
     );
   }
 
+  function faqHtml(question, answerHtml) {
+    var q = String(question || "").trim();
+    if (!q) return "";
+    return (
+      '<details class="oz-faq"><summary class="oz-faq-q">' +
+      esc(q) +
+      '</summary><div class="oz-faq-a">' +
+      (answerHtml || "") +
+      "</div></details>"
+    );
+  }
+
+  function isBlockStart(line) {
+    return /^\s*::(faq|iframe|img|video)\s+/i.test(String(line || ""));
+  }
+
   function sizeAttrs(size) {
     if (!size || !size.w || !size.h) return "";
     return (
@@ -323,6 +339,16 @@
     var out = [];
     for (var i = 0; i < parts.length; i++) {
       var line = parts[i];
+      var faqLine = line.match(/^\s*::faq\s+(.+?)\s*$/i);
+      if (faqLine) {
+        var ansParts = [];
+        while (i + 1 < parts.length && !isBlockStart(parts[i + 1])) {
+          i++;
+          ansParts.push(processInline(parts[i]));
+        }
+        out.push(faqHtml(faqLine[1], ansParts.join("<br>")));
+        continue;
+      }
       var iframeLine = line.match(/^\s*::iframe\s+(\S+)(?:\s+(.+))?\s*$/i);
       if (iframeLine) {
         out.push(iframeHtml(iframeLine[1], iframeLine[2]));
@@ -366,6 +392,7 @@
 
   function toPlain(raw) {
     return String(raw || "")
+      .replace(/^\s*::faq\s+/gim, "")
       .replace(/^\s*::iframe\s+\S+(?:\s+.+)?\s*$/gim, "")
       .replace(/^\s*::img\s+\S+(?:\s+.+)?\s*$/gim, "")
       .replace(/^\s*::video\s+\S+(?:\s+.+)?\s*$/gim, "")
