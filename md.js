@@ -346,6 +346,7 @@
           i++;
           ansParts.push(processInline(parts[i]));
         }
+        while (ansParts.length && ansParts[ansParts.length - 1] === "") ansParts.pop();
         out.push(faqHtml(faqLine[1], ansParts.join("<br>")));
         continue;
       }
@@ -395,26 +396,44 @@
   }
 
   function joinBlocks(parts) {
-    var s = "";
+    var grouped = [];
+    var faqBuf = [];
+    function flushFaq() {
+      if (!faqBuf.length) return;
+      if (faqBuf.length === 1) grouped.push(faqBuf[0]);
+      else grouped.push('<div class="oz-faq-list">' + faqBuf.join("") + "</div>");
+      faqBuf = [];
+    }
     for (var i = 0; i < parts.length; i++) {
       var cur = parts[i];
-      if (i === 0) {
-        s = cur;
+      if (isFaqBlock(cur)) {
+        faqBuf.push(cur);
         continue;
       }
-      var prev = parts[i - 1];
-      if (cur === "" && isFaqBlock(prev)) continue;
-      if (prev === "" && isFaqBlock(cur)) {
-        s += cur;
-        continue;
-      }
-      if (isFaqBlock(prev) && isFaqBlock(cur)) {
-        s += cur;
-        continue;
-      }
-      s += "<br>" + cur;
+      if (cur === "" && faqBuf.length) continue;
+      flushFaq();
+      grouped.push(cur);
     }
-    return s;
+    flushFaq();
+
+    var s = "";
+    for (var j = 0; j < grouped.length; j++) {
+      var item = grouped[j];
+      if (j === 0) {
+        s = item;
+        continue;
+      }
+      var prev = grouped[j - 1];
+      if (item === "" && (/oz-faq/.test(prev) || /oz-embed/.test(prev) || /oz-md-media/.test(prev))) {
+        continue;
+      }
+      if (prev === "" && /oz-faq/.test(item)) {
+        s += item;
+        continue;
+      }
+      s += "<br>" + item;
+    }
+    return s.replace(/(<\/details>)\s*<br>\s*(?=<details class="oz-faq")/g, "$1");
   }
 
   function toPlain(raw) {
