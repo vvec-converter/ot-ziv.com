@@ -387,7 +387,34 @@
       }
       out.push(processInline(line));
     }
-    return out.join("<br>");
+    return joinBlocks(out);
+  }
+
+  function isFaqBlock(html) {
+    return /class="oz-faq"/.test(String(html || ""));
+  }
+
+  function joinBlocks(parts) {
+    var s = "";
+    for (var i = 0; i < parts.length; i++) {
+      var cur = parts[i];
+      if (i === 0) {
+        s = cur;
+        continue;
+      }
+      var prev = parts[i - 1];
+      if (cur === "" && isFaqBlock(prev)) continue;
+      if (prev === "" && isFaqBlock(cur)) {
+        s += cur;
+        continue;
+      }
+      if (isFaqBlock(prev) && isFaqBlock(cur)) {
+        s += cur;
+        continue;
+      }
+      s += "<br>" + cur;
+    }
+    return s;
   }
 
   function toPlain(raw) {
