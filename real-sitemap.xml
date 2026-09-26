@@ -66,12 +66,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ot-ziv.com/otziv.html?id=vodka-casino</loc>
-    <lastmod>2026-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://ot-ziv.com/otziv.html?id=no-verification-casino</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>weekly</changefreq>
@@ -104,6 +98,12 @@
   <url>
     <loc>https://ot-ziv.com/otziv.html?id=vodka-bet</loc>
     <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ot-ziv.com/otziv.html?id=vodka-casino</loc>
+    <lastmod>2026-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
