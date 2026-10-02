@@ -570,5 +570,21 @@
   {
     "slug": "https-www-google-com-search-q-d0-b2-d0-be-d0-b4-d0-ba-d0",
     "name": "https://www.google.com/search?q=%D0%B2%D0%BE%D0%B4%D0%BA%D0%"
+  },
+  {
+    "slug": "наперстки",
+    "name": "наперстки"
+  },
+  {
+    "slug": "thimbles",
+    "name": "thimbles"
+  },
+  {
+    "slug": "thimbles-game",
+    "name": "thimbles game"
+  },
+  {
+    "slug": "наперстки-играть",
+    "name": "наперстки играть"
   }
 ]
