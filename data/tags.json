@@ -49,7 +49,7 @@
   },
   {
     "slug": "vodka-bet",
-    "name": "vodka.bet"
+    "name": "vodka bet"
   },
   {
     "slug": "водка-казино",
@@ -498,5 +498,25 @@
   {
     "slug": "куаныш",
     "name": "Куаныш"
+  },
+  {
+    "slug": "justinfo",
+    "name": "justinfo"
+  },
+  {
+    "slug": "just-info",
+    "name": "just info"
+  },
+  {
+    "slug": "info-just",
+    "name": "info just"
+  },
+  {
+    "slug": "водка-бет",
+    "name": "водка бет"
+  },
+  {
+    "slug": "зеркало-водка-казино",
+    "name": "зеркало водка казино"
   }
 ]
