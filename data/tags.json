@@ -590,5 +590,33 @@
   {
     "slug": "vodka-casino-ru",
     "name": "vodka-casino.ru"
+  },
+  {
+    "slug": "reddit",
+    "name": "Reddit"
+  },
+  {
+    "slug": "reddit-otziv",
+    "name": "reddit otziv"
+  },
+  {
+    "slug": "reddit-отзыв",
+    "name": "reddit отзыв"
+  },
+  {
+    "slug": "реддит-отзыв",
+    "name": "реддит отзыв"
+  },
+  {
+    "slug": "реддит-бан",
+    "name": "Реддит бан"
+  },
+  {
+    "slug": "реддит-аху-л",
+    "name": "реддит аху@л"
+  },
+  {
+    "slug": "reddit-reviews",
+    "name": "Reddit reviews"
   }
 ]
