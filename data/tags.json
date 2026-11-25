@@ -625,7 +625,7 @@
   },
   {
     "slug": "liqd",
-    "name": "liqd"
+    "name": "@LIQD"
   },
   {
     "slug": "liqdcasino",
@@ -646,5 +646,9 @@
   {
     "slug": "liqd-reviews",
     "name": "liqd reviews"
+  },
+  {
+    "slug": "game",
+    "name": "game"
   }
 ]
